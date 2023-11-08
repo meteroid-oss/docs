@@ -18,19 +18,19 @@
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "mailto:team@meteroid.io"
     }
   ],
   "topbarCtaButton": {
     "name": "Github",
     "url": "https://github.com/meteroid-oss/meteroid"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
+  // "tabs": [
+  //   {
+  //     "name": "API Reference",
+  //     "url": "api-reference"
+  //   }
+  // ],
   "anchors": [
     {
       "name": "Documentation",
@@ -72,7 +72,7 @@
   ],
   "footerSocials": {
     "twitter": "https://twitter.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "github": "https://github.com/meteroid-oss/meteroid",
+    "linkedin": "https://www.linkedin.com/company/meteroid"
   }
 }
