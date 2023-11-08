@@ -25,12 +25,6 @@
     "name": "Github",
     "url": "https://github.com/meteroid-oss/meteroid"
   },
-  // "tabs": [
-  //   {
-  //     "name": "API Reference",
-  //     "url": "api-reference"
-  //   }
-  // ],
   "anchors": [
     {
       "name": "Documentation",
