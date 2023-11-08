@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Meteroid Docs",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
@@ -8,7 +8,7 @@
   "favicon": "/favicon.svg",
   "colors": {
     "primary": "#8263FA",
-    "light": "#7874F7",
+    "light": "#8f6cef",
     "dark": "#200D05",
     "anchors": {
       "from": "#7874F7",
