@@ -2,8 +2,9 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Meteroid Documentation",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/public/meteroid-icon-dark.svg",
+    "light": "/public/meteroid-icon-light.svg",
+    "href": "https://meteroid.com"
   },
   "favicon": "/favicon.svg",
   "colors": {
@@ -20,9 +21,10 @@
     }
   },
   "topbarLinks": [
+
     {
-      "name": "Support",
-      "url": "mailto:team@meteroid.io"
+      "name": "Talk to us",
+      "url": "https://meteroid.com/talk-to-us"
     }
   ],
   "topbarCtaButton": {
@@ -32,39 +34,49 @@
   "anchors": [
     {
       "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
+      "icon": "discord",
+      "url": "https://go.meteroid.com/discord"
+    },
+    {
+      "name": "Github",
+      "icon": "github",
+      "url": "https://go.meteroid.com/github"
     },
     {
       "name": "Blog",
       "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "url": "https://meteroid.com/blog"
+    },
+    {
+      "name": "API References",
+      "icon": "code",
+      "url": "api-reference"
     }
   ],
   "navigation": [
     {
-      "group": "Documentation",
-      "pages": ["introduction", "quickstart", "development"]
+      "group": "Introduction",
+      "pages": ["introduction/understanding-meteroid", "introduction/quickstart", "introduction/self-hosting"]
     },
     {
-      "group": "Essentials",
-      "pages": ["essentials/markdown", "essentials/code", "essentials/images", "essentials/settings", "essentials/navigation"]
+      "group": "Modeling your pricing",
+      "pages": ["catalog/introduction", "catalog/use-cases", "catalog/features"]
     },
     {
-      "group": "API Documentation",
+      "group": "Configuring your metering",
+      "pages": ["metering/introduction", "metering/reporting", "metering/scalability"]
+    },
+    {
+      "group": "Managing subscriptions",
+      "pages": ["billing/introduction", "billing/subscriptions", "billing/lifecycle", "billing/insights", "billing/migrations"]
+    },
+    {
+      "group": "API Reference",
       "pages": ["api-reference/introduction"]
-    },
-    {
-      "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
-      ]
     }
   ],
   "footerSocials": {
-    "twitter": "https://twitter.com/mintlify",
+    "twitter": "https://twitter.com/meteroidhq",
     "github": "https://github.com/meteroid-oss/meteroid",
     "linkedin": "https://www.linkedin.com/company/meteroid"
   }
