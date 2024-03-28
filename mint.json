@@ -63,7 +63,7 @@
       "pages": ["catalog/introduction", "catalog/use-cases", "catalog/features"]
     },
     {
-      "group": "Configuring your metering",
+      "group": "Metering",
       "pages": ["metering/introduction", "metering/reporting", "metering/scalability"]
     },
     {
