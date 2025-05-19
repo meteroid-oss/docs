@@ -1,0 +1,78 @@
+---
+title: Managing Trials & Coupons
+---
+
+## Trial
+
+Free trials let your customers experience the value of your product for a limited time and free of charge before making a purchase decision, helping boost customer adoption and conversion rates.
+
+To set up a trial:
+
+* Select a Plan in Product Catalog > Plan
+  * If the Plan is in Draft status: You can directly scroll to the Trial section.
+  * If the Plan is Active: Click "Open draft" first, then scroll down to the Trial section.
+* Click "Edit" in the Trial section, then "Add trial".
+
+In Meteroid, you can configure the duration of the trial period, specify which plans the trial applies to and define what happens at the end of the trial, as follow:
+
+* <u>Step 1</u>: Set Trial Duration
+  * Choose the number of days for the trial period.
+* <u>Step 2</u>: Select the Plan for the Trial & end-of-trial strategy
+  * <u>Option A</u>: The trial applies to the Current Plan
+    * Select one of the following end-of-trial events and click **"Save"** to proceed:
+      * Downgraded: End Users will access another plan of your choice at the end of the trial period.
+      * Charged: End Users will be charged the price defined in the current plan at the end of the trial period.
+      * Blocked: Revoke access to the current plan. This will not impact End Users' access to other Plans.
+    * In the below example, End Users of the "Hobby" Plan will get access during 14 days to the "Hobby" plan for free. If they have other active subscriptions they will keep on accessing the given Plans and being charged accordingly. At the end of the 14 days, End Users will automatically be charged for the "Hobby" Plan. If they have other active subscriptions they will keep on accessing the given Plans and being charged accordingly after the 14 days.
+
+      ![image.png](media_Pricing/zEZwBftmWi6Gzg-image.png)
+
+   * <u>Option B</u>: The trial applies to another Plan.
+     * <u>Scenario 1</u>: Grant free access to the defined Plan
+        - Select an end-of-trial event: "Downgraded," "Charged," or "Blocked" (_cf_. above). Click **"Save"** to proceed.
+        - In the below example, End Users of the "Hobby" Plan will get access during 14 days to the "Enterprise" Plan for free. They will not access nor be charged anymore for the "Hobby" Plan during this period. At the end of 14 days, if End Users did not subscribe to the "Enterprise" Plan, then they will be downgraded to the "Hobby" Plan and charged accordingly.
+     
+         ![image.png](media_Pricing/zJybEaOXTA34mk-image.png)  
+
+     * <u>Scenario 2</u>: Grant free access to the defined Plan while paying for the current plan
+        - End Users continue paying for the current plan but gains access to the defined Plan during the trial period. At the end of the trial period, End Users are automatically downgraded to the current plan. Click **"Save"** to proceed.
+        - In the below example, End Users of the "Hobby" Plan will get access during 14 days to the "Enterprise" plan for free. They will keep on being charged for the "Hobby" Plan during this period. At the end of the 14 days, if End Users did not subscribe to the "Enterprise" Plan, then they will be downgraded to the "Hobby" Plan and keep on being charged accordingly.
+
+        ![image.png](media_Pricing/yGubtyQ499Aiad-image.png)
+
+
+## Coupons
+
+Coupons can be used to grant your customers discounts. Coupons can be offered as a fixed amount or a percentage of a given price and can be limited in time or not.
+
+### Creating coupons
+
+To create a new coupon, navigate to **Product Catalog > Coupons** and click on **"+ New Coupon"**. Then, fill in the following details:
+
+* **Code**: The discount code that will be sent to the client. You can customize it as needed.
+* **Description**: An internal note for reference (optional).
+* **Discount Type**: Choose between:
+  * **Fixed Amount**: A specific discount amount.
+  * **Percentage**: A percentage discount applied to the total subscription cost.
+* **Discount Value**: Enter the discount amount and currency (for fixed discounts) or the percentage (for percentage-based discounts).
+* **Expiration Date** (optional): Set a date after which the coupon will no longer be valid.
+* **Redemption Limit** (optional): Restrict the number of times the coupon can be used.
+
+### Managing coupons
+
+Once a coupon is created, you can manage it by clicking on the coupon and selecting "Actions". The available actions are:
+
+* **Disable**: Temporarily deactivate the coupon, moving it to the "Inactive" section. To reactivate it, go to the "Inactive" section, select the coupon, and click "Actions" > "Enable" to restore it to the "Active" section.
+* **Archive**: Move the coupon to the "Archived" section. To restore it, go to the "Archived" section, select the coupon, and click "Actions" > "Restore & Enable", making it active again.
+* **Delete**: Permanently remove the coupon. Once deleted, it cannot be recovered or reused.
+
+You can also update the coupon amount or percentage at any time. Simply click on the coupon (whether it’s in the Active, Inactive, or Archived section), enter a new value, and click Save to apply the changes.
+
+### Applying coupons
+
+Once you have created, coupons can be applied by:
+
+* **End User**: Coupons can be used by End Users directly during the checkout process. They simply need to enter the coupon code at checkout to receive the discount.
+
+💡 Coupons in Meteroid are supported at Subscription level and not yet at Customer level. To grant a coupon to a given Customer, you should discount all their subscriptions.
+          

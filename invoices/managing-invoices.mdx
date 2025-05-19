@@ -1,0 +1,83 @@
+---
+title: Managing invoices
+---
+
+The **Billing > Invoices** section in Meteroid provides a central view of all invoices issued to your Customers. Each invoice includes a summary of the billed items, the total amount, payment status, and key metadata such as the invoicing entity, Customer's details, and due date.
+
+# Create new Invoices
+
+While most invoices in Meteroid are generated automatically based on the conditions defined in your Plans (subscription pricing, usage, one-time charges, etc.), you also have the flexibility to handle ad-hoc or non-recurring events. To manually create an invoice (e.g., for one-off services not covered by a Plan), click "New Invoice" in the Billing > Invoices section.
+
+# Edit Invoices
+
+To **edit standard invoice elements** like footnotes, logo or legal mentions (such as VAT number, company details, or custom messaging), go to **Settings > Invoices** and update these elements for the relevant invoicing entity.
+
+How Invoice elements are determined:
+
+* Invoice date: Set when the invoice is finalized and sent. It’s based on the subscription's billing cycle and any applicable grace period.
+* Due date: Automatically calculated using the invoice date plus the configured net payment terms.
+* Bill to: Pulled directly from the Customer’s details (Name and Billing Address).
+
+📌 Note: Generated invoices themselves are not editable once finalized, in compliance with accounting and legal requirements. If a correction is needed, consider issuing a \*\*credit note \*\*(please contact us at hey@meteroid.com to do so) and generating a new invoice with the updated details.
+
+📌 Note: Meteroid supports localized invoice generation:
+
+* If a Customer's billing address (under Customers > Billing Address) is in France, the invoice will automatically be generated in French.
+* For all other end users, invoices are generated in English by default.
+
+
+# Manage Invoices
+
+Invoices are handled at the Subscription level, meaning a Customer will receive a separate Invoice for each Subscription. To manage Invoices, go to Billing > Invoices. Here, you can view all invoices along with key details:
+
+* Invoice Number: Unique identifier for the Invoice.
+* Customer: The recipient of the Invoice.
+* Amount & Currency: The total amount due in the specified currency.
+* Invoice Date: The date the Invoice was issued to the Customer.
+* Status:
+  * **Open**: Status of an invoice <u>before the end of the billing period</u>.
+  * **Draft**: This status is set <u>between the end of the billing period and the end of the grace period</u>. During this time, the invoice is awaiting finalization and is not sent to the Customer.
+  * **Canceled**:\*\* \*\*To cancel an invoice. This status can only be set to "Open" or "Draft" invoices.
+  * **Finalized**: This status is set <u>after the end of the grace period</u>. Once an invoice is finalized, it is sent to the Customer using the Customer's invoicing emails
+  * **Voided**: Is equivalent to canceling an invoice, yet preserving a trail. This status can only be set to "Finalized" invoices.
+
+💡While "Open", "Draft" and "Finalized" status are set automatically by Meteroid, "Canceled" and "Voided" status can be set manually by Account Managers.
+
+<mark></mark>
+
+# When are End Users Invoiced?
+
+To invoice End Users in Meteroid, their Subscriptions must first be **activated** (cf. *Billing > Subscriptions*). Once active, invoicing depends on two factors:
+
+* The **billing cycle** defined at the subscription level — either on the **1**<sup>**st**</sup>\*\* of the month\*\* or on the **anniversary date** (i.e., the date the subscription started).
+* The **billing period** defined for each pricing component within a Plan — monthly, quarterly, annually, etc.
+
+Different types of pricing components are billed at different moments within the billing period:
+
+* **Subscription rates** and **slot-based pricing** are billed **at the beginning** of the billing period.
+* **Capacity commitments** and **usage-based charges** are billed **monthly at the end** of the billing period, once actual usage or fulfillment is known.
+
+Examples:
+
+* If a Plan is solely composed of a subscription rate billed quarterly, and the billing cycle is set to the 1st of the month, Customers will receive an Invoice at the beginning of each quarter (e.g., January 1<sup>st</sup>, April 1<sup>st</sup>, etc.).
+* In Month M, an Invoice will charge End Users for their monthly subscription rate for Month M+1 (in advance) and their usage or capacity consumption from Month M (in arrears).
+
+# E-Invoices
+
+#### What is e-invoicing?
+
+**E-invoicing (electronic invoicing)** is the digital exchange of invoice documents between a supplier and a buyer, using a **standardized format** that enables automated processing. Unlike traditional PDFs or paper invoices, e-invoices follow a structured format (typically XML) that can be seamlessly interpreted by accounting systems and tax authorities.
+
+This process is particularly important in jurisdictions like the **European Union**, where specific e-invoicing standards are mandated for businesses to comply with tax and reporting obligations.
+
+#### E-invoices in Meteroid
+
+Meteroid supports e-invoicing in compliance with European standards. Here’s how it works:
+
+* Meteroid supports the **Factur-X** format, which combines a human-readable **PDF** with a machine-readable **XML** file. We currently support the **“Basic” profile**, which is sufficient for most B2B invoicing needs.
+
+📌 Note: By default, Meteroid issues invoices in **PDF format**. To enable e-invoicing in Factur-X format please contact us at 👉 [**hey@meteroid.com**](#)
+
+* Depending on countries, Meteroid can **automatically send e-invoices** to your **Partenaire de Dématérialisation (PDP)** (mandatory in France as of September 2026) or directly to \*\*Tax Authorities. \*\*For more information, please contact us at 👉 [**hey@meteroid.com**](#)
+
+          

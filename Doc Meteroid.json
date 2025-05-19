@@ -64,7 +64,7 @@
     },
     {
       "group": "Billing",
-      "pages": ["billing/managing-plans", "billing/modeling-your-pricing", "billing/managing-trials-and-coupons"]
+      "pages": ["billing/managing-plans", "billing/modelling-your-pricings", "billing/managing-trials-and-coupons"]
     },
     {
       "group": "Subscriptions",
@@ -81,10 +81,6 @@
         {
       "group": "Settings",
       "pages": ["settings/merchant", "settings/invoices-settings", "settings/integrations", "settings/tenants"]
-    },
-    {
-      "group": "API Reference",
-      "pages": ["api-reference/introduction"]
     }
   ],
   "footerSocials": {

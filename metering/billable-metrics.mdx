@@ -1,0 +1,80 @@
+---
+title: Billable Metrics
+description: Learn how to create and manage your billable metrics in Meteroid.
+---
+
+Billable Metrics are at the core of Usage-Based Billing in Meteroid. Unlike subscriptions, which apply fixed recurring charges, Metrics allow you to bill customers based on real usage—giving you the opportunity to monetize metered features and consumption.
+
+Meteroid is built to ingest and process high volumes of events efficiently, thanks to a robust and scalable event processing pipeline written in Rust, leveraging Kafka and Clickhouse. 
+
+Meteroid makes it easy to send raw, unaggregated event data, automatically handling aggregation based on your configured logic—so you can ensure accuracy without pre-processing your data.
+
+📌 Tip: As you get started, we strongly recommend using a Meteroid Test Tenant to define and test your Metrics setup without impacting your production environment.
+
+## Adding a Metric in Meteroid
+
+To create a new metric, navigate to: **Product Catalog > Metrics > New Metric**
+
+Then, you will need to enter the following details:
+
+* **Metric Name** – A unique name that will help identify the billable metric when defining pricing strategies.
+* **Product Line** – A Product Line represents a category or grouping of related Plans (*cf*. Glossary for more details). If needed, Account Managers can activate the Product Line feature in \*\*Settings. \*\*Once activated, when Account Managers create a Plan, they must assign it to a specific Product Line and only Metrics from the same Product Line can be used to define pricing components for that Plan. **By default, Meteroid automatically assigns Metrics and Plans to the "Default" Product Line**.
+* **Event Code** – This is the usage event used to build a billable Metric. It corresponds to the name of the event that your system sends to Meteroid and that Meteroid should consider to build the billable Metric. Indeed, Metrics are assembled by filtering and aggregating (cf. Aggragation Type below) these incoming events.
+* **Description** – A brief explanation of the metric and what it measures.
+* **Aggregation Type** – Defines how the data is processed by Meteroid. It is applied to the values included in the events matching the Event Code.
+  * **Count** – Counts the number of occurrences of an event (e.g., API calls).
+  * **Count Distinct** – Counts the number of unique occurrences (e.g., unique users accessing a feature).
+  * **Sum** – Sums up numerical values (e.g., total data usage in GB).
+  * **Mean** – Calculates the average value (e.g., average response time).
+  * **Min** – Retrieves the minimum recorded value.
+  * **Max** – Retrieves the maximum recorded value.
+  * **Latest** – Captures the most recent recorded value.
+
+💡 **Important:** Meteroid automatically aggregates Metrics at the end of each billing period based on the selected Aggregation Type. To avoid double counting or incorrect calculations, **you should send raw, unprocessed data rather than pre-aggregated values.**
+
+* In option you can configure the segmentation for more granular pricing strategies:
+  * **No Segmentation** – By default, the metric is not segmented.
+  * **Single Dimension Segmentation** – Allows different pricing strategies based on a single attribute (e.g., Cloud Provider).
+    * **Example**: You want different pricing for AWS, Azure, and GCP.
+    * Fields to fill:
+      * **Dimension** (e.g., "Cloud Provider")
+      * **Values** – List the different values, separated **only by a comma without spaces** (e.g., "AWS,Azure Cloud,GCP", not "AWS, Azure Cloud, GCP"
+    * When configuring a plan, you can set different prices for each cloud provider.
+  * **Two-Dimensional (Independent) Segmentation** – Allows separate pricing for two independent attributes (e.g., Cloud Provider & Region).
+    * Fields to fill:
+      * **Dimension 1** (e.g., "Cloud Provider") with values "AWS,Azure Cloud,GCP" (separated by coma without spaces).
+      * **Dimension 2** (e.g., "Geography") with values "North America,Europe,Asia" (separated by coma without spaces).
+    * Each dimension is independent, meaning pricing can be set separately for each cloud provider in each region.
+  * **Two-Dimensional (Dependent) Segmentation** – Allows pricing variations based on two interdependent attributes (e.g., Cloud Provider & Region).
+    * Fields to fill:
+      * **Dimension** (e.g., "Cloud Provider")
+      * **Relative Dimension** (e.g., "Geography")
+      * **Values:** The possible combinations of the two dimensions, formatted as follows:
+
+```
+{
+  "DimensionValue1": ["RelativeDimensionValue1", "RelativeDimensionValue2", ...],
+  "DimensionValue2": ["RelativeDimensionValue3", "RelativeDimensionValue4", ...],
+  "DimensionValue3": ["RelativeDimensionValue5", "RelativeDimensionValue6", ...],
+  ...
+}
+```
+
+For example, for cloud providers and geographies:
+
+```
+{
+  "AWS": ["North America", "Europe"],
+  "Azure Cloud": ["Europe", "Asia"],
+  "GCP": ["North America", "Asia"]
+}
+``` 
+
+💡 **Note**: Difference Between Dependent vs. Independent Dimensions
+
+
+- **Two Dimensions (Independent):** You must define a price for **every possible combination** of the two dimensions (e.g., every Cloud Provider in every Geography).
+- **Two Dimensions (Dependent):** You can **restrict pricing to specific valid combinations** (e.g., AWS may only be available in North America and Europe).
+
+
+          
