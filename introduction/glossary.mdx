@@ -1,0 +1,132 @@
+---
+title: Glossary
+---
+
+
+Billing can get **quite complex**. Learn more about Meteroid's key concepts and what they mean in the context of our platform.
+
+📌 Something is still unclear? Don't hesitate to reach out to us at 👉 [**hey@meteroid.com**](#) for additional support.
+
+## Meteroid
+
+**Meteroid** is a billing platform designed for B2B SaaS companies. It helps manage pricing, Subscriptions, Invoicing, and Usage-Based Billing. Unlike a Payment Service Provider (PSP) such as Stripe or PayPal, Meteroid doesn’t process payments directly—instead, it connects with your PSP to track payments and update invoice statuses automatically. With Meteroid, your teams can automate recurring billing, configure complex pricing models, and provide customers with a seamless billing experience—all without relying on engineering.
+
+## Account Manager
+
+In Meteroid, an Account Manager is the internal user (typically from your team) actively using Meteroid to manage and oversee the commercial relationship with a Customer.
+
+## Customer (or End User)
+
+In Meteroid, Customers are the End User of the services you are selling. You can assign them Subscriptions or bill them for one-time payments.
+
+## Product
+
+Products in Meteroid represent a product or service that you offer to your Customers.
+
+## Metric
+
+A Metric in Meteroid represents consumption data or a metered feature (e.g., number of API calls, GB used). It is built by filtering and aggregating raw events sent to Meteroid.
+
+Metrics are the foundation for implementing Usage-Based Billing (UBB) or Hybrid pricing models, enabling you to charge Customers based on actual usage.
+
+## Plan
+
+Plans represent the functionality of a product that customers are billed for during a pre-defined time period (*e.g* monthly or annually).
+
+Meteroid allows your teams to manage plans, their content, price and trial configuration without requiring additional engineering changes.
+
+## Subscription
+
+In Meteroid, a subscription connects a customer to a specific plan, specifying what products or services Customers can access and how they are charged. Customers can have multiple subscriptions and manage them flexibly—pause, cancel, or adjust as needed.
+
+## Self-served subscription
+
+These are for standard-priced, self-service paying customers. Self-served subscriptions in Meteroid are designed to enable customers to subscribe to your Plan independently, without sales interaction. This model relies on **standardized pricing and offerings**, making it easy to scale.
+
+## Sales-led subscription
+
+These apply to customers with ad-hoc, bespoke contracts. Sales-led subscriptions in Meteroid are used when the **price and content of Plans are negotiated individually** with each customer, leading to variations in pricing and structure. This approach is common in enterprise or high-touch sales opportunities.
+
+## Invoice
+
+Meteroid allow you to bill your customers easily for many different products and pricing models. The Invoice is the document sent to your customers that details the products or services delivered, the total amount due, and the payment method and deadline.
+
+## Pricing model
+
+A pricing model refers to the strategy used to determine how a product or service will be priced. It can include various approaches such as:
+
+* subscription-based pricing models: Customers pay a fixed recurring fee (e.g., monthly or annually) to access a product or service.
+* usage-based pricing models: Also known as pay-as-you-go, this model charges Customers based on how much they use a product or service (e.g., number of API calls, GB of storage, minutes used).
+* hybrid (mix of both) pricing models combine subscription fees with usage-based components. For example, a Customer might pay a base monthly rate for core features and an additional fee based on usage.
+
+Read our [Blog Articles] (https://www.meteroid.com/blog) for insights into Pricing Models. Moreover, we explain in more details the different pricing models supported by Meteroid in the *Modelling your Pricing* section.
+
+## Net Terms
+
+**Net Terms** refer to the number of days a customer has to pay an invoice after it is issued. It defines the payment due date, impacting cash flow and financial planning. In Meteroid, Net Terms can be defined at different levels:
+
+* **Invoicing Entity** (Settings > Invoices) – Applies as a general rule for all invoices.
+* **Plan** (Product Catalog > Plan) – Allows specific payment terms per Plan.
+
+📌 **Priority Rule:** If Net Terms are defined in a Plan, they take precedence over the Invoicing Entity's default Net Terms. Otherwise, the default terms from the Invoicing Entity apply.
+
+## Check-out page
+
+The **Checkout Page** is where Customers review complete their purchase. In Meteroid, the checkout experience is fully connected to your product setup: any changes made in Meteroid—such as updating a plan’s pricing—will automatically reflect on your website. Likewise, events happening on your site, like a new customer or subscription, are instantly synced back to Meteroid.
+
+You can also generate a Checkout Page for a specific customer and share it as a link, making it easy to guide them through the purchase process.
+
+
+## Coupon
+
+A coupon is a way to give a discount to your customers. It can be either a fixed amount (a €10 coupon), or a percentage (10% off). It can also be limited in time or used a limited number of time.
+
+## MRR
+
+The Monthly Recurring Revenue (MRR) is a measure of your monthly recurring subscription revenue. It includes subscription rates, slot-based prices, capacity commitments (the monthly tier price being included but not overage charges) and additional recurring charges. On the contrary, it excludes usage-based billing and one-time charges.
+
+## Billing Entity
+
+A Billing Entity refers to the legal and financial entity responsible for issuing invoices, collecting payments, and managing tax obligations. It defines the company name, registered address, and the currency in which invoices are issued. In Meteroid, each invoice is linked to a specific Billing Entity.
+
+📌 For more details, refer to **Settings > Merchant**.
+
+***
+
+## Trial Period
+
+The **Trial Period** allows customers to use a Plan for free for a defined period before billing starts. It helps customers evaluate the service before committing to a paid subscription. Trial duration and conditions can be configured per Plan in Meteroid.
+
+📌 For more details, refer to the **Product Catalog > Pricing** section.
+
+***
+
+## Billing Period
+
+The **Billing Period** defines the timeframe for which price components are calculated. While Invoices in Meteroid are often issued on a monthly basis, different price components (e.g., subscription fees, usage-based charges) can have varying billing periods, such as monthly or annually and can be billed in advance or in arrear.
+
+* **Recurring charges** (e.g., subscriptions, slot-based pricing) are billed at the \*\*begining \*\*(in advance) of the billing period, which can be monthly, quarterly or annually.
+* **Non-recurring charges** (e.g., usage-based billing, overage charges) are billed at the \*\*end \*\*(in arrear) of the billing period, which is always monthly.
+
+## Billing Cycle
+
+The Billing Cycle defines when Invoices are issued for a given Subscription. It can either be the 1<sup>st</sup> of the month or be based on the anniversary of the Subscription's start date.
+
+<mark></mark>
+
+## Tenant
+
+A Tenant in Meteroid represents a separate environment used to manage and test your billing configuration. You can create multiple Tenants—for example, for Production, Development, or Sandbox purposes—each with its own settings and data.
+
+## Grace Period
+
+The Grace Period is the time frame before an invoice is considered finalized and officially due by the Customer. In Meteroid, the Grace Period can be configured per Invoicing Entity under Settings > Invoices > Grace Period
+
+## Product Line
+
+**Product Line** in Meteroid represents a category or grouping of related Plans. Each Plan is created within a specific Product Line, allowing you to organize offerings more effectively—for example, grouping by service types like “Operations” or “Support,” with Plans such as Starter, Pro, or Advanced under each.
+
+End users can subscribe independently to multiple Plans across different Product Lines, enabling flexible bundling and modular access to your products or services.
+
+Product Lines can be defined in Settings. Once defined, Metrics and Plans can be assigned to a given Product Line. If no Product Line is specified, Meteroid automatically assigns the "Default" Product Line.
+          

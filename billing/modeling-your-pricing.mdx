@@ -1,0 +1,181 @@
+---
+title: Modeling your pricing
+---
+
+To define a Plan's pricing model, click the "+ Add a price component" button. In Meteroid the following pricing models are supported:
+
+* Subscription rate
+* Slot-based
+* Capacity commitment
+* Usage-based
+* One-time charge
+* Recurring charge
+
+## Subscription rate
+
+A subscription-based pricing refers to a product or service for which the cost is a **fixed** **charge**. It means that your customer will pay a predetermined, flat fee, regardless of usage, quantity, or time duration. It provides predictability to your customer, as they know exactly how much they will pay without unexpected variations in costs. The End User will be billed at the begining of the billing period, which can be set monthly, quarterly, or annually.
+
+In the below example, End Users will be charged €100/month.
+
+<img
+  src="/public/meteroid-subscription.png"
+  alt="Subscriptions in Meteroid"
+/>
+
+## Slot based
+
+This pricing model is ideal for Seats, Licenses, or other purchasable entities where billing is based on the number of active slots. Your customers will be billed at the begining of the billing period, which can be set monthly, quarterly, or annually.
+
+<img
+  src="/public/meteroid-slots.png"
+  alt="Slot-based Pricings in Meteroid"
+/>
+
+The following billing rules are applied in Meteroid:
+
+* **Adding a Slot Unit During a Period:** 
+If a new slot (e.g., a seat) is added mid-period, a pro-rata rate will be applied for that period. If the new slot exceeds the pre-defined number of slots, Meteroid considers that each Slot have the same price, meaning that the additional Slot will be billed the average Slot rate (Rate / Number of slots).
+
+💡Adding a Slot Unit during a Billing Period will trigger the creation of a new dedicated Invoice.
+
+* **Removing a Slot Unit During a Period:**
+  If a slot is removed during the defined period, the End User will still be billed the entire rate for that period. The price will decrease for the subsequent billing period to reflect the updated number of slots.
+
+💡In Plans using the Slot-Based Pricing model, you can define the rate per slot. The number of slots granted to Customers can be specified within each Subscription.
+
+## Capacity commitment
+
+This threshold-based pricing model allows your customers to pay based on a monthly capacity chosen upfront. It offers predictable billing while providing flexibility for additional usage. If your customers exceed their committed capacity, overage charges are applied based on predefined rates. Using this pricing strategy, your customers will be billed at the end of the monthly billing period.
+
+<img
+  src="/public/meteroid-capacity-commit.png"
+  alt="Capacity Commitments in Meteroid"
+/>
+
+You can configure this pricing model by:
+
+* **Selecting a Billable Metric:**
+  On the left side of the interface, choose the metric that will determine usage (e.g., data storage, user seats, or API calls).
+* **Defining Packages:**
+  Click the "Add Threshold" button on the right to set up your packages. You can create as many packages as needed and customers will select the package that best fits their usage needs.For each package, configure the following columns:
+  * **Included:** Specify the number of billable units included in the package.
+  * **Tier Price:** Set the fixed price Customers will pay for this package.
+  * **Per Unit Overage:** Define the price Customers will pay per unit when their consumption exceeds the included capacity.
+
+**Example Configuration:**
+
+| Package   | Included (Units) | Tier Price ($) | Per Unit Overage ($) |
+| --------- | ---------------- | -------------- | -------------------- |
+| Package 1 | 100              | 10             | 0.10                 |
+| Package 2 | 200              | 18             | 0.05                 |
+
+**Example Calculation:**
+If a Customer consumes 150 units:
+
+* **With Package 1:** The client will pay $15 ($10 + 50 units × $0.10).
+* **With Package 2:** The client will pay $18, as the consumption remains within the 200-unit threshold.
+
+## Usage-based
+
+Usage-based charges (or Pay-as-you-go) refer to fees that Customers will pay for **usage** of specific features. Plan prices in Meteroid can have one or more usage-based charges. When adding a usage-based charge, select the billable metric that you'd like to charge for its usage and a pricing model. Using usage-based billing, your Customers will be billed at the end of the monthly billing period.
+
+<img
+  src="/public/meteroid-usage-based.png"
+  alt="Pay-As-You-Go Pricing Model in Meteroid"
+/>
+
+The following usage-based pricing models are supported by Meteroid:
+
+* Per unit: Your customers pay per unit, each unit having the same price.
+* Tiered: Your customers pay per unit, and the unit price is based on the tier range it falls into.
+* Volume: Your customers pay per unit, and the unit price is based on the total number of units purchased.
+* Package: Your customers pay per block of units.
+* Matrix: Your customers pay a tiered discounted price when purchasing a bulk of units.
+
+**<u></u>**
+
+**<u>Per unit pricing strategy</u>**
+
+In this pricing model your customers will be charged the same price per unit.
+
+In the below example, when a customer purchases or uses 5 units in a given month, the total price to be paid during this month will be (5 units x €100) = €500.
+
+<img
+  src="/public/meteroid-per-unit-pricing.png"
+  alt="Per Unit Pricing Model in Meteroid"
+/>
+
+**<u>Tiered pricing strategy</u>**
+
+In this pricing model your customers pay per unit, and the unit price is based on the tier range it falls into. Usually, the more your customer buys, the lower the cost per unit becomes.
+
+In the below example, when a customer purchases 18 units in a given month, the total price paid will be €4,300 (10 units x €300 + 5 units x €200 + 3 units x €100)
+
+<img
+  src="/public/meteroid-tiered.png"
+  alt="Tiered Pricing Model in Meteroid"
+/>
+
+<mark></mark>
+
+**<u>Volume pricing strategy</u>**
+
+In this pricing model your customers pay per unit, and the unit price is based on the total number of units purchased.
+
+In the below example, when your customer purchases 18 units, the total price per month will be 18 units x €100 = €1,800.
+
+<img
+  src="/public/meteroid-volume.png"
+  alt="Volume Pricing Model in Meteroid"
+/>
+
+**<u>Package pricing strategy</u>**
+
+In this pricing model customers will be charged the same price per\*\* block \*\*of units.
+
+In the below example, your customers can purchase seats in block of 25 units, i.e. 25 seats for $5, 50 seats for $10, etc. If your customer uses 40 seats, the price billed will be $10.
+
+| Block size | Price per block |
+| ---------- | --------------- |
+| 25         | €5              |
+
+
+## One-time charge
+
+A **One-Time Charge** is used to bill customers for a specific, non-recurring event—such as setup fees, training sessions, or any ad-hoc service. It appears once on the invoice and is not tied to any recurring billing cycle.
+
+When adding a One-Time Charge component, here’s how to configure it:
+
+* **Name**: By default, it's labeled “One-Time Charge.” You can customize this name by clicking the pen icon. This name will be displayed on your end user's invoice.
+* **Quantity**: Represents the number of units being billed. This field fills the “quantity” column on the invoice.
+* **Price per unit**: Defines the amount to charge for each unit.
+
+**Example**:
+If you set a quantity of 2 and a price per unit of €100, end users will be billed €200 on their next invoice.
+
+## Recurring charge
+
+A **Recurring Charge** is a repeated fee that is not tied to a subscription rate, but still billed on a regular basis. It’s commonly used for items such as, support packages or additional fees that recur independently of the main subscription plan.These charges are included in each billing cycle according to the configuration you set:
+
+* **Cadence: **Choose the billing frequency for the charge (Monthly, Quarterly, Annually)
+* **Billing Type: **Decide when the customer should pay:
+  * **Paid upfront** (charged at the beginning of the billing period)
+  * **Postpaid** (charged at the end of the billing period)
+* **Quantity: **Represents the number of units being billed. This field populates the “Quantity” column on the invoice.
+* **Price per unit: **The amount charged for each unit
+
+**Example:**
+You configure a Recurring Charge for a “Premium Support Package”:
+
+* Cadence: Monthly
+* Billing Type: Paid upfront
+* Quantity: 1
+* Price per unit: €250
+
+Each month, the customer will be billed €250 at the beginning of the period, and it will appear as a separate line item on the invoice labeled “Premium Support Package.”
+
+💡 **Currency Handling in Plans:**
+The Plan's currency is determined when creating your Meteroid account, based on the incorporation country. <u>**This default currency cannot be changed**</u>**.** However, End Users will be billed in the Invoicing Entity’s currency using the conversion rate of the day. For instance, if your account’s default currency is USD, but the End Users are billed by an Invoicing entity based in Germany, they will be billed in EUR, the amount being converted at the daily exchange rate when the invoice is finalized and thus sent to end users.
+
+💡 **Billing period:**
+In Meteroid, billing is handled differently depending on the type of pricing component: **Subscription rates** and **slot-based pricing** are billed **at the beginning of the billing period** whereas other components, such as **capacity commitments** and **usage-based charges**, are billed **at the end of the billing period**, once the actual usage or commitment fulfillment is known. For example, in Month M, the invoice will charge End Users for their subscription for Month M+1 (in advance), and their usage or capacity consumption from Month M (in arrears).

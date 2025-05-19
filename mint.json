@@ -56,19 +56,31 @@
   "navigation": [
     {
       "group": "Introduction",
-      "pages": ["introduction/understanding-meteroid", "introduction/quickstart", "introduction/self-hosting"]
-    },
-    {
-      "group": "Modeling your pricing",
-      "pages": ["catalog/introduction", "catalog/use-cases", "catalog/features"]
+      "pages": ["introduction/understanding-meteroid", "introduction/glossary"]
     },
     {
       "group": "Metering",
-      "pages": ["metering/introduction", "metering/reporting", "metering/scalability"]
+      "pages": ["metering/billable-metrics"]
     },
     {
-      "group": "Managing subscriptions",
-      "pages": ["billing/introduction", "billing/subscriptions", "billing/lifecycle", "billing/insights", "billing/migrations"]
+      "group": "Billing",
+      "pages": ["billing/managing-plans", "billing/modeling-your-pricing", "billing/managing-trials-and-coupons"]
+    },
+    {
+      "group": "Subscriptions",
+      "pages": ["subscriptions/what-is-a-subscription", "subscriptions/creating-a-subscription", "subscriptions/managing-a-subscription", "subscriptions/check-out"]
+    },
+    {
+      "group": "Customer",
+      "pages": ["customer/managing-customers"]
+    },
+    {
+      "group": "Invoices",
+      "pages": ["invoices/managing-invoices"]
+    },
+        {
+      "group": "Settings",
+      "pages": ["settings/merchant", "settings/invoices-settings", "settings/integrations", "settings/tenants"]
     },
     {
       "group": "API Reference",

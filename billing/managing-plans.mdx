@@ -1,0 +1,71 @@
+---
+title: Managing Plans
+description: Meteroid helps B2B SaaS companies manage their Product Catalog and pricing models efficiently, without requiring engineering support. 
+---
+
+
+## Introduction
+
+At the heart of the system are **Plans**, which define what customers access and how they are billed—typically on a monthly or annual basis.
+
+Meteroid supports a wide range of pricing models, from subscription and slot-based pricing to usage-based and capacity commitment models, as well as one-time and recurring charges. You can easily configure and adjust these models directly within the platform.
+
+<img
+  src="/public/meteroid-pricing-models.png"
+  alt="Meteroid pricing models"
+/>
+
+In addition to pricing, Meteroid lets you set up **free trials** to encourage adoption, and create **coupons** to offer promotional discounts—all from the same interface.
+
+## Plans
+
+In Meteroid, Plans represent the functionalities of a product or service that Customers are billed for during a pre-defined time period (*e.g* monthly or annually). For a given product/sercice, you can for example implement "beginner", "intermediate" and "advanced" plans, providing your Customers with different options of product or service access.
+
+Plans work as templates for subscriptions (*cf*. Billing > Subscriptions): by selecting the plan in the subscription assignment flow, the subscription configuration will be pre-filled. Nevertheless, when assigning a subscription, all information inherited from the plan can also be customized without affecting the original plan.
+
+Meteroid allows your teams to manage plans, their content, price and trial configuration without requiring additional engineering changes.
+
+## Creating a Plan in Meteroid
+
+To create a Plan in Meteroid, click Product catalog > Plans > New plan
+
+Then, follow these steps by filling in the required fields:
+
+* **Name:** Assign a name to your Plan. This name will be displayed to the End User on their portal.
+
+💡Once a Plan created, you can fill the Description field. This field is for internal use only and will not be displayed to End Users.
+
+* **Product Line:** Select the product line the Plan will be linked to. A Product Line represents a group of related Plans (*cf*. Glossary). Product Lines can be defined in Settings. Once defined, Plans can be assigned to a given Product Line. If no Product Line is specified, Meteroid automatically assigns the "Default" Product Line.
+* **Plan Type:** Choose the type of plan from the following options:
+  * Standard: Designed for Self-serve or scalable subscriptions that customers can purchase independently. These plans can include:
+    * Customizable pricing models: Implement a variety of pricing models from subscrition-based to hybrid & usage-based models.
+    * **Trial periods:** Offer customers a free trial before their paid subscription begins.
+    * **Schedules (Phases):** Set up different phases within the plan, such as introductory pricing periods or promotional rates.
+    * **Add-ons:** Offer optional features or services that customers can include with their subscription.
+  * Free / Freemium: Free plans allow your customers to access limited functionalities of your product, with the option to charge for supplemental or advanced features later through separate upgrades.
+    * **Payment Information:** These plans cannot include paid components, ensuring that access remains fully free and customers will <u>not</u> be required to provide payment details when subscribing to these plans.
+  * Custom: Ideal for Sales-led opportunities where tailored solutions are needed. Custom plans allow you to adapt for specific Customers or groups, offering bespoke configurations based on their unique requirements.
+
+## Configuring a Plan in Meteroid
+
+The first layer provides general information about your plan, including its status, currency, and more.
+
+To make updates, click the **pen icon in the upper right corner**, where you can modify the following details:
+
+* **Plan Name:** Update the title of the plan that will be displayed to End Users on their Portal.
+* **Plan Description:** Provide or edit a brief description (for internal use only).
+* **Net Terms (in days):** Define the payment period granted to your clients. After this period, invoices will be marked as overdue.
+
+📌 **Priority Rule**: **Net Terms** defined at the Plan level will override the Net Terms defined at invoicing entity level (defined in Settings > Invoices).
+
+## Plan Status
+
+#### Draft Plans
+
+When you create a plan, it starts in **"Draft"** status. Customers cannot see or subscribe to draft plans. While in draft, you can freely edit the plan’s pricing, trial period, and other settings. If you decide to remove a draft plan, click **"Discard Draft"** to delete it. You can check a plan's status at any time on the **Plan Dashboard** (**Product Catalog > Plans**) or inside the plan view next to the **"Status"** field.
+
+#### Active Plans
+
+Once you're satisfied with the configuration, clicking **"Publish Version"** (upper right) moves the plan to **"Active"** status, making it available for customers to subscribe. At this stage, the plans can only be updated through versioning.
+
+To update an active plan, click **"New Version"** (upper right) and then **"Open Draft"**. This allows you to modify pricing, trial periods, and other details. Once changes are finalized, clicking **"Publish Version"** will create a new version of the plan. By default, new customers subscribe to the latest version, while existing customers remain on their current version. You can access the different plans' version by clicking "History"
