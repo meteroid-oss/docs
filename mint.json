@@ -23,6 +23,11 @@
       "dark": "#000000"
     }
   },
+  "integrations": {
+    "telemetry": {
+      "enabled": false
+    }
+  },
   "topbarLinks": [
 
     {
