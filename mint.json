@@ -7,6 +7,9 @@
     "href": "https://meteroid.com"
   },
   "favicon": "/favicon.svg",
+  "appearance": {
+    "default": "dark"
+  },
   "colors": {
     "primary": "#8263FA",
     "light": "#ffffff",
