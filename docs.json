@@ -7,6 +7,9 @@
     "light": "#ffffff",
     "dark": "#200D05"
   },
+  "appearance": {
+    "default": "dark"
+  },
   "favicon": "/favicon.svg",
   "navigation": {
     "anchors": [
@@ -127,5 +130,9 @@
       "linkedin": "https://www.linkedin.com/company/meteroid"
     }
   },
-  "integrations": {}
+  "integrations": {
+    "telemetry": {
+      "enabled": false
+    }
+  }
 }
