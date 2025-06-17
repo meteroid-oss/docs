@@ -1,0 +1,131 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Meteroid Documentation",
+  "colors": {
+    "primary": "#8263FA",
+    "light": "#ffffff",
+    "dark": "#200D05"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "anchors": [
+      {
+        "anchor": "Documentation",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": [
+              "introduction/understanding-meteroid",
+              "introduction/glossary"
+            ]
+          },
+          {
+            "group": "Metering",
+            "pages": [
+              "metering/billable-metrics"
+            ]
+          },
+          {
+            "group": "Billing",
+            "pages": [
+              "billing/managing-plans",
+              "billing/modeling-your-pricing",
+              "billing/managing-trials-and-coupons"
+            ]
+          },
+          {
+            "group": "Subscriptions",
+            "pages": [
+              "subscriptions/what-is-a-subscription",
+              "subscriptions/creating-a-subscription",
+              "subscriptions/managing-a-subscription",
+              "subscriptions/check-out"
+            ]
+          },
+          {
+            "group": "Customer",
+            "pages": [
+              "customer/managing-customers"
+            ]
+          },
+          {
+            "group": "Invoices",
+            "pages": [
+              "invoices/managing-invoices"
+            ]
+          },
+          {
+            "group": "Settings",
+            "pages": [
+              "settings/merchant",
+              "settings/invoices-settings",
+              "settings/integrations",
+              "settings/tenants"
+            ]
+          }
+        ]
+      },
+      {
+        "anchor": "Community",
+        "href": "https://go.meteroid.com/discord",
+        "icon": "discord"
+      },
+      {
+        "anchor": "Github",
+        "href": "https://go.meteroid.com/github",
+        "icon": "github"
+      },
+      {
+        "anchor": "Blog",
+        "href": "https://meteroid.com/blog",
+        "icon": "newspaper"
+      },
+      {
+        "anchor": "API References",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "API Reference",
+            "pages": [
+              "api-reference/introduction"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/public/meteroid-icon-light.svg",
+    "dark": "/public/meteroid-icon-dark.svg",
+    "href": "https://meteroid.com"
+  },
+  "background": {
+    "color": {
+      "light": "#ffffff",
+      "dark": "#000000"
+    }
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Talk to us",
+        "href": "https://meteroid.com/talk-to-us"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Get started",
+      "href": "https://github.com/meteroid-oss/meteroid"
+    }
+  },
+  "footer": {
+    "socials": {
+      "twitter": "https://twitter.com/meteroidhq",
+      "github": "https://github.com/meteroid-oss/meteroid",
+      "linkedin": "https://www.linkedin.com/company/meteroid"
+    }
+  },
+  "integrations": {}
+}
