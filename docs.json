@@ -101,10 +101,10 @@
       },
       {
         "anchor": "Integrations",
-        "icon": "blocks",
+        "icon": "cube",
         "groups": [
           {
-            "group": "integrations",
+            "group": "Integrations",
             "pages": [
               "integrations/hubspot",
               "integrations/pennylane"
