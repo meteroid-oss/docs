@@ -101,7 +101,7 @@
       },
       {
         "anchor": "Integrations",
-        "icon": "telemetry",
+        "icon": "blocks",
         "groups": [
           {
             "group": "integrations",
