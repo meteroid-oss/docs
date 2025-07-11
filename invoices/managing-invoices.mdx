@@ -29,22 +29,37 @@ How Invoice elements are determined:
 
 # Manage Invoices
 
-Invoices are handled at the Subscription level, meaning a Customer will receive a separate Invoice for each Subscription. To manage Invoices, go to Billing > Invoices. Here, you can view all invoices along with key details:
+Invoices in Meteroid are handled at the **Subscription level**, meaning a Customer receives a separate invoice for each Subscription.
 
-* Invoice Number: Unique identifier for the Invoice.
-* Customer: The recipient of the Invoice.
-* Amount & Currency: The total amount due in the specified currency.
-* Invoice Date: The date the Invoice was issued to the Customer.
-* Status:
-  * **Open**: Status of an invoice <u>before the end of the billing period</u>.
-  * **Draft**: This status is set <u>between the end of the billing period and the end of the grace period</u>. During this time, the invoice is awaiting finalization and is not sent to the Customer.
-  * **Canceled**:\*\* \*\*To cancel an invoice. This status can only be set to "Open" or "Draft" invoices.
-  * **Finalized**: This status is set <u>after the end of the grace period</u>. Once an invoice is finalized, it is sent to the Customer using the Customer's invoicing emails
-  * **Voided**: Is equivalent to canceling an invoice, yet preserving a trail. This status can only be set to "Finalized" invoices.
+To manage invoices, navigate to **Billing > Invoices**. There, you can view and track all invoices with the following key details:
 
-💡While "Open", "Draft" and "Finalized" status are set automatically by Meteroid, "Canceled" and "Voided" status can be set manually by Account Managers.
+* **Invoice Number** – Unique identifier for each invoice
+* **Customer** – The recipient of the invoice
+* **Amount & Currency** – Total due in the relevant currency
+* **Invoice Date** – Date the invoice was issued
+* **Status** – Current state of the invoice (see below)
+* **Payment Status** – Whether or not the invoice has been paid (see below)
 
-<mark></mark>
+## Invoice Status
+
+* **Draft: **Set automatically between the end of the billing period and the end of the grace period. The invoice is not yet finalized and is not sent to the Customer.
+* **Finalized: **Unless specified, this status is set automatically at the end of the grace period. Finalized invoices are accounting documents and can no longer be edited. At this stage, if the preferred payment method is:
+  * **Direct Debit or Credit Card**: If automatic payment is configured, Meteroid will charge the Customer directly and send an invoice afterwards. Otherwise, Meteroid sends a secure payment link along with the invoice, allowing the Customer to complete the payment manually.
+  * **Bank Transfer**: The Customer receives the invoice along with your bank details to initiate the transfer manually.
+* **Voided: **Equivalent to canceling an invoice, while preserving an audit trail. Can only be applied to finalized invoices. This action is manual.
+* **Uncollectible: **Used when an invoice is considered definitively unpaid (e.g., in case of customer bankruptcy). This is a **final and irreversible status**, set manually.
+
+## Payment Status
+
+In addition to invoice status, Meteroid tracks **Payment Status**:
+
+* **Unpaid: **The invoice is due and has not been paid yet.
+* **Paid: **Set automatically once full payment is received. Applies to payments made via credit card or direct debit.
+* **Partially Paid: **Set if only part of the total amount has been paid. <mark> </mark>
+* **Errored: **Triggered after multiple failed payment attempts (e.g., declined card, insufficient funds). Typically applies to automatic payments via credit card or direct debit after all retries have failed.
+
+💡 Note: Meteroid automatically updates the payment status if the payment method is Direct Debit or Credit Card. Meteroid does not yet support automatic payment status update for bank transfer.
+
 
 # When are End Users Invoiced?
 

@@ -1,0 +1,66 @@
+---
+title: HubSpot Integration
+---
+
+HubSpot is a leading CRM platform offering powerful tools for marketing, sales, content management, and customer service.
+
+With **Meteroid’s native integration**, you can automatically sync your data to HubSpot, ensuring alignment between your sales and finance teams. The integration enables synchronization for changes in:
+
+* Your **customers**
+* Your **subscriptions**
+
+Meteroid-HubSpot is a **one-way integration** from Meteroid to HubSpot. When new customers or subscriptions are created in Meteroid, they are **automatically synced** to HubSpot.
+
+💡 **Important:** Only customers and subscriptions created *after* the integration is enabled will be automatically synced. Existing data in Meteroid is not retroactively propagated to HubSpot.
+
+## Prerequisites
+
+To enable the integration, your HubSpot account must be on the **Sales Hub Enterprise** plan. This is required to support custom objects and fields, which Meteroid uses to store billing data.
+
+## Data Mapping
+
+### Customers
+
+When a new customer is created in Meteroid, it is pushed as a **Company record** in HubSpot. The following fields are mapped:
+
+| Company property in Hubspot   | Property in Meteroid                  |
+| ----------------------------- | ------------------------------------- |
+| id                            | customer → id                         |
+| name                          | customer → name                       |
+| meteroid\_customer\_id          | customer → id                         |
+| meteroid\_customer\_email       | customer → billing\_email              |
+| meteroid\_customer\_country     | customer → billing\_address → country  |
+| meteroid\_customer\_city        | customer → billing\_address → city     |
+| meteroid\_customer\_state       | customer → billing\_address → state    |
+| meteroid\_customer\_street      | customer → billing\_address → line1    |
+| meteroid\_customer\_postal\_code | customer → billing\_address → zip\_code |
+
+📌 Note: Hubspot properties prefixed with `meteroid_` are custom-created properties under `Meteroid information` property group.
+
+### Subscriptions
+
+Meteroid subscriptions are synced and associated with the corresponding HubSpot Deal. The following fields are created or updated:
+
+| Deal property in Hubspot         | Property in Meteroid       |
+| -------------------------------- | -------------------------- |
+| id                               | subscription → id          |
+| dealname                         | plan → name                |
+| meteroid\_customer\_id             | subscription → customer\_id |
+| meteroid\_subscription\_id         | subscription → id          |
+| meteroid\_subscription\_plan       | plan → name                |
+| meteroid\_subscription\_start\_date | subscription → start\_date  |
+| meteroid\_subscription\_end\_date   | subscription → end\_date    |
+| meteroid\_subscription\_currency   | subscription → currency    |
+| meteroid\_subscription\_status     | subscription → status      |
+| meteroid\_subscription\_mrr\_cents  | subscription → mrr\_cents   |
+
+📌 Note: Hubspot properties prefixed with `meteroid_` are custom-created properties under `Meteroid information` property group.
+
+## How to Set It Up
+
+1. Navigate to `Settings > Integrations` in your Meteroid dashboard.
+2. Select **HubSpot** and click **Connect**.
+3. Follow the OAuth flow to authorize Meteroid’s access.
+4. Once connected, Meteroid will automatically create the required custom fields in HubSpot and start syncing data for new customers and subscriptions.
+
+📌 Need help or want to customize your HubSpot integration further? 👉 Contact us at hey@meteroid.com.

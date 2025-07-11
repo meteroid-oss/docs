@@ -21,6 +21,7 @@
             "group": "Introduction",
             "pages": [
               "introduction/understanding-meteroid",
+              "introduction/get-started-with-meteroid",
               "introduction/glossary"
             ]
           },
@@ -65,7 +66,8 @@
               "settings/merchant",
               "settings/invoices-settings",
               "settings/integrations",
-              "settings/tenants"
+              "settings/tenants",
+              "settings/payment-methods"
             ]
           }
         ]
@@ -93,6 +95,19 @@
             "group": "API Reference",
             "pages": [
               "api-reference/introduction"
+            ]
+          }
+        ]
+      },
+      {
+        "anchor": "Integrations",
+        "icon": "telemetry",
+        "groups": [
+          {
+            "group": "integrations",
+            "pages": [
+              "integrations/hubspot",
+              "integrations/pennylane"
             ]
           }
         ]

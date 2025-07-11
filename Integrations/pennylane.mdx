@@ -1,0 +1,47 @@
+---
+title: Pennylane Integration
+---
+
+## Overview
+
+Pennylane is a leading French financial and accounting management solution, available as SaaS.
+
+With **Meteroid’s native integration**, you can automatically sync to Pennylane, ensuring alignment with your accounting system. The integration enables synchronization for changes in:
+
+* **Customers**
+* **Invoices**
+
+Meteroid-Pennylane is a **one-way integration** from Meteroid to Pennylane. When new Customers or Invoices are created in Meteroid, they are **automatically synced** to Pennylane.
+
+💡 **Important:** Only changes occuring *after* the integration is enabled will be automatically synced. Previously existing data in Meteroid is not retroactively propagated to Pennylane.
+
+## Prerequisites
+
+To enable the integration, your Pennylane account must be on the **Essential** or **Premium** plan, which includes support for third-party integrations.
+
+## Data Mapping
+
+Meteroid exports invoices to Pennylane with the following fields:
+
+| Pennylane                                     | Meteroid                                              |
+| --------------------------------------------- | ----------------------------------------------------- |
+| external\_reference                            | id                                                    |
+| invoice\_number                                | invoice\_number                                        |
+| date                                          | invoice\_date                                          |
+| deadline                                      | due\_at (fallbacks to invoice\_date if due\_at is empty) |
+| currency                                      | currency                                              |
+| currency\_amount                               | total                                                 |
+| invoice\_lines → currency\_amount               | line\_items → total                                    |
+| invoice\_lines → label                         | line\_items → name                                     |
+| invoice\_lines → quantity                      | line\_items → quantity                                 |
+| invoice\_lines → raw\_currency\_unit\_price       | line\_items → unit\_price                               |
+| invoice\_lines → description                   | null                                                  |
+| invoice\_lines → imputation\_dates → start\_date | line\_items → start\_date                               |
+| invoice\_lines → imputation\_dates → end\_date   | line\_items → end\_date                                 |
+
+## How to Set It Up
+
+1. Go to `Settings > Integrations` in your Meteroid dashboard.
+2. Select **Pennylane** from the list.
+3. Click **Connect** and complete the OAuth authorization flow.
+4. Once connected, invoices created in Meteroid will be automatically pushed to your Pennylane account.

@@ -1,0 +1,51 @@
+---
+title: Get strated with Meteroid 
+---
+
+Whether you're exploring Meteroid for the first time or preparing for deployment, we recommend the following steps to test and validate your setup safely and efficiently.
+
+## 1. Create Your Meteroid Account
+
+To begin, create an account on Meteroid. This gives you access to the billing platform and the tools needed to manage subscriptions, invoicing, and payments.
+
+## 2. Choose a Safe Testing Environment
+
+We **strongly recommend** testing in a non-production setup before going live. You have two options:
+
+* Use a **Development Environment**: Ideal for custom setups or teams integrating Meteroid into their internal stack
+* Use the **Sandbox Environment (with sample data)**: Meteroid offers a preconfigured Sandbox environment populated with mock data to help you visualize how Meteroid can help your business
+
+To ensure you are in the right environment (also called **tenants**), go to Settings > General and look at the Tenant slug section (which can be "dev" ie. Development Environment, "sandbox" ie. Sandbox Environment or "prod ie. Production Environment).
+
+<img
+  src="/public/meteroid-tenant.png"
+  alt="Tenants in Meteroid"
+/>
+
+If required, you can create at any time new tenants by clicking "new tenant".
+
+<img
+  src="/public/meteroid-new-tenant.png"
+  alt="New tenants in Meteroid"
+/>
+
+## 3. Set Up Your Invoicing Entity & Payment Methods
+
+To ensure accurate testing or going live, make sure your **invoicing setup is complete**:
+
+* **Invoicing Entity Details**
+  Go to Settings > Merchant and ensure all billing information is accurate. This will be reflected on all generated invoices.
+* **Connect to a Payment Provider**
+  If required, connect Meteroid to your preferred payment provider in Settings > Integrations. Meteroid currently supports providers like **Stripe**.
+* **Define Payment Methods**
+  Go to Settings > Payment Methods and choose the options available to your customers (Credit Card, Direct Debit, or Bank Transfer).
+
+## 4. Create Your First Subscriptions and Invoices
+
+Once your environment and billing setup are ready, you're good to go with your first usage simulation:
+
+1. **Create Metrics** *(if your pricing model is usage-based)* via **Product Catalog > Metrics**
+2. **Create Plans** under **Product Catalog > Plans** with desired pricing, trial, and billing configuration
+3. **Add Customers** in the **Customers** tab
+4. **Assign Plans to Customers** by creating a **Subscription** from the **Billing > Subscriptions** tab
+5. **View and Manage Invoices** in **Billing > Invoices**, where Meteroid automatically generates invoices based on the subscription
