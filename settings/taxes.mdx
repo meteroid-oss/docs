@@ -1,0 +1,32 @@
+---
+Managing Taxes in Meteroid
+---
+
+To configure taxes, navigate to Settings > Taxes. Here, you can select the tax calculation method for each **Invoicing Entity**. The available options are: **None, Manual, or Meteroid EU VAT**.
+
+## Tax Calculation Logic
+
+Meteroid determines the applicable tax rate for a Customer invoice by following a specific hierarchy. The decision tree below visualizes this process.
+
+
+<img
+  src="/public/meteroid-tax1.png"
+  alt="Tax rate decision tree"
+/>
+
+📌 **Note**: 
+- Customer tax characteristics, such as exemption status or a custom tax rate, are configured in the Customer section of Meteroid.
+- If you use multiple Invoicing Entities, be sure to configure the tax calculation logic for each one by clicking the invoicing entity button in the upper right corner.
+When creating a Tenant, you can choose from three types of environments:
+
+### Details of the Meteroid EU VAT Engine
+When you select the Meteroid EU VAT tax calculation logic, Meteroid will automatically suggest the relevant VAT rate for the transaction. The following decision tree illustrates how the system determines this rate.
+
+<img
+  src="/public/meteroid-eu-vat.png"
+  alt="Meteroid EU VAT decision tree"
+/>
+
+📌 **Note**:
+- Meteroid uses the intra-community VAT number or Tax ID to classify a Customer as either Business-to-Business (BtB) or Business-to-Consumer (BtC). If no intra-community VAT number is filled, Meteroid classifies the Customer as BtC.
+- For international BtB customers, the invoice will automatically include relevant mentions like for the reverse charge mechanism.
