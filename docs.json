@@ -64,10 +64,18 @@
             "group": "Settings",
             "pages": [
               "settings/merchant",
+              "settings/taxes",
               "settings/invoices-settings",
-              "settings/integrations",
               "settings/tenants",
               "settings/payment-methods"
+            ]
+          },
+           {
+            "group": "Integrations",
+            "pages": [
+              "integrations/general-information",
+              "integrations/hubspot",
+              "integrations/pennylane"
             ]
           }
         ]
