@@ -9,7 +9,7 @@ Meteroid is built to ingest and process high volumes of events efficiently, than
 
 Meteroid makes it easy to send raw, unaggregated event data, automatically handling aggregation based on your configured logic—so you can ensure accuracy without pre-processing your data.
 
-📌 Tip: As you get started, we strongly recommend using a Meteroid Test Tenant to define and test your Metrics setup without impacting your production environment.
+📌 **Tip**: As you get started, we strongly recommend using a Meteroid Test Tenant to define and test your Metrics setup without impacting your production environment.
 
 ## Adding a Metric in Meteroid
 
@@ -18,7 +18,7 @@ To create a new metric, navigate to: **Product Catalog > Metrics > New Metric**
 Then, you will need to enter the following details:
 
 * **Metric Name** – A unique name that will help identify the billable metric when defining pricing strategies.
-* **Product Line** – A Product Line represents a category or grouping of related Plans (*cf*. Glossary for more details). If needed, Account Managers can activate the Product Line feature in \*\*Settings. \*\*Once activated, when Account Managers create a Plan, they must assign it to a specific Product Line and only Metrics from the same Product Line can be used to define pricing components for that Plan. **By default, Meteroid automatically assigns Metrics and Plans to the "Default" Product Line**.
+* **Product Line** – A Product Line represents a category or grouping of related Plans (*cf*. Glossary for more details). If needed, Account Managers can activate the Product Line feature in Settings. Once activated, when Account Managers create a Plan, they must assign it to a specific Product Line and only Metrics from the same Product Line can be used to define pricing components for that Plan. **By default, Meteroid automatically assigns Metrics and Plans to the "Default" Product Line**.
 * **Event Code** – This is the usage event used to build a billable Metric. It corresponds to the name of the event that your system sends to Meteroid and that Meteroid should consider to build the billable Metric. Indeed, Metrics are assembled by filtering and aggregating (cf. Aggragation Type below) these incoming events.
 * **Description** – A brief explanation of the metric and what it measures.
 * **Aggregation Type** – Defines how the data is processed by Meteroid. It is applied to the values included in the events matching the Event Code.
