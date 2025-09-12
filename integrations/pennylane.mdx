@@ -4,7 +4,7 @@ title: Pennylane Integration
 
 ## Overview
 
-Pennylane is a leading French financial and accounting management solution, available as SaaS.
+Pennylane is a leading French financial and accounting management solution, available as SaaS.
 
 With **Meteroid’s native integration**, you can automatically sync to Pennylane, ensuring alignment with your accounting system. The integration enables synchronization for changes in:
 
@@ -21,7 +21,23 @@ To enable the integration, your Pennylane account must be on the **Essential** o
 
 ## Data Mapping
 
-Meteroid exports invoices to Pennylane with the following fields:
+### Customer 
+
+When a new Customer is created in Meteroid, Meteroid updates the Sales > Customers section in Pennylane. The following fields are mapped: 
+
+| Pennylane                                     | Meteroid                                              |
+| --------------------------------------------- | ----------------------------------------------------- |
+| name                            | name                                                    |
+| billing_address                                | billing_address                                        |
+| phone                                          | phone                                          |
+| external_reference                                      | customer_id |
+| vat_number                                      | vat_number                                              |
+| emails                      | invoicing_emails                                 |
+| billing_iban       | null                               |
+
+### Invoices
+
+Meteroid exports invoices to Pennylane's Sales > Customer invoices section with the following fields:
 
 | Pennylane                                     | Meteroid                                              |
 | --------------------------------------------- | ----------------------------------------------------- |

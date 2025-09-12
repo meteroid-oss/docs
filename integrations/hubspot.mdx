@@ -54,7 +54,9 @@ Meteroid subscriptions are synced and associated with the corresponding HubSpot 
 | meteroid\_subscription\_status     | subscription → status      |
 | meteroid\_subscription\_mrr\_cents  | subscription → mrr\_cents   |
 
-📌 Note: Hubspot properties prefixed with `meteroid_` are custom-created properties under `Meteroid information` property group.
+📌 Note: 
+- Hubspot properties prefixed with `meteroid_` are custom-created properties under `Meteroid information` property group.
+- Subscriptions are synced only if the Customer has previously been synced. If you create a Subscription with a Customer that has not been synced to HubSpot (for example, if they were created before HubSpot synchronization), the associated deal will not be created in HubSpot. 
 
 ## How to Set It Up
 
