@@ -28,7 +28,15 @@
           {
             "group": "Metering",
             "pages": [
-              "metering/billable-metrics"
+              "metering/billable-metrics",
+              "metering/managing-events"
+            ]
+          },
+          {
+            "group": "Quotes",
+            "pages": [
+              "quotes/introduction",
+              "quotes/create-and-manage-quotes"
             ]
           },
           {

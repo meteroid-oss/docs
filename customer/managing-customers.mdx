@@ -8,7 +8,7 @@ description: Meteroid allows you to manage your Customers, including creating, u
 To create a new Customer, go to **Customers > New Customer**. You will then need to enter the following details:
 
 * **Customer Name:** The name of the Customer. This name will be used to create Invoices.
-* **Primary Email:** The contact email your Sales team use to contact Customers. This email is not used by Meteroid.
+* **Email address:** The contact email your Sales team use to contact Customers. This email is not used by Meteroid.
 * **Alias (External ID):** The Customer’s unique identifier in your system.
 * **Stripe Customer ID:** If using Stripe for credit card payments, you can link an existing Stripe customer ID for seamless payment processing. *(Note: Meteroid currently only supports Stripe for payment processing.)*
 
@@ -19,6 +19,8 @@ Once created, you can update Customer details:
 * Alias: _cf_. above
 * Primary email: _cf_. above
 * **Invoicing email**: Is used by Meteroid to send Invoices to Customers.
+
+📌 Note: If *“Disable all email notifications”* is enabled in Settings > General, no business emails (*e.g* invoicing, payment emails) will be sent to Customers. 
 * Phone number: Is not used by Meteroid. For your Sales team to contact Customers.
 * **Balance:** Customer credits, which can be manually adjusted based on commercial agreements. These credits will be used first when generating a new invoice.
 * **Addresses:**

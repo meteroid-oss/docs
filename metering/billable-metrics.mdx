@@ -32,7 +32,7 @@ Then, you will need to enter the following details:
 
 💡 **Important:** Meteroid automatically aggregates Metrics at the end of each billing period based on the selected Aggregation Type. To avoid double counting or incorrect calculations, **you should send raw, unprocessed data rather than pre-aggregated values.**
 
-* In option you can configure the segmentation for more granular pricing strategies:
+In option you can configure the segmentation for more granular pricing strategies:
   * **No Segmentation** – By default, the metric is not segmented.
   * **Single Dimension Segmentation** – Allows different pricing strategies based on a single attribute (e.g., Cloud Provider).
     * **Example**: You want different pricing for AWS, Azure, and GCP.
@@ -70,11 +70,13 @@ For example, for cloud providers and geographies:
 }
 ``` 
 
-💡 **Note**: Difference Between Dependent vs. Independent Dimensions
+  💡 **Note**: Difference Between Dependent vs. Independent Dimensions
 
+  - **Two Dimensions (Independent):** You must define a price for **every possible combination** of the two dimensions (e.g., every Cloud Provider in every Geography).
+  - **Two Dimensions (Dependent):** You can **restrict pricing to specific valid combinations** (e.g., AWS may only be available in North America and Europe).
 
-- **Two Dimensions (Independent):** You must define a price for **every possible combination** of the two dimensions (e.g., every Cloud Provider in every Geography).
-- **Two Dimensions (Dependent):** You can **restrict pricing to specific valid combinations** (e.g., AWS may only be available in North America and Europe).
+Optionally, you can configure the **usage grouping** as well. To do so, enter a **grouping key**.\
+This allows you to group usage events by values from your events (e.g., `cluster_id`, `project_id`). These groups will then be displayed on Invoices, making it easier for Customers to understand how usage is allocated across different projects, clusters, or other attributes.
 
-
+💡 **Note**: **Groups are considered independent**. For exampple, if you configure a tiered pricing model, the usage within each group will be evaluated separately. The consumption from different groups will not be summed across groups when determining the applicable tier.
           
