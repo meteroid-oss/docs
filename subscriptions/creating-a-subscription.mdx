@@ -23,14 +23,14 @@ To create a subscription manually:
 
   * **Anniversary date of the Subscription**: Customers will be charged each billing period (e.g monthly) at the Subscription's anniversary date.
 
-💡 **Backdated Subscriptions**
+    💡 **Backdated Subscriptions**: It is possible to create a subscription with a **start date in the past**. To do so:
+    * Set the desired **Start Date** in the past.
+    * Choose the **Activation Condition** as *“On Start Date”*.
+    * Meteroid will automatically generate and bill invoices corresponding to the elapsed billing cycles since the chosen start date.
 
-It is possible to create a subscription with a **start date in the past**. To do so:
+    For example: If the billing cycle is monthly and you create a subscription with a start date 3 months ago, Meteroid will generate and bill **3 invoices**—one for each past cycle.
 
-* Set the desired **Start Date** in the past.
-* Choose the **Activation Condition** as *“On Start Date”*.
-* Meteroid will automatically generate and bill invoices corresponding to the elapsed billing cycles since the chosen start date.
-
-For example:
-
-If the billing cycle is monthly and you create a subscription with a start date 3 months ago, Meteroid will generate and bill **3 invoices**—one for each past cycle.
+* Configure Advanced Settings:
+  * **Auto-Advance Invoice**: When **activated**, the invoice is first created in Draft status and automatically transitions to Finalized status at the end of the Grace Period. When deactivated, the Invoice remains in Draft status until it is manually finalized by selecting Actions > Finalize & Send.
+  * **Charge Automatically**: When this setting is **enabled**, and if a Payment Method is configured in **Settings > Payment Methods**, Meteroid will automatically charge the Customer once the invoice is finalized.
+  * **Purchase Order (PO)**: You can enter a PO number associated with the Subscription. This PO number will be automatically displayed on every invoice generated from that Subscription.

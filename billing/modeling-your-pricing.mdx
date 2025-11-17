@@ -139,6 +139,23 @@ In the below example, your customers can purchase seats in block of 25 units, i.
 | ---------- | --------------- |
 | 25         | €5              |
 
+**<u>Matrix pricing strategy</u>**
+
+Matrix pricing is designed for use cases where the price depends on **one or multiple segmentation dimensions**. To use matrix pricing, your **Billable Metrics must include one or multiple segmentation dimensions**. Each segmentation dimension becomes a row in your pricing matrix.
+
+💡 **Note:** To learn how to configure your Billable Metrics to include multiple dimensions read the "Billable Metrics" section.
+
+In the below example, calls to:
+
+* API 3 in Australia are billed €0.01/call
+* API2 in Asia are billed €0.02/call
+* API1 in Europe are billed €0.03/call
+* API1 in North America are billed €0.04/call
+
+<img
+  src="/public/meteroid-matrix.png"
+  alt="Matrix Pricing Model in Meteroid"
+/>
 
 ## One-time charge
 
