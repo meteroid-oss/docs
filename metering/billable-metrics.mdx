@@ -30,7 +30,7 @@ Then, you will need to enter the following details:
   * **Max** – Retrieves the maximum recorded value.
   * **Latest** – Captures the most recent recorded value.
 
-💡 Note: You can optionally define a **Conversion Factor** for Billable Metric. The raw usage value sent to Meteroid will be **divided** by this factor before billing calculations take place. This is useful when your system reports usage in a base unit that you want to convert into a more readable Billable Metric. For example, if your application tracks storage in **bytes**, you can set a conversion factor of **1024** to bill in **kilobytes (KB)**.
+💡 **Note**: You can optionally define a **Conversion Factor** for Billable Metric. The raw usage value sent to Meteroid will be **divided** by this factor before billing calculations take place. This is useful when your system reports usage in a base unit that you want to convert into a more readable Billable Metric. For example, if your application tracks storage in **bytes**, you can set a conversion factor of **1024** to bill in **kilobytes (KB)**.
 
 💡 **Important:** Meteroid automatically aggregates Metrics at the end of each billing period based on the selected Aggregation Type. To avoid double counting or incorrect calculations, **you should send raw, unprocessed data rather than pre-aggregated values.**
 
@@ -96,7 +96,7 @@ To edit a Metric, go to **Metrics > Edit**. You can modify the:
 * **Segmentation values** (e.g., adding a new region, etc.). This is especially useful if you need to introduce new segmentation options while keeping existing Plan configurations intact.
 
 
-💡**Note: **The Event Code and the Aggregation Type of a Metric cannot be edited once the Metric has been created. If you need to change either of these, you must archive the Metric and create a new one.
+💡**Note:** The Event Code and the Aggregation Type of a Metric cannot be edited once the Metric has been created. If you need to change either of these, you must archive the Metric and create a new one.
 
 
 ## Archiving a Metric
