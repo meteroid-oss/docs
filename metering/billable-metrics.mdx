@@ -11,7 +11,7 @@ Meteroid makes it easy to send raw, unaggregated event data, automatically handl
 
 📌 **Tip**: As you get started, we strongly recommend using a Meteroid Test Tenant to define and test your Metrics setup without impacting your production environment.
 
-## Adding a Metric in Meteroid
+# Adding a Metric in Meteroid
 
 To create a new metric, navigate to: **Product Catalog > Metrics > New Metric**
 
@@ -79,4 +79,28 @@ Optionally, you can configure the **usage grouping** as well. To do so, enter a 
 This allows you to group usage events by values from your events (e.g., `cluster_id`, `project_id`). These groups will then be displayed on Invoices, making it easier for Customers to understand how usage is allocated across different projects, clusters, or other attributes.
 
 💡 **Note**: **Groups are considered independent**. For exampple, if you configure a tiered pricing model, the usage within each group will be evaluated separately. The consumption from different groups will not be summed across groups when determining the applicable tier.
-          
+
+# Manage Metrics in Meteroid
+
+## Editing a Metric
+
+To edit a Metric, go to **Metrics > Edit**. You can modify the:
+
+* **Metric Name**
+* **Segmentation values** (e.g., adding a new region, etc.). This is especially useful if you need to introduce new segmentation options while keeping existing Plan configurations intact.
+
+
+💡**Note: **The Event Code and the Aggregation Type of a Metric cannot be edited once the Metric has been created. If you need to change either of these, you must archive the Metric and create a new one.
+
+
+## Archiving a Metric
+
+Metrics can be archived by clicking **Metrics > Archive**. Archived Metrics cannot be used to create or update Plans but billing for existing Plans using archived metrics is **not disrupted**.
+
+If required, you can **unarchive** a metric by filtering on \_Archived \_metrics in the Metrics list and clicking **Unarchive**.
+
+
+## Duplicating a Metric
+
+You can duplicate a Metric by selecting **Metrics > Duplicate**.\
+This feature is useful if you want to create a new Metric based on the configuration of an existing one—for example, reusing the same event setup while changing the aggregation type.
