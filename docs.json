@@ -53,13 +53,15 @@
               "subscriptions/what-is-a-subscription",
               "subscriptions/creating-a-subscription",
               "subscriptions/managing-a-subscription",
+              "subscriptions/updating-a-subscription",
               "subscriptions/check-out"
             ]
           },
           {
             "group": "Customer",
             "pages": [
-              "customer/managing-customers"
+              "customer/managing-customers",
+              "customer/customer-portal"
             ]
           },
           {

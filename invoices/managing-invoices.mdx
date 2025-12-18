@@ -82,7 +82,7 @@ In addition to invoice status, Meteroid tracks **Payment Status**:
 * **Partially Paid**: Set if only part of the total amount has been paid. <mark> </mark>
 * **Errored**: Triggered after multiple failed payment attempts (e.g., declined card, insufficient funds). Typically applies to automatic payments via credit card or direct debit after all retries have failed.
 
-💡 **Note**: Meteroid automatically updates the payment status if the payment method is Direct Debit or Credit Card. Meteroid does not yet support automatic payment status update for bank transfer.
+💡 **Note**: Meteroid automatically updates the payment status if the payment method is Direct Debit or Credit Card. If the payment method is set at bank transfer, payment status for a given invoice can be updated by clicking on Actions > Mark as Paid.
 
 
 # When are End Users Invoiced?
@@ -95,12 +95,23 @@ To invoice End Users in Meteroid, their Subscriptions must first be **activated*
 Different types of pricing components are billed at different moments within the billing period:
 
 * **Subscription rates** and **slot-based pricing** are billed **at the beginning** of the billing period.
-* **Capacity commitments** and **usage-based charges** are billed **monthly at the end** of the billing period, once actual usage or fulfillment is known.
+* **Capacity commitments** and **usage-based charges** are billed **at the end** of the billing period, once actual usage or fulfillment is known.
 
 Examples:
 
 * If a Plan is solely composed of a subscription rate billed quarterly, and the billing cycle is set to the 1st of the month, Customers will receive an Invoice at the beginning of each quarter (e.g., January 1<sup>st</sup>, April 1<sup>st</sup>, etc.).
 * In Month M, an Invoice will charge End Users for their monthly subscription rate for Month M+1 (in advance) and their usage or capacity consumption from Month M (in arrears).
+
+Moreover, when an invoice is finalized, Meteroid automatically sends an email to the End users provided the following conditions are met:
+
+* **“Disable all email notifications” is disabled in **Settings > General, AND
+* An **Invoicing Email** is configured at the **Customer** level.
+
+If both conditions are met, Meteroid sends one of the following emails:
+
+* **Receipt Email**: Sent when an automatic payment method (e.g., credit card, direct debit) is configured and the payment succeeds. This email includes attached the payment receipt.
+* **Invoice Email**: Sent when no automatic payment method is available or when payment fails. This email contains the invoice as an attachment and includes a **“View and Pay”** button redirecting the End User to the checkout page where they can pay their invoice.
+
 
 # E-Invoices
 

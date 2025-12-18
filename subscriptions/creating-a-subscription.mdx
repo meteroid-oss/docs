@@ -34,3 +34,11 @@ To create a subscription manually:
   * **Auto-Advance Invoice**: When **activated**, the invoice is first created in Draft status and automatically transitions to Finalized status at the end of the Grace Period. When deactivated, the Invoice remains in Draft status until it is manually finalized by selecting Actions > Finalize & Send.
   * **Charge Automatically**: When this setting is **enabled**, and if a Payment Method is configured in **Settings > Payment Methods**, Meteroid will automatically charge the Customer once the invoice is finalized.
   * **Purchase Order (PO)**: You can enter a PO number associated with the Subscription. This PO number will be automatically displayed on every invoice generated from that Subscription.
+  * **Activation condition**:
+    * **On start date**: If the start date is in the past, the subscription is created with the Active status. If the **start date is set in the future**, the subscription is created with the **Pending** status and automatically moves to **Active** once the start date is reached
+    * **On Checkout**: The subscription is created with the **Pending** status and automatically moves to Active once the Customer completes the payment through the checkout flow
+    * **Manual activation**: The subscription is created with the **Pending** status and **remains pending** until manually activated. To activate it, go to the subscription and click Actions > Activate Subscription
+  * **Payment methods strategy**:
+    * **Default**: Meteroid tries to use any online payment methods configured in **Settings > Payment Methods** for the invoicing entity (e.g., credit card, direct debit). If no online payment method is configured, a **“Pay online”** button appears on the invoice, redirecting the Customer to bank details to complete the payment manually.
+    * **Bank transfer**: If bank account details are configured in **Settings > Payment Methods**, these details are automatically displayed on the invoice. The Customer is expected to pay using a manual bank transfer.
+    * **External**: Payment is handled entirely outside of Meteroid.
