@@ -107,15 +107,8 @@
       },
       {
         "anchor": "API References",
-        "icon": "code",
-        "groups": [
-          {
-            "group": "API Reference",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          }
-        ]
+        "href": "https://api.meteroid.com/scalar",
+        "icon": "code"
       },
       {
         "anchor": "Integrations",
