@@ -111,6 +111,18 @@
         "icon": "code"
       },
       {
+        "anchor": "Changelog",
+        "icon": "megaphone",
+        "groups": [
+          {
+            "group": "changelog",
+            "pages": [
+              "changelog/product-update"
+            ]
+          }
+        ]
+      },
+      {
         "anchor": "Integrations",
         "icon": "cube",
         "groups": [
