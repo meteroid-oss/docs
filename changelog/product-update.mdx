@@ -1,0 +1,60 @@
+npm i -g mintlify@latest
+title: "Changelog"
+description: "Product updates"
+---
+
+<Update label="January 2026" description="v1.0.0">
+
+## Enhanced trial logic 
+
+We have introduced advanced trial configurations. You can now define trial parameters at the plan level:
+
+* **Duration:** Set a specific number of days for the trial period.
+* **Plan Scoping:** Define which specific plan the trial applies to.
+* **Charging Logic:** Define whether the user should be charged or not during the trial.
+
+<img
+  src="public/meteroid-trials4.png" 
+  alt="Trials in Meteroid"
+/>
+
+## Credit Notes
+
+Meteroid now supports credit notes for issued invoices:
+
+* **Amount Control:** Issue credit notes for the full invoice amount or a partial (limited) amount.
+* **Credit Type:**
+  * **Credit Balance:** The amount is added to the customer’s balance and applied to future recurring invoices.
+  * **Refund:** The amount is marked for return to the original payment method.
+
+<img
+  src="public/meteroid-credit-notes.png" 
+  alt="Credit Notes in Meteroid"
+/>
+  
+## New SDK: Java
+
+We have released a **Java SDK** to simplify integration to Meteroid API for JVM-based applications.
+
+* **Core Resources:** Full support for managing `Customers`, `Plans`, `Subscriptions`, and `Invoices`.
+* **Usage Ingestion:** Simplified methods for reporting metered events.
+* **Installation:** Available via Maven/Gradle.
+* **Repository:** [meteroid-oss/meteroid-clients/java](https://github.com/meteroid-oss/meteroid-clients/tree/main/java)  
+
+<img
+  src="public/meteroid-java-sdk.png" 
+  alt="Java SDK"
+/>
+
+## Advanced Coupons 
+
+New rules have been added to grant coupons to users:
+* **Plan Assignment:** Coupons can now be restricted to a specific Plan.
+* **Billing Cycle Duration:** You can now set a billing cycle limit to define exactly how many billing cycles a discount remains active.
+
+<img
+  src="public/meteroid-coupons.png" 
+  alt="Coupons in Meteroid"
+/>
+
+</Update>
