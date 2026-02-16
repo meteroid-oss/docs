@@ -16,27 +16,21 @@ To create a subscription manually:
 
 💡 **Note**: If the Start Date is set in the future, the Subscription will remain in **Pending** status until that date is reached **and** the payment is successfully processed. Once these conditions are met, the Subscription will automatically move to **Active** (cf. Managing Subscriptions). When an End Date is defined, the Subscription will automatically transition to **Expired** status once that date is reached.
 
+💡**Note**: If a Subscription is created with a start date in the past, a Skip past invoices option appears. If enabled, Meteroid will not generate invoices for past billing periods and will only consider the current billing period and future ones. This is particularly useful when migrating or importing existing Subscriptions into Meteroid, as it prevents **double invoicing Customers** for periods that have already been billed outside of Meteroid.
+
 * Choose a **Billing Cycle**:
   * **1<sup>st</sup> of the month**: Customers will be charged each billing period (e.g monthly) the 1<sup>st</sup> of the month.
 
     💡 **Note**: For the first Invoice, the Customer will be charged for the full month, even if they subscribed mid-month.
 
   * **Anniversary date of the Subscription**: Customers will be charged each billing period (e.g monthly) at the Subscription's anniversary date.
-
-    💡 **Note: Backdated Subscriptions**: It is possible to create a subscription with a **start date in the past**. To do so:
-    * Set the desired **Start Date** in the past.
-    * Choose the **Activation Condition** as *“On Start Date”*.
-    * Meteroid will automatically generate and bill invoices corresponding to the elapsed billing cycles since the chosen start date.
-
-    For example: If the billing cycle is monthly and you create a subscription with a start date 3 months ago, Meteroid will generate and bill **3 invoices**—one for each past cycle.
-
+  
 * Configure Advanced Settings:
   * **Auto-Advance Invoice**: When **activated**, the invoice is first created in Draft status and automatically transitions to Finalized status at the end of the Grace Period. When deactivated, the Invoice remains in Draft status until it is manually finalized by selecting Actions > Finalize & Send.
   * **Charge Automatically**: When this setting is **enabled**, and if a Payment Method is configured in **Settings > Payment Methods**, Meteroid will automatically charge the Customer once the invoice is finalized.
   * **Purchase Order (PO)**: You can enter a PO number associated with the Subscription. This PO number will be automatically displayed on every invoice generated from that Subscription.
   * **Activation condition**:
     * **On start date**: If the start date is in the past, the subscription is created with the Active status. If the **start date is set in the future**, the subscription is created with the **Pending** status and automatically moves to **Active** once the start date is reached
-    💡**Note:** If a Subscription is created with a start date in the past, a Skip past invoices option appears. If enabled, Meteroid will not generate invoices for past billing periods and will only consider the current billing period and future ones. This is particularly useful when migrating or importing existing Subscriptions into Meteroid, as it prevents **double invoicing Customers** for periods that have already been billed outside of Meteroid.
     * **On Checkout**: The subscription is created with the **Pending** status and automatically moves to Active once the Customer completes the payment through the checkout flow
     * **Manual activation**: The subscription is created with the **Pending** status and **remains pending** until manually activated. To activate it, go to the subscription and click Actions > Activate Subscription
   * **Payment methods strategy**:
