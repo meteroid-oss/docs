@@ -36,6 +36,7 @@ To create a subscription manually:
   * **Purchase Order (PO)**: You can enter a PO number associated with the Subscription. This PO number will be automatically displayed on every invoice generated from that Subscription.
   * **Activation condition**:
     * **On start date**: If the start date is in the past, the subscription is created with the Active status. If the **start date is set in the future**, the subscription is created with the **Pending** status and automatically moves to **Active** once the start date is reached
+    💡**Note:** If a Subscription is created with a start date in the past, a Skip past invoices option appears. If enabled, Meteroid will not generate invoices for past billing periods and will only consider the current billing period and future ones. This is particularly useful when migrating or importing existing Subscriptions into Meteroid, as it prevents **double invoicing Customers** for periods that have already been billed outside of Meteroid.
     * **On Checkout**: The subscription is created with the **Pending** status and automatically moves to Active once the Customer completes the payment through the checkout flow
     * **Manual activation**: The subscription is created with the **Pending** status and **remains pending** until manually activated. To activate it, go to the subscription and click Actions > Activate Subscription
   * **Payment methods strategy**:

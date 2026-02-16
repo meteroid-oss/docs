@@ -9,11 +9,11 @@ The **Customer Portal** is a self-service interface where your Customers can ind
 
 ## Payment Method Management
 
-Customers can add or update their payment methods directly from the Portal depending on the payment methods configured at the **invoicing entity level** in **Settings > Payment Methods**.
+Customers can add and manage their payment methods directly from the Customer Portal. The available payment methods depend on what has been configured in **Settings > Payment Methods** for the invoicing entity. For example, if Stripe is configured to accept credit cards, Customers will be able to enter their credit card information in the Customer Portal.
 
-For example: If **Credit Card** is enabled with Stripe for the invoicing entity, the Customer can add a credit card. If not, they cannot.
+However, the payment method that will actually be used to process payments is determined by the **payment method strategy set at the Subscription level**. For example, even if a Customer adds a credit card in the Customer Portal, it will not be used if the Subscription is configured to use **bank transfer**.
 
-💡 **Note**: Whenever the Customer adds a new payment method, it automatically becomes their **default** method for future payments.
+💡**Note:** When a Customer adds a new payment method of a given type (for example, a new credit card), it automatically becomes the default payment method for that type and will be used for future payments when that payment method is selected at the Subscription level. This is particularly useful when a Customer needs to update an expired or replaced card.
 
 ## Update Billing Details
 

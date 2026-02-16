@@ -71,6 +71,12 @@
             ]
           },
           {
+            "group": "Credit Notes",
+            "pages": [
+              "credit-notes/create-and-manage-credit-notes"
+            ]
+          },
+          {
             "group": "Settings",
             "pages": [
               "settings/merchant",

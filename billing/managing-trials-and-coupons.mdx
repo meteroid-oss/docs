@@ -2,53 +2,25 @@
 title: Managing Trials & Coupons
 ---
 
-## Trial
+## Trials
 
-Free trials let your customers experience the value of your product for a limited time and free of charge before making a purchase decision, helping boost customer adoption and conversion rates.
+Trials allow you to grant temporary access to a Plan or to additional features before regular billing starts. In Meteroid, trials are configured directly at the **Plan level**.
 
-To set up a trial:
+### Configuring a Trial
 
-* Select a Plan in Product Catalog > Plan
-  * If the Plan is in Draft status: You can directly scroll to the Trial section.
-  * If the Plan is Active: Click "Open draft" first, then scroll down to the Trial section.
-* Click "Edit" in the Trial section, then "Add trial".
+To configure a trial, go to **Product Catalog > Plans**, open the relevant Plan, and scroll down to the **Trial** section. From there, you can define the trial duration, the Plan the trial applies to, and what happens once the trial ends.Trials only apply **at the beginning of a subscription**. If you add or modify a trial on an existing Plan, it will create a new version of the Plan and only **new Customers subscribing to that Plan** will benefit from the trial. Existing subscriptions are not retroactively affected.
 
-In Meteroid, you can configure the duration of the trial period, specify which plans the trial applies to and define what happens at the end of the trial, as follow:
+### Trial Duration and Billing Alignment
 
-* <u>Step 1</u>: Set Trial Duration
-  * Choose the number of days for the trial period.
-* <u>Step 2</u>: Select the Plan for the Trial & end-of-trial strategy
-  * <u>Option A</u>: The trial applies to the Current Plan
-    * Select one of the following end-of-trial events and click **"Save"** to proceed:
-      * Downgraded: End Users will access another plan of your choice at the end of the trial period.
-      * Charged: End Users will be charged the price defined in the current plan at the end of the trial period.
-      * Blocked: Revoke access to the current plan. This will not impact End Users' access to other Plans.
-    * In the below example, End Users of the "Hobby" Plan will get access during 14 days to the "Hobby" plan for free. If they have other active subscriptions they will keep on accessing the given Plans and being charged accordingly. At the end of the 14 days, End Users will automatically be charged for the "Hobby" Plan. If they have other active subscriptions they will keep on accessing the given Plans and being charged accordingly after the 14 days.
+If you grant **14 days of free trial**, start the subscription on **January 1st**, and choose to bill on the **subscription anniversary date**, the first invoice will be issued on **January 15th**, and the Customer will then be billed every **15th of the month** (for a monthly billing cycle). If instead you choose to bill on the **first day of the month**, the Customer will receive a **pro-rated invoice on January 15th**, covering the period from January 15th to January 31st, and will then be billed every **1st of the month** thereafter.
 
-      <img
-      src="/public/meteroid-trial.png"
-      alt="Trials in Meteroid"
-      />
+### Trials and Usage
 
-   * <u>Option B</u>: The trial applies to another Plan.
-     * <u>Scenario 1</u>: Grant free access to the defined Plan
-        - Select an end-of-trial event: "Downgraded," "Charged," or "Blocked" (_cf_. above). Click **"Save"** to proceed.
-        - In the below example, End Users of the "Hobby" Plan will get access during 14 days to the "Enterprise" Plan for free. They will not access nor be charged anymore for the "Hobby" Plan during this period. At the end of the 14 days, if End Users did not subscribe to the "Enterprise" Plan, then they will be downgraded to the "Hobby" Plan and charged accordingly.
-     
-          <img
-          src="/public/meteroid-trial2.png"
-          alt="Trials in Meteroid"
-          />
+Trials affect both **subscription charges and usage-based charges**. Any usage generated during the trial period follows the trial rules defined for the Plan and will not be billed if the trial is free.
 
-     * <u>Scenario 2</u>: Grant free access to the defined Plan while paying for the current plan
-        - End Users continue paying for the current plan but gains access to the defined Plan during the trial period. At the end of the trial period, End Users are automatically downgraded to the current plan. Click **"Save"** to proceed.
-        - In the below example, End Users of the "Hobby" Plan will get access during 14 days to the "Enterprise" plan for free. They will keep on being charged for the "Hobby" Plan during this period. At the end of the 14 days, if End Users did not subscribe to the "Enterprise" Plan, then they will be downgraded to the "Hobby" Plan and keep on being charged accordingly.
+### Granting Access to Another Plan During a Trial
 
-          <img
-          src="/public/meteroid-trial3.png"
-          alt="Trials in Meteroid"
-          />
-
+Meteroid allows you to grant trial access to another Plan’s features while keeping the subscription anchored to the original Plan. If you configure a trial on **Plan 1** that grants **90 days of access to Plan 2 features while continuing to charge**, Customers will be billed according to **Plan 1’s pricing and billing conditions**. This setup is useful when Plan 2 offers more advanced features that you want Customers to experience before potentially upgrading. If you configure a trial on **Plan 1** that grants **90 days of access to Plan 2 features for free**, Customers will **not be charged at all** during the trial period (neither for Plan 1 nor for Plan 2). Billing will only start once the trial ends, based on the defined end-of-trial behavior.
 
 ## Coupons
 
