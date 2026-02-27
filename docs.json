@@ -5,7 +5,7 @@
   "colors": {
     "primary": "#8263FA",
     "light": "#ffffff",
-    "dark": "#FFFFFF1F"
+    "dark": "#1f1f1f"
   },
   "appearance": {
     "default": "dark"
