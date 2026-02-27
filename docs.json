@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "luma",
   "name": "Meteroid Documentation",
   "colors": {
     "primary": "#8263FA",
