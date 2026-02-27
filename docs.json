@@ -144,8 +144,8 @@
     ]
   },
   "logo": {
-    "light": "/public/meteroid-icon-light.svg",
-    "dark": "/public/meteroid-icon-dark.svg",
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
     "href": "https://meteroid.com"
   },
   "background": {
