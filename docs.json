@@ -2,8 +2,11 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "almond",
   "name": "Meteroid Documentation",
+  "fonts": {
+    "family": "Inter"
+  },
   "colors": {
-    "primary": "#8263FA",
+    "primary": "#000000",
     "light": "#ffffff",
     "dark": "#1f1f1f"
   },
@@ -150,8 +153,8 @@
   },
   "background": {
     "color": {
-      "light": "#ffffff",
-      "dark": "#000000"
+      "light": "#fafafa",
+      "dark": "#1f1f1f"
     }
   },
   "navbar": {
