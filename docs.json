@@ -1,14 +1,21 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "theme": "maple",
   "name": "Meteroid Documentation",
   "fonts": {
-    "family": "Inter"
+    "heading": {
+      "family": "Inter",
+      "weight": 500
+    },
+    "body": {
+      "family": "Inter",
+      "weight": 400
+    }
   },
   "colors": {
     "primary": "#000000",
     "light": "#ffffff",
-    "dark": "#1f1f1f"
+    "dark": "#000000"
   },
   "appearance": {
     "default": "dark"
@@ -100,11 +107,6 @@
         ]
       },
       {
-        "anchor": "Community",
-        "href": "https://go.meteroid.com/discord",
-        "icon": "discord"
-      },
-      {
         "anchor": "Github",
         "href": "https://go.meteroid.com/github",
         "icon": "github"
@@ -153,8 +155,8 @@
   },
   "background": {
     "color": {
-      "light": "#fafafa",
-      "dark": "#1f1f1f"
+      "light": "#fcfcfc",
+      "dark": "#0a0a0a"
     }
   },
   "navbar": {
