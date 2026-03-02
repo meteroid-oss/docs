@@ -177,56 +177,7 @@
       "github": "https://github.com/meteroid-oss/meteroid",
       "linkedin": "https://www.linkedin.com/company/meteroid",
       "discord": "https://go.meteroid.com/discord"
-    },
-    "links": [
-      {
-        "header": "Resources",
-        "items": [
-          {
-            "label": "Glossary",
-            "href": "https://www.meteroid.com/glossary"
-          },
-          {
-            "label": "Changelog",
-            "href": "https://docs.meteroid.com/changelog/product-update"
-          },
-          {
-            "label": "API Reference",
-            "href": "https://api.meteroid.com/scalar"
-          },
-          {
-            "label": "Integrations",
-            "href": "https://docs.meteroid.com/integrations/general-information"
-          }
-        ]
-      },
-      {
-        "header": "Company",
-        "items": [
-          {
-            "label": "Blog",
-            "href": "https://www.meteroid.com/blog"
-          },
-          {
-            "label": "Talk to us",
-            "href": "https://www.meteroid.com/talk-to-us"
-          }
-        ]
-      },
-      {
-        "header": "Legal",
-        "items": [
-          {
-            "label": "Terms & Conditions",
-            "href": "https://www.meteroid.com/terms"
-          },
-          {
-            "label": "Privacy Policy",
-            "href": "https://www.meteroid.com/privacy"
-          }
-        ]
-      }
-    ]
+    }
   },
   "integrations": {
     "telemetry": {
