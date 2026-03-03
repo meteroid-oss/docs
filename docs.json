@@ -1,11 +1,14 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "maple",
+  "theme": "almond",
   "name": "Meteroid Documentation",
+  "icons": {
+    "library": "tabler"
+  },
   "fonts": {
     "heading": {
       "family": "Inter",
-      "weight": 500
+      "weight": 600
     },
     "body": {
       "family": "Inter",
@@ -14,22 +17,24 @@
   },
   "colors": {
     "primary": "#000000",
+    
     "light": "#ffffff",
     "dark": "#000000"
+
   },
   "appearance": {
     "default": "dark"
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "anchors": [
+    "tabs": [
       {
-        "anchor": "Documentation",
-        "icon": "book-open",
+        "tab": "Docs",
         "groups": [
           {
-            "group": "Introduction",
+            "group": "Getting started",
             "pages": [
+              "home",
               "introduction/understanding-meteroid",
               "introduction/get-started-with-meteroid",
               "introduction/glossary"
@@ -96,7 +101,7 @@
               "settings/payment-methods"
             ]
           },
-           {
+          {
             "group": "Integrations",
             "pages": [
               "integrations/general-information",
@@ -107,47 +112,46 @@
         ]
       },
       {
-        "anchor": "Github",
-        "href": "https://go.meteroid.com/github",
-        "icon": "github"
+        "tab": "API Reference",
+        "openapi": "https://api.meteroid.com/api-docs/openapi.json",
+                    "collapsed": true
+        
       },
       {
-        "anchor": "Blog",
-        "href": "https://meteroid.com/blog",
-        "icon": "newspaper"
-      },
-      {
-        "anchor": "API References",
-        "href": "https://api.meteroid.com/scalar",
-        "icon": "code"
-      },
-      {
-        "anchor": "Changelog",
-        "icon": "megaphone",
+        "tab": "Changelog",
         "groups": [
           {
-            "group": "changelog",
+            "group": "Changelog",
             "pages": [
               "changelog/product-update"
             ]
           }
         ]
+      }
+    ],
+    "global": {
+    "anchors": [
+      {
+        "anchor": "Blog",
+        "href": "https://meteroid.com/blog",
+        "icon": "book"
+
       },
       {
-        "anchor": "Integrations",
-        "icon": "cube",
-        "groups": [
-          {
-            "group": "Integrations",
-            "pages": [
-              "integrations/hubspot",
-              "integrations/pennylane"
-            ]
-          }
-        ]
+        "anchor": "Talk to us",
+        "href": "https://meteroid.com/talk-to-us",
+        "icon": "message"
+      },
+
+      {
+        "anchor": "GitHub",
+        "href": "https://go.meteroid.com/github",
+        "icon": "github"
+
       }
     ]
-  },
+  }
+},
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg",
@@ -155,8 +159,8 @@
   },
   "background": {
     "color": {
-      "light": "#fcfcfc",
-      "dark": "#0a0a0a"
+      "light": "#f7f7f7",
+      "dark": "#111111"
     }
   },
   "navbar": {
@@ -183,5 +187,18 @@
     "telemetry": {
       "enabled": false
     }
-  }
+  },
+ "contextual": {
+   "options": [
+     "copy",
+     "view",
+     "chatgpt",
+     "claude",
+     "perplexity",
+     "grok",
+     "mcp",
+     "cursor",
+     "vscode"
+   ]
+ }
 }

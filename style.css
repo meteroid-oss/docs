@@ -1,0 +1,144 @@
+.dark .text-sm, .dark .paragraph-small {
+    color: #9E9E9E;
+}
+
+.light .text-sm, .light .paragraph-small {
+    color: #3E3E3E;
+}
+
+.dark .sidebar-group a {
+    color: rgba(247, 247, 248, 0.6) !important;
+}
+
+.sidebar-group-header {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
+    text-transform: none !important;
+}
+
+.sidebar-group a {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    line-height: 160% !important;
+    text-decoration: none !important;
+    transition: background-color 0.15s ease, color 0.15s ease !important;
+}
+
+.sidebar-group a.bg-primary\/10, .sidebar-group a[aria-current="page"] {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 6px !important;
+}
+
+.light .sidebar-group a.bg-primary\/10, .sidebar-group a[aria-current="page"] {
+    background: rgb(0 0 0 / 6%) !important;
+    border-radius: 6px !important;
+}
+
+.dark\:hover\:text-gray-300:hover:is(.dark *) {
+    border-radius: 6px !important;
+}
+
+.dark #topbar-cta-button a {
+    background-color:#ffffff;
+}
+.dark #topbar-cta-button span {
+    color:#0e0e0e;
+}
+.dark #navbar, .dark .almond-layout, .dark .almond-layout > div, .dark .almond-layout > div > div {
+    background-color: #111111 !important; 
+}
+
+/* .dark #navbar {
+    border-bottom:1px solid #ffffff12;
+} */
+
+/* #content-area {
+    max-width: 1072px;
+} */
+
+#search-bar-entry {
+    border-radius:100px !important;
+    padding-right: 16px;
+}
+
+
+.home-content-wrapper {
+    max-width: 1024px;
+    margin:0 auto;
+    padding-top: 6rem;
+    padding-left:2rem;
+    padding-right:2rem;
+}
+
+.home-content-wrapper H1 {
+ font-size: 36px;
+ letter-spacing: -1px;
+ font-weight:500;
+}
+.dark .home-content-wrapper H1 {
+    color: #f3f3f3;
+}
+.light .home-content-wrapper H1 {
+    color: #1e1e1e;
+}
+
+.home-content-wrapper H2 {
+ font-size: 20px;
+ font-weight:500;
+ margin-top:36px;
+ margin-bottom:16px;
+}
+.dark .home-content-wrapper H2 {
+    color: #f3f3f3;
+}
+.light .home-content-wrapper H2 {
+    color: #1e1e1e;
+}
+
+.home-content-wrapper a H2 {
+ font-size: 16px;
+ font-weight:500;
+ margin-top:56px;
+ margin-bottom:8px;
+}
+.home-content-wrapper a span {
+ font-size: 14px !important;
+ font-weight:400;
+}
+
+.home-p-description {
+    margin-bottom:16px;
+    margin-top:8px;
+    line-height:160% !important;
+}
+
+
+.home-content-wrapper a {
+border-radius: 6px;
+font-size: 14px;
+}
+
+.dark .home-content-wrapper a {
+    background-color: #1d1d1d !important;
+}
+
+#navbar [role="tablist"],
+#navbar ul {
+  justify-content: center !important;
+  flex: 1;
+  margin: 0 auto !important;
+}
+
+.dark .bg-primary\/10 {
+    background-color: #111111;
+}
+
+.dark\:bg-\[\#09090B\]:is(.dark *) {
+    --tw-bg-opacity: 1;
+    background-color: #111111;
+}
+
+.dark\:bg-white\/5:is(.dark *) {
+    background-color: rgb(255 255 255 / 8%);
+}

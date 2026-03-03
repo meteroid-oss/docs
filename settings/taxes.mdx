@@ -8,11 +8,12 @@ To configure taxes, navigate to Settings > Taxes. Here, you can select the tax c
 
 Meteroid determines the applicable tax rate for a Customer invoice by following a specific hierarchy. The decision tree below visualizes this process.
 
-
+<Frame>
 <img
   src="/public/meteroid-tax1.png"
   alt="Tax rate decision tree"
 />
+</Frame>
 
 📌 **Note**: 
 - Customer tax characteristics, such as exemption status or a custom tax rate, are configured in the Customer section of Meteroid. Meteroid also supports **multiple tax rates per Customer**, whether it’s TPS and TVQ in Canada or IGST, SGST, and CGST in India allowing you to accurately reflect complex regional tax structures.
@@ -21,12 +22,12 @@ Meteroid determines the applicable tax rate for a Customer invoice by following 
 
 ### Details of the Meteroid EU VAT Engine
 When you select the Meteroid EU VAT tax calculation logic, Meteroid will automatically suggest the relevant VAT rate for the transaction. The following decision tree illustrates how the system determines this rate.
-
+<Frame>
 <img
   src="/public/meteroid-eu-vat.png"
   alt="Meteroid EU VAT decision tree"
 />
-
+</Frame>
 📌 **Note**:
 - Meteroid uses the intra-community VAT number or Tax ID to classify a Customer as either Business-to-Business (BtB) or Business-to-Consumer (BtC). If no intra-community VAT number is filled, Meteroid classifies the Customer as BtC.
 - For international BtB customers, the invoice will automatically include relevant mentions like for the reverse charge mechanism.
