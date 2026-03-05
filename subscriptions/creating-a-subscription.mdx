@@ -2,7 +2,14 @@
 Creating a subscription
 ---
 
-A Subscription can be created either manually by Account Managers directly in Meteroid, or automatically when End Users subscribe through their Portal. In both cases, the Subscription is recorded in Meteroid.
+A Subscription can be created either: 
+
+* manually by Account Managers directly in Meteroid
+* automatically on CheckOut
+* automatically via API (cf. API Reference) 
+* via a csv file upload 
+
+## Creating a subscription direclty in Meteroid
 
 To create a subscription manually:
 
@@ -21,7 +28,7 @@ To create a subscription manually:
 * Choose a **Billing Cycle**:
   * **1<sup>st</sup> of the month**: Customers will be charged each billing period (e.g monthly) the 1<sup>st</sup> of the month.
 
-    💡 **Note**: For the first Invoice, the Customer will be charged for the full month, even if they subscribed mid-month.
+    💡**Note**: For the first Invoice, the Customer will be charged for the full month, even if they subscribed mid-month.
 
   * **Anniversary date of the Subscription**: Customers will be charged each billing period (e.g monthly) at the Subscription's anniversary date.
   
@@ -37,3 +44,12 @@ To create a subscription manually:
     * **Default**: Meteroid tries to use any online payment methods configured in **Settings > Payment Methods** for the invoicing entity (e.g., credit card, direct debit). If no online payment method is configured, a **“Pay online”** button appears on the invoice, redirecting the Customer to bank details to complete the payment manually.
     * **Bank transfer**: If bank account details are configured in **Settings > Payment Methods**, these details are automatically displayed on the invoice. The Customer is expected to pay using a manual bank transfer.
     * **External**: Payment is handled entirely outside of Meteroid.
+
+## Creating a subscription via a csv file upload
+
+To upload Subscriptions in bulk via CSV:
+
+1. Go to **Subscriptions > Import CSV**.
+2. Upload your CSV file following Meteroid’s required structure.
+
+📌 **Need a template?** We can provide a ready-to-use CSV template to help you format your data correctly. Simply reach out to 👉 [**hey@meteroid.com**](#)

@@ -58,8 +58,10 @@
             "group": "Billing",
             "pages": [
               "billing/managing-plans",
-              "billing/modeling-your-pricing",
-              "billing/managing-trials-and-coupons"
+              "billing/creating-products-and-modeling-your-pricing",
+              "billing/managing-trials-and-coupons",
+              "billing/managing-add-ons", 
+              "billing/managing-upgrade-&-downgrade-and-price-updates"
             ]
           },
           {
