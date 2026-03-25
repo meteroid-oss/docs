@@ -104,6 +104,13 @@
             ]
           },
           {
+            "group": "Connect",
+            "pages": [
+              "connect/express",
+              "connect/oauth"
+            ]
+          },
+          {
             "group": "Integrations",
             "pages": [
               "integrations/general-information",
