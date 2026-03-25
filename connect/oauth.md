@@ -87,6 +87,8 @@ GET /api/v1/oauth/authorize
 
 The user sees a consent screen showing your application name. They select which of their organizations to connect, then approve or deny the request.
 
+![User consent screen](/assets/oauth-authorize.png)
+
 On approval, Meteroid redirects to your `redirect_uri` with an authorization code:
 
 ```

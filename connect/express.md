@@ -24,7 +24,7 @@ Meteroid handles organization creation, tenant provisioning, and invoicing entit
 
 ### 1. Enable Connect
 
-Navigate to **Settings > Connect** in your Meteroid dashboard, then click **Enable Platform**. This activates the Connect feature for your organization.
+Navigate to **Developers > Connect Platform** in your Meteroid dashboard, then click **Enable Platform**. This activates the Connect feature for your organization.
 
 ### 2. Configure Branding (Optional)
 
@@ -35,6 +35,8 @@ In the **Platform Settings** tab, you can set a branding invoicing entity. The o
 From the **Connected Accounts** tab, create a new Express account by providing the end user's email and organization name. You can optionally pre-fill a country and attach metadata for your own reference.
 
 Meteroid generates a single-use onboarding link that you send to the user — via email, in-app notification, or any channel you prefer.
+
+![Express onboarding link generation](/assets/express-link.png)
 
 <Info>You can also create connected accounts and generate onboarding links programmatically via the API. See the [API Reference](/api-reference) for details.</Info>
 
@@ -54,6 +56,8 @@ The user reviews and completes their organization details:
 - **Organization name** — pre-filled from what the platform provided, editable by the user
 - **Country** — pre-filled if the platform specified one
 - **Legal name**, **address**, **VAT number** — optional fields used for invoicing
+
+![Express onboarding](/assets/express-onboarding.png)
 
 ### Completion
 
