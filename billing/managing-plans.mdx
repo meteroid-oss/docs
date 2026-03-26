@@ -42,11 +42,7 @@ Then, follow these steps by filling in the required fields:
 💡To add more available currencies, go to Settings > General > Available currencies
 
 * **Plan Type:** Choose the type of plan from the following options:
-  * Standard: Designed for Self-serve or scalable subscriptions that customers can purchase independently. These plans can include:
-    * Customizable pricing models: Implement a variety of pricing models from subscrition-based to hybrid & usage-based models.
-    * **Trial periods:** Offer customers a free trial before their paid subscription begins.
-    * **Schedules (Phases):** Set up different phases within the plan, such as introductory pricing periods or promotional rates.
-    * **Add-ons:** Offer optional features or services that customers can include with their subscription.
+  * Standard: Designed for Self-serve or subscriptions that customers can purchase independently. These plans are displayed in the Customer Portal and end users have the possibility to upgrade / downgrade among standard plans.
   * Free / Freemium: Free plans allow your customers to access limited functionalities of your product, with the option to charge for supplemental or advanced features later through separate upgrades.
     * **Payment Information:** These plans cannot include paid components, ensuring that access remains fully free and customers will <u>not</u> be required to provide payment details when subscribing to these plans.
   * Custom: Ideal for Sales-led opportunities where tailored solutions are needed. Custom plans allow you to adapt for specific Customers or groups, offering bespoke configurations based on their unique requirements.
@@ -64,6 +60,17 @@ To make updates, click the **pen icon in the upper right corner**, where you can
 📌 **Priority Rule**: **Net Terms** defined at the Plan level will override the Net Terms defined at invoicing entity level (defined in Settings > Invoices).
 
 📌 **Applicability Rule:** Plan components (pricing, trial period, etc.) only apply from the subscription **start date**. If the plan is updated, the changes will only apply to **new customers** subscribing after the update. **Existing subscriptions will not be retroactively modified.**
+
+* Self-service rank: Impact the display order of standard plan on the Customer Portal. 
+
+💡 **Plans are sorted numerically**: a rank of "1" is displayed first, followed by "2", and so on. In the below example, the Standard 20 Plan had a self-service rank set at "1" and the Standard 80 Plan set at "2".
+
+<Frame>
+<img
+  src="/public/meteroid-change-plan-from-customer-portal.png"
+  alt="Upgrade / downgrade from Meteroid's Customer Portal"
+/>
+</Frame>
 
 ## Plan Status
 
