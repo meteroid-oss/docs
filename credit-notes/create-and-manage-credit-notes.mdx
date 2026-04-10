@@ -9,7 +9,18 @@ To create one, go to **Billing > Invoices**, open the relevant invoice, then cli
 
 ## Credit Note Types
 
-When creating a credit note, you can choose between two options:
+### Credit Note Scope
+
+When creating a credit note, you can define what should be credited:
+
+* Credit specific line(s): You can select one or several invoice lines to cancel or adjust. This is useful for partial corrections (e.g., overbilling on a specific component).
+* Cancel the entire invoice: Choose this option to fully cancel the invoice. 
+
+    💡**Note:** If you cancel the entire invoice, you can select the option “Also open a corrected draft invoice”. Meteroid will automatically create a new draft invoice replicating the original data, which can then be edited by clicking Actions > Edit Invoice. If you do not choose this option during the credit note creation, you can always go back to the fully credited invoice and click Actions > Create Corrected Invoice to generate a new draft invoice replicating the original data.
+    
+### Handling Credited Amounts
+
+If the invoice is marked as Paid or Partially Paid, you will be able to choose how the credited amount is handled. 2 options can can chosen :
 
 * **Credit to Customer Balance**, the credited amount is added to the Customer’s balance and will automatically be applied to future **recurring invoices**.
 
