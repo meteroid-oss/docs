@@ -4,6 +4,9 @@ Managing events
 
 In the **Events** section, you can review the latest events sent to Meteroid, whether they were ingested through the API or imported via CSV. This gives you full visibility into the raw data that powers your billable metrics.
 
+## Import Events via API 
+
+To import Events via Meteroid's API, please refer to the [dedicated API doumentation](https://docs.meteroid.com/api-reference/events/ingest-events).
 
 ## Import Events via CSV
 
@@ -11,3 +14,5 @@ You can bulk import events into Meteroid by clicking **“Import CSV.”** The i
 
 * **event\_code**: This field will later be used when creating a billable metric (corresponds to the Event Code when creating a new Billable Metric).
 * **customer\_id**: Used to link the event to a Customer in Meteroid. The link is established through the **Alias** defined in the Customer record.
+
+💡**Note:** You can monitor and manage batch processing at any time by consulting the Developers > Batch Jobs section. This allows you to track the progress and see if the import was successful, partially successful, or failed.
