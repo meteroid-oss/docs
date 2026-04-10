@@ -4,6 +4,52 @@ ContentWidth: 734
 ---
 <Info>Get started with Meteroid for free</Info>
 
+<Update label="March 2026" description="v1.0.0">
+
+## Meteroid Connect Platform
+
+The Connect Platform provides the infrastructure for third-party application integration, allowing platforms to view and manage all accounts connected to their platform. Meteroid Connect supports 2 account management set ups:
+* Express Accounts: Allows the platform to manage connected accounts via a managed onboarding flow. Meteroid handles the synchronization of billing identities and facilitates the calculation of platform fees during payout events. In this configuration, users only have a read-only view of their account.
+* Standard Accounts: In this setup, users have full access to their Meteroid account, while the platform is granted scoped access to specific resources.
+
+<Frame>
+<img
+  src="/public/meteroid-connect-platform.png" 
+  alt="Meteroid Connect Platform"
+/>
+</Frame>
+
+## Enhanced Credit Note
+
+When creating a credit note, you can now choose between:
+* Crediting select line-items: Users can select individual invoice lines or sub-lines for adjustment. This granular control is particularly useful for matrix pricing models, allowing for the adjustment of specific dimension combinations within a single line item. The system calculates the prorated amount to be credited based on the selected quantity or fixed price.
+* Full Cancellation & Replication: Choosing to cancel a full invoice allows for the simultaneous creation of a "Corrected Draft." This draft clones all metadata and line items from the original finalized invoice for immediate modification.
+
+<Frame>
+<img
+  src="/public/meteroid-credit-note2.png" 
+  alt="Credit Notes in Meteroid"
+/>
+</Frame>
+
+## Batch Processing & Data Ingestion
+
+Meteroid now includes a monitoring interface for high-volume CSV imports (Customer, Subscription or Events imported via CSV). You can now track:
+* Ingestion Progress: Track the ingestion progress in real-time to monitor the processing status of large datasets.
+* Execution States: The Developers > Batch Processing section now tracks three distinct job states:
+** Completed: 100% of records ingested.
+** Completed with Errors: Indicates that some rows failed validation (e.g., non-existent customer alias). A CSV file containing only the failed rows can be downloaded for targeted troubleshooting.
+** Failed: The entire batch was rejected. 
+
+<Frame>
+<img
+  src="/public/meteroid-batch-jobs.png" 
+  alt="Batch Processing Monitoring in Meteroid"
+/>
+</Frame>
+
+</Update>
+
 <Update label="February 2026" description="v1.0.0">
 
 ## Enhanced Product Management 
