@@ -117,6 +117,12 @@
               "integrations/hubspot",
               "integrations/pennylane"
             ]
+          },
+          {
+            "group": "Migration",
+            "pages": [
+               "migration/stripe-migration-guide"
+            ]
           }
         ]
       },

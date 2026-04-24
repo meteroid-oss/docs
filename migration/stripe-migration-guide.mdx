@@ -1,0 +1,90 @@
+---
+title: Stripe Migration Guide
+---
+# Migrating from Stripe Billing to Meteroid
+
+This guide outlines the technical workflow for migrating your existing customers, subscriptions, and pricing models from Stripe to Meteroid.
+
+## Overview of Migration Steps
+
+The migration process follows a structured path to ensure data integrity and billing accuracy:
+
+1. **Sandbox Setup**: Isolate your testing environment.
+2. **Import Product & Metrics**: Mirror Stripe Products and Metrics in Meteroid.
+3. **Merchant Setup**: Configure branding and tax details.
+4. **Core Data Import & Payment Setup**: Move Customers, Subscriptions, and connect your gateway.
+5. **Historical Backfill (optional)**: Ingest past usage to validate billing logic.
+6. **Real-time Ingestion Setup**: Configure your application to send live usage data.
+7. **Moving to Production**: Final delta sync and Stripe Billing deactivation.
+
+## 1. Environment Selection
+
+Before starting the migration, ensure you are working in a **Development or Sandbox environment**. This allows you to test the ingestion of historical data and invoice generation without affecting live financial records.
+
+**Important Safety Step**: Navigate to **Settings > General** and ensure the **"Disable all email notifications"** option is enabled. This prevents Meteroid from sending automated billing or subscription emails to your customers while you are performing tests.
+
+## 2. Modeling Pricing & Metadata
+
+Meteroid offers a module to mirror your existing Stripe **Products** and **Metrics**. For more information, please contact our support team at [**hey@meteroid.com**](#)
+
+## 3. Configuring Invoicing Details
+
+Configure your brand and legal identity before generating any test invoices.
+
+* Navigate to **Settings > Merchant**.
+* Set up your tax calculation method, contact information, and invoice branding (logo, footers).
+
+## 4. Importing Core Data & Payment Setup
+
+Use our API to migrate your customer base and their active subscriptions, and configure how you will collect payments.
+
+### Import Customers
+
+Use the `POST /api/v1/customers` endpoint.
+
+* **Key Requirement**: Ensure the `alias` field in Meteroid matches your internal identifier or your Stripe Customer ID to maintain a clear link for event ingestion.
+
+### Payment Integration
+
+Connect your payment provider to handle future transactions.
+
+* Navigate to **Settings > Payment Methods**.
+* Connect your gateway (e.g., Stripe) to allow Meteroid to trigger payments on finalized invoices.
+
+### Import Subscriptions
+
+Use the `POST /api/v1/subscriptions` endpoint to recreate active subscriptions.
+
+* Map the Stripe subscription start dates to Meteroid to maintain billing cycle alignment.
+* `skip_past_invoices: false`: By setting this to `false`, Meteroid will generate invoices for previous periods. This is recommended to compare Meteroid-generated invoices against your historical Stripe invoices to verify that your pricing models are configured correctly.
+
+## 5. Backfilling Historical Usage (Optional)
+
+To ensure continuity in reporting and verify billing accuracy, you can backfill usage data.
+
+* **Usage Ingestion**: Use `POST /api/v1/events/ingest`.
+* **Configuration Flags**:
+  * `allow_backfilling: true`: Enables the ingestion of events with past timestamps.
+
+## 6. Real-time Data & Usage Ingestion
+
+Once historical data is validated, you must configure your application to stream live events to Meteroid.
+
+* **Event Streaming**: Transition your usage tracking logic from Stripe Usage Records to Meteroid's `POST /api/v1/events` endpoint.
+* **Idempotency**: Use the `idempotency_key` field to prevent duplicate billing for the same event in case of network retries.
+* **Low Latency**: Meteroid is designed for high-frequency ingestion. Ensure your application sends events as they occur to provide customers with real-time visibility into their usage via the Customer Portal.
+
+## 7. Moving to Production
+
+Once you have validated your data in the sandbox/dev environment:
+
+1. **Request Production Access**: Contact your Account Manager to activate your Production environment.
+2. **Deactivate Stripe Billing**: Disable the recurring billing engine in Stripe to prevent double-billing, while keeping Stripe as your payment gateway.
+
+## Frequently Asked Questions (FAQ)
+
+**Can I run Meteroid and Stripe in parallel?** Yes. Many teams run both systems in parallel during the migration phase. You can ingest usage into both platforms to compare the resulting draft invoices. Only once you are confident in the Meteroid output should you deactivate Stripe Billing.
+
+**Will I lose access to my Stripe payment?** No. Meteroid acts as the orchestration layer (billing logic, usage calculation, and invoice generation). You can still use Stripe as your underlying payment gateway.
+
+**How long does migration take?** While customer and subscription imports take minutes, a full migration typically takes 2 weeks. This timeline includes modeling your pricing, backfilling usage for validation, and conducting a side-by-side billing comparison to ensure 100% accuracy before the final cut-over.
