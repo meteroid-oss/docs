@@ -1,0 +1,105 @@
+---
+Create and Manage Entitlements
+---
+
+Entitlements define what a Customer can access, use, or consume as part of a Subscription. They allow you to connect billing logic with product access management.
+
+To manage Entitlements, go to **Product Catalog > Features**.
+To create a new Entitlement, click New Feature.
+
+💡 **Note:** Meteroid does not directly manage or enforce access to your application or features. Meteroid provides APIs and entitlement data allowing you to determine which Customers should have access to a given feature. The effective access management and enforcement remain under your responsibility.
+
+## Global vs. Product Entitlements
+
+### Global Entitlements
+
+Global Entitlements are not linked to a specific Product. They can be used to grant broad or platform-wide access.
+
+### Product Entitlements
+
+Product Entitlements are linked to a specific Product previously created in Meteroid. They are typically used to manage access to a specific feature, capability, or usage associated with that Product.
+
+## Entitlement Types
+
+### Boolean Entitlements
+
+Boolean Entitlements simply grant or revoke access, regardless of usage.
+
+As long as the Subscription is active and the Entitlement is enabled, the Customer has access to the corresponding feature or Product.
+
+### Metered Entitlements
+
+Metered Entitlements are linked to a Billable Metric defined in the **Metrics** section.
+
+When configuring a Metered Entitlement, you can define:
+
+* A usage limit (optional)
+* A reset period
+
+The limit defines the maximum usage allowed during a given reset period.
+
+For example, if the metric is "API Calls" and the limit is set to 10,000, the Customer will be allowed to consume up to 10,000 API calls during the reset period.
+
+#### Reset Periods
+
+Meteroid supports five reset strategies for Metered Entitlements.
+
+1. Never
+
+The count is never reset. This creates a lifetime cap. Once the limit is reached, access is permanently revoked unless manually updated.
+
+2. Billing Cycle
+
+The limit is granted for one billing cycle. Usage counters are reset at the beginning of each billing cycle. If the limit is reached during the billing cycle, access is revoked until the next billing cycle starts.
+
+3. Calendar
+
+Usage resets on calendar boundaries, independently from the Subscription start date.
+
+Examples:
+- Monthly reset: every 1st of the month
+- Weekly reset: every Monday
+- Yearly reset: every January 1st
+- Daily reset: every day at 00:00:00 UTC (ISO 8601)
+
+This mode is useful when usage quotas should align across all Customers.
+
+4. Fixed Windows
+
+Usage resets at regular intervals based on the Subscription start date.
+
+For example, if:
+
+* the Subscription starts on June 3rd
+* and the reset window is set to 1 month
+
+then the limit resets every 3rd of the month.
+
+This mode is useful when quotas should align with each individual Subscription lifecycle.
+
+Compared to the Billing Cycle reset strategy, Fixed Windows provide more flexibility as you can define reset periods independently from the billing cycle.
+
+5. Sliding Windows
+
+Sliding windows continuously evaluate usage over a rolling time period ending at the current moment.
+
+For example:
+
+* if the reset period is set to 1 hour
+* Meteroid always evaluates usage over the previous rolling hour
+
+This strategy is useful for rate limiting and rolling quotas.
+
+## Entitlement Overrides
+
+Entitlements can be overridden at both the Plan and Subscription levels.
+
+The hierarchy is:
+
+1. Default Entitlement (configured in the Feature section)
+2. Plan Entitlement
+3. Subscription Entitlement
+
+This means that Subscription-level overrides always take precedence over Plan-level overrides, which themselves override the default Entitlement configuration.
+
+This flexibility allows you to adapt access rights for specific Customers.

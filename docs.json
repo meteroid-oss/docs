@@ -94,6 +94,12 @@
             ]
           },
           {
+            "group": "Entitlements",
+            "pages": [
+              "entitlements/create-and-manage-entitlements"
+            ]
+          },
+          {
             "group": "Settings",
             "pages": [
               "settings/merchant",
