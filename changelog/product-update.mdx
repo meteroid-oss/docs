@@ -2,7 +2,95 @@
 title: "Product updates"
 ContentWidth: 734
 ---
-<Info>Get started with Meteroid for free</Info>
+<Info>[Get started with Meteroid for free](https://app.meteroid.com/registration)</Info>
+
+<Update label="May 2026" description="v1.0.0">
+
+## Entitlements
+
+We have introduced Entitlements to manage what customers are allowed to access based on their billing context.
+
+Meteroid supports both:
+
+* **boolean entitlements** (feature-style access such as “enabled/disabled”)
+* **metered entitlements** (usage-based limits such as “up to N requests, or units”). For additional flexibility, Meteroid supports multiple reset periods including billing-cycle resets, calendar-based resets, and sliding windows.\
+
+This helps ensure end users always access exactly what they are entitled to (no more, no less) based on their subscription and usage limits.
+
+<Frame>
+<img
+  src="/public/meteroid-entitlements.png" 
+  alt="Entitlements in Meteroid"
+/>
+</Frame>
+
+To Learn more about how to manage entitlements in Meteroid, read our [dedicated documentation](https://docs.meteroid.com/)
+
+## Amend Subscriptions
+
+Subscriptions can now be **amended after creation**, giving you full flexibility to adapt customer subscriptions over time.
+
+You can now:
+
+* Add or remove add-ons from an existing subscription
+* Update prices or quantities
+* Apply changes immediately or schedule them at the end of the billing period
+
+<Frame>
+<img
+  src="/public/metroid-amend-susbscriptions.png" 
+  alt="Updating existing subscriptions in Meteroid"
+/>
+</Frame>
+
+This is especially important for custom deals and evolving customer requirements, enabling smoother upsell and expansion workflows over time.
+
+## Quotes Simulation
+
+For usage-based products, quotes can now include a **target usage parameter** to simulate expected costs. At the quote level, you can define an estimated usage volume, and the system will compute a projected price based on your pricing model.
+
+<Frame>
+<img
+  src="/public/meteroid-quote-simulation.png" 
+  alt="Quote usage simualtion"
+/>
+</Frame>
+
+It is designed to help end users better understand their expected spend before committing and improve budget planning.
+
+## Auditability
+
+We added an Activity section at the subscription level, providing Account Managers with a complete view of everything that happens throughout a subscription's lifecycle such as:
+* Subscription amendments
+* Invoice creation
+* Credit note issuance
+* Other billing-related actions affecting the subscription
+
+<Frame>
+<img
+  src="/public/meteroid-activity-section.png" 
+  alt="Activity section at Subscription level"
+/>
+</Frame>
+
+In addition, we added a comprehensive Audit Log that allows teams to track events across subscriptions and billing operations.
+
+<Frame>
+<img
+  src="/public/meteroid-audit-log.png" 
+  alt="Audit log in Meteroid"
+/>
+</Frame>
+
+This gives revenue teams greater visibility into subscription history, making it easier to understand account changes, investigate billing questions, and collaborate efficiently with Customers.
+
+## Docker Compose for Local Deployment
+
+We have added a **Docker Compose setup for local development**, making it easier to run Meteroid end-to-end on your machine without complex setup steps.
+
+
+</Update>
+
 
 <Update label="March 2026" description="v1.0.0">
 
