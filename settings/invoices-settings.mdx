@@ -21,4 +21,16 @@ In Settings > Invoices, you can also update the following settings:
 
 📌 **Best Practice:** If a Customers' **billing address** (under **Customers > Billing Address**) is located in **France**, the invoice will automatically be issued in **French**. For all other Customers, invoices are issued in **English**. To ensure clarity and compliance across Customer geographies, consider writing your **invoice footnotes in both English and French**.
 
-          
+# Consolidating Recurring Invoices
+
+By default, Meteroid creates one invoice per Subscription. You can instead consolidate invoices by enabling "Consolidate recurring invoices" in Settings > Invoices.
+
+When enabled, Meteroid automatically groups recurring invoices from multiple Subscriptions into a single invoice, provided the Subscriptions share the same billing properties:
+* Customer
+* Invoice date
+* Currency
+* Payment method
+* Net terms
+* Auto-advance setting
+
+If any of these properties differ, separate invoices are generated.

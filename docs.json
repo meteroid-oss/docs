@@ -106,7 +106,8 @@
               "settings/taxes",
               "settings/invoices-settings",
               "settings/tenants",
-              "settings/payment-methods"
+              "settings/payment-methods",
+              "settings/audit-log"
             ]
           },
           {

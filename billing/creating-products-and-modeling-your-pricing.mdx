@@ -231,3 +231,21 @@ The Plan's currency is determined when creating your Meteroid account, based on 
 
 💡 **Billing period:**
 In Meteroid, billing is handled differently depending on the type of pricing component: **Subscription rates** and **slot-based pricing** are billed **at the beginning of the billing period** whereas other components, such as **capacity commitments** and **usage-based charges**, are billed **at the end of the billing period**, once the actual usage or commitment fulfillment is known. For example, in Month M, the invoice will charge End Users for their subscription for Month M+1 (in advance), and their usage or capacity consumption from Month M (in arrears).
+
+# Floor Price
+A floor price lets you define a minimum amount that will be invoiced, regardless of the calculated charges.
+
+To configure a floor price, go to Product Catalog > Plans, open the desired Plan, then scroll to the Contract Terms section.
+
+You can configure a floor price at two levels:
+
+* Plan level: The minimum amount applies to the total value of all Products included in the Plan.
+* Product level: A minimum amount applies only to one or several specific Product(s) assigned to the Plan.
+
+💡 **Note:** When a floor price applies to multiple Products, it is evaluated against the combined amount of all applicable Products, not individually for each Product.
+
+If the calculated amount is below the configured floor price, Meteroid automatically increases the invoiced amount to match the minimum.
+
+💡 **Note:** Floor prices configured at the Plan level can be overridden when creating a Subscription. This allows you to define customer-specific minimum commitments without modifying the Plan itself.
+
+💡 **Note:** The floor price is evaluated before coupons and discounts are applied. This means that if the invoice total exceeds the floor price before a coupon is applied, but falls below it after the coupon is applied, the floor price is not applied. 
