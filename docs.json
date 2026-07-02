@@ -107,6 +107,7 @@
               "settings/invoices-settings",
               "settings/tenants",
               "settings/payment-methods",
+              "settings/two-factor-authentication",
               "settings/audit-log"
             ]
           },

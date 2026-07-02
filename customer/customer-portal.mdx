@@ -19,6 +19,13 @@ However, the payment method that will actually be used to process payments is de
 
 Customers can update directly in the Portal their billing info (email, billing adress, tax number...). They updated information are automatically reflected in Meteroid and applied to future invoices.
 
+<Frame>
+<img
+  src="/public/meteroid-customer-portal-billing-details.png"
+  alt="Update billing details from Meteroid's Customer Portal"
+/>
+</Frame>
+
 ## Manage & Pay Invoices
 
 Customers can view and download their past invoices with their payment status. If the invoices have not already been paid, they can pay them using the pre-defined payment method: 
@@ -27,9 +34,17 @@ Customers can view and download their past invoices with their payment status. I
 
 In the Subscription section, clicking "Manage", Customer can access a preview of their upcoming invoices. 
 
-## Upgrade/downgrade their subscriptions
+<Frame>
+<img
+  src="/public/meteroid-customer-portal-invoice.png"
+  alt="Manage and pay invoices from Meteroid's Customer Portal"
+/>
+</Frame>
 
-In the subscription section, clicking "Manage" and then "Change Plan", Customers can upgrade/downgrade their subscription in full autonomy.
+
+## Upgrade/downgrade their subscriptions and buy Add Ons
+
+In the subscription section, clicking "Manage" and then "Change Plan", End Users can upgrade/downgrade their subscription in full autonomy.
 
 <Frame>
 <img
@@ -42,5 +57,25 @@ In the subscription section, clicking "Manage" and then "Change Plan", Customers
 * downgrades take effect at the end of the current billing period (no credits).
 * upgrades take effect immediately. A prorated invoice is immediately issued including credit for the former plan and charge for the new one. 
 
-💡**Note:** To have more information on Plans that are displayed in the Customer Portal (and so eligible for upgrade/downgrade), please read the managing plans section
+💡**Note:** To have more information on Plans that are displayed in the Customer Portal (and so eligible for upgrade/downgrade), please read the managing plans section.
 
+In the subscription section, clicking "Manage" and then "Add-ons", End Users can buy Add-ons in full autonomy. 
+
+💡**Note:** To have more information on Add-Ons that are displayed in the Customer Portal (and so that can be bought by End Users), please read the managing add-ons section.
+
+
+# Portal Customization
+
+You can customize the look and feel of your Customer Portal to match your brand identity and provide a consistent experience for End Users. Customization is managed directly from the Settings > Merchant section. 
+
+# Integrating the Customer Portal
+
+## Using Meteroid's API
+
+You can generate a Customer Portal token for a given Customer using Meteroid's API. This token allows you to securely authenticate the Customer and redirect them to their dedicated Customer Portal.
+
+Refer to the [API documentation](https://docs.meteroid.com/api-reference/customers/generate-a-portal-token-for-a-customer) for more details on generating a Customer Portal token.
+
+## Using Embedded UI Components
+
+Meteroid also provides embedded UI components that allow you to integrate Customer Portal features directly into your application. This approach enables your Customers to manage their subscriptions, invoices, payment methods, and billing information without leaving your product.
