@@ -1,0 +1,30 @@
+---
+title: Managing Invoice Annexes 
+---
+
+Invoice Annexes let you attach detailed appendices to your invoices, for example a full breakdown of usage events behind a usage-based charge. Annexes are managed at the Plan level, in the Invoice Annexes section of the plan configuration.
+
+To create an annex, click Add annex > Create new, then fill in the following fields:
+
+* Name: Internal label for the annex. Not displayed on invoices.
+* Kind: Choose how the annex is rendered on the invoice:
+  * Table: Displays the annex as a structured table of rows and columns (see below).
+  * Static text: Displays the annex as free-form text.
+* Title: The title displayed on the invoice.
+
+Datails on annexes of kind Table: 
+* Event codes: The event(s) detailed in the annex. This must match the event code used when sending events to Meteroid.
+* Rows: Choose how events are listed in the annex:
+  * One row per event: Every event is listed individually, with no aggregation.
+  * Aggregated: Events are grouped together in a single row, based on the property set in the "Aggregate by" field.
+* Columns: Define one or more columns to display in the annex. For each column:
+  * Label: The column header displayed on the annex.
+  * Shows: What the column displays:
+    * Property value: The value of a property on the row.
+    * Event date: A date based on the event's timestamp.
+    * Count of events: The number of events.
+    * Sum of property: The sum of a numeric property across the events, based on the property set in the "property/date" field.
+    * Period: The period, based on the event's timestamp.
+    * Billed amount: The amount billed for the row.
+
+💡 **Note**: You can further organize the annex by entering a property in the Group by field to group events together, and a property in the Sort by field to control the order in which they appear.
