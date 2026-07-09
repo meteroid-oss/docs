@@ -101,6 +101,17 @@
             ]
           },
           {
+            "group": "Analytics",
+            "pages": [
+              "analytics/overview",
+              "analytics/reports",
+              "analytics/segments",
+              "analytics/steering",
+              "analytics/customer-signals",
+              "analytics/dashboards"
+            ]
+          },
+          {
             "group": "Settings",
             "pages": [
               "settings/merchant",

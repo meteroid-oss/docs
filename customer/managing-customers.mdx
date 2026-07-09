@@ -12,8 +12,10 @@ To create a new Customer, go to **Customers > New Customer**. You will then need
 * **Alias (External ID):** The Customer’s unique identifier in your system.
 * **Email address:** The contact email your Sales team use to contact Customers. This email is not used by Meteroid.
 * **Invoicing email:** The email you want Meteroid to use to send invoices to your Customers.
+* **Phone:** An optional contact phone number for the Customer.
 * **VAT number:** This field must be filled if you want to use Meteroid VAT tax engine.
-* **Custom taxes:** This field must be filled if you want to apply custom tax rates or apply a tax rate outside of the EU.
+* **Tax exempt:** Mark the Customer as exempt from tax, so no tax is applied on their invoices.
+* **Custom taxes:** This field must be filled if you want to apply custom tax rates or a tax rate outside of the EU. You can add several cumulative custom taxes.
 * **Billing Address:** This will appear on Invoices.
 * **Shipping Address:** If applicable.
 
@@ -40,3 +42,15 @@ To upload Customers in bulk via CSV:
 📌 **Need a template?** We can provide a ready-to-use CSV template to help you format your data correctly. Simply reach out to 👉 [**hey@meteroid.com**](#)
 
 💡**Note:** You can monitor and manage batch processing at any time by consulting the Developers > Batch Jobs section. This allows you to track the progress and see if the import was successful, partially successful, or failed.
+
+💡**Note:** You can also **export** your Customers in bulk to CSV from the Customers list.
+
+# The Customer page
+
+Once a Customer exists, their detail page centralizes everything about the account:
+
+* **Billing info** — contact and billing details, addresses, tax settings, and linked external providers.
+* **Subscriptions, Invoices & Payment methods** — the account's active subscriptions, past invoices, and saved payment methods.
+* **Analytics** — MRR trend, billed revenue, and per-metric usage for this Customer.
+* **Signals** — which risk or opportunity [segments](/analytics/customer-signals) this Customer currently belongs to.
+* **Activity** — a timeline of recent actions on the account.

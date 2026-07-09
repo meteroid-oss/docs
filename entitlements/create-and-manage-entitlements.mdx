@@ -27,6 +27,18 @@ Boolean Entitlements simply grant or revoke access, regardless of usage.
 
 As long as the Subscription is active and the Entitlement is enabled, the Customer has access to the corresponding feature or Product.
 
+### Config Entitlements
+
+Config Entitlements carry a **static, typed configuration value** rather than a simple on/off flag or a usage limit. They are resolved synchronously and are ideal for plan-driven settings your application reads — for example a rate limit, a retention window, a tier label, or a feature configuration object.
+
+The supported value kinds are:
+
+* **Number** — e.g. `10000`
+* **Boolean** — `true` / `false`
+* **Text** — a free-form string
+* **JSON** — a structured object
+* **Select** — a value chosen from a predefined list of options
+
 ### Metered Entitlements
 
 Metered Entitlements are linked to a Billable Metric defined in the **Metrics** section.
@@ -92,14 +104,25 @@ This strategy is useful for rate limiting and rolling quotas.
 
 ## Entitlement Overrides
 
-Entitlements can be overridden at both the Plan and Subscription levels.
+Entitlements can be overridden at the Plan, Subscription, and Customer levels.
 
-The hierarchy is:
+The resolution hierarchy, from lowest to highest priority, is:
 
-1. Default Entitlement (configured in the Feature section)
-2. Plan Entitlement
-3. Subscription Entitlement
+1. **Default Entitlement** — configured in the Feature section
+2. **Plan Entitlement**
+3. **Subscription Entitlement**
+4. **Customer override** — highest priority
 
-This means that Subscription-level overrides always take precedence over Plan-level overrides, which themselves override the default Entitlement configuration.
+This means a **Customer override wins everywhere** for that Customer, taking precedence over the Subscription, Plan, and default configuration.
+
+### Customer overrides
+
+Customer-level overrides are account-wide: they apply to **every** subscription the Customer has—and even to Customers with **no** active subscription. Use them to force a feature on or off for a whole account regardless of what the Customer is subscribed to, for example to grant complimentary access to a design partner, provision a feature manually, or hard-cap a specific account. Because they win everywhere, use them sparingly.
+
+### Effective entitlements & pinning
+
+The Customer detail page shows each Customer's **effective entitlements**—the resolved value for every feature—along with its **origin** (default feature, plan, plan version, add-on, subscription, or customer override) and whether the value is *direct* or *inherited*.
+
+You can **pin** an inherited value onto a specific subscription. Pinning snapshots the currently-resolved value so it no longer changes when the upstream Plan or feature default is later edited—useful for locking in terms for an existing Customer while you evolve your catalog.
 
 This flexibility allows you to adapt access rights for specific Customers.

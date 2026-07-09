@@ -1,0 +1,70 @@
+---
+title: "Analytics overview"
+sidebarTitle: "Overview"
+description: "Meteroid turns your billing and usage data into a real-time BI, steering and customer-intelligence surface."
+---
+
+Meteroid ships a full analytics suite built directly on your billing and usage data—no external data warehouse, no ETL. Every metric you see is computed from the same subscriptions, invoices, payments and events that drive your billing, so the numbers never diverge from what you actually charged.
+
+In the app, these capabilities live under the **Intelligence** section of the navigation, plus the tenant **Dashboard** (your home page):
+
+<CardGroup cols={2}>
+  <Card
+    title="Reports & the explorer"
+    icon="chart-bar"
+    href="/analytics/reports"
+  >
+    A catalog of ready-made metrics (MRR, revenue, cash, retention, usage…) and
+    an interactive explorer to chart, break down, filter, compare and forecast
+    any of them.
+  </Card>
+  <Card title="Segments" icon="filter" href="/analytics/segments">
+    Reusable customer cohorts built from relational and usage predicates—use
+    them to split charts, scope reports, and drive signals.
+  </Card>
+  <Card title="Steering" icon="bell" href="/analytics/steering">
+    Metric monitors and alerts that watch your business KPIs and notify you on
+    thresholds, % changes, anomalies, limits and forecasts.
+  </Card>
+  <Card
+    title="Customer signals"
+    icon="signal"
+    href="/analytics/customer-signals"
+  >
+    Account-level intelligence for sales and CS—who's slipping, who's expanding,
+    and live rosters of customers entering a risk or opportunity segment.
+  </Card>
+  <Card title="Dashboards" icon="layout-dashboard" href="/analytics/dashboards">
+    Your home dashboard plus composable, shareable dashboards assembled from
+    saved charts.
+  </Card>
+</CardGroup>
+
+## Availability
+
+The analytics suite is available to **Standard** organizations. Express organizations (lightweight, self-serve setups) don't have the Intelligence section.
+
+Within the suite, some capabilities are unlocked per plan. Core revenue metrics—**Recurring Revenue**, **Revenue** and your own **Usage** metrics—are available to every Standard organization. The **Cash**, **Subscriptions**, **Customers** and **Retention** metric groups, along with **Steering**, **Customer Signals** and **Dashboards**, are premium capabilities.
+
+## How it works
+
+<Info>
+  You don't need to configure anything to start—metrics are populated
+  automatically from your existing billing and usage data.
+</Info>
+
+- **Real-time & consistent.** Metrics are served from a purpose-built analytics store that projects your subscriptions, invoices, payments and metering events into time series. Charts, insights and alerts all read the _same_ underlying series, so a monitor never disagrees with the chart it watches.
+- **Currency.** Amounts are reported in your organization's reporting currency.
+- **Granularity.** When you chart a range longer than roughly three months, Meteroid automatically coarsens the grain to weekly buckets to keep charts readable and fast.
+- **Scale guards.** Very wide or very deep queries are bounded (execution time and row limits) so a heavy exploration can't degrade the platform—if you hit a bound, narrow the range or the breakdown.
+
+## Glossary
+
+| Term                  | Meaning                                                                                                                                               |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Metric**            | A named, pre-computed series such as `MRR` or `Billed Revenue`. See the [metric catalog](/analytics/reports#the-metric-catalog).                      |
+| **Breakdown / split** | Slicing one metric into multiple series by a dimension (plan, country, customer type…) or by a segment.                                               |
+| **Segment**           | A saved, reusable customer cohort defined by predicates. See [Segments](/analytics/segments).                                                         |
+| **Monitor**           | An always-on rule that watches a metric and fires alerts. See [Steering](/analytics/steering).                                                        |
+| **Signal**            | A watch on a customer **segment** that produces a live roster of accounts (risk or opportunity). See [Customer signals](/analytics/customer-signals). |
+| **Saved view**        | A persisted exploration (metric + visualization + breakdown + filters). A **dashboard** is a layout of several saved views.                           |
