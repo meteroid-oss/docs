@@ -3,7 +3,7 @@ title: "Segments"
 description: "Build reusable customer cohorts from relational and usage predicates, then chart, scope and watch them."
 ---
 
-A **Segment** is a named, reusable set of customers defined by predicates—for example *"paying customers in the EU with no API usage in the last 30 days"*. Segments are the connective tissue of the analytics suite: once saved, a segment can **split any chart**, **scope** a report, and power a [customer signal](/analytics/customer-signals).
+A **Segment** is a named, reusable set of customers defined by predicates—for example _"paying customers in the EU with no API usage in the last 30 days"_. Segments are the connective tissue of the intelligence suite: once saved, a segment can **split any chart**, **scope** a report, and power a [customer signal](/analytics/customer-signals).
 
 Manage segments from the **Segments** tab in **Intelligence > Analytics**.
 
@@ -13,20 +13,20 @@ A segment combines predicates with **AND / OR / NOT**, so you can express nested
 
 ### Relational predicates
 
-| Predicate | Matches customers by… |
-| --- | --- |
-| **Plan** | Being active on one of the selected plans. |
+| Predicate     | Matches customers by…                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------ |
+| **Plan**      | Being active on one of the selected plans.                                                 |
 | **Lifecycle** | Their derived lifecycle state (paying, trialing, free, past due, churned, lead, dormant…). |
-| **Geography** | Country or currency. |
-| **Attribute** | An arbitrary attribute key/value on the customer. |
+| **Geography** | Country or currency.                                                                       |
+| **Attribute** | An arbitrary attribute key/value on the customer.                                          |
 
 ### Usage (behavioral) predicates
 
-| Predicate | Matches customers by… |
-| --- | --- |
-| **Metric threshold** | Usage of a metric above/below a value (`>`, `≥`, `<`, `≤`). |
-| **Inactive** | The **absence** of usage on a metric (optionally under a small maximum)—i.e. customers who *didn't* do something. |
-| **Delta** | A relative change in a metric versus the customer's own prior window. |
+| Predicate            | Matches customers by…                                                                                             |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Metric threshold** | Usage of a metric above/below a value (`>`, `≥`, `<`, `≤`).                                                       |
+| **Inactive**         | The **absence** of usage on a metric (optionally under a small maximum)—i.e. customers who _didn't_ do something. |
+| **Delta**            | A relative change in a metric versus the customer's own prior window.                                             |
 
 <Info>Usage predicates evaluate over the **last 90 days**.</Info>
 
@@ -38,6 +38,6 @@ Before saving, click **Preview members** to see the resolved customer list and t
 
 Once saved, a segment is available across analytics:
 
-* **Split a chart** — in the explorer, choose **Break down by → By segment** to render one series per segment.
-* **Scope a chart** — set a segment as the chart's **Audience** to restrict every series to those customers.
-* **Watch a segment** — attach a [signal](/analytics/customer-signals) so you get a live roster of customers entering or leaving the segment, with alerts.
+- **Split a chart** — in the explorer, choose **Break down by → By segment** to render one series per segment.
+- **Scope a chart** — set a segment as the chart's **Audience** to restrict every series to those customers.
+- **Watch a segment** — attach a [signal](/analytics/customer-signals) so you get a live roster of customers entering or leaving the segment, with alerts.
