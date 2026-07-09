@@ -1,0 +1,44 @@
+---
+title: "Dashboards"
+description: "Your home dashboard, plus composable dashboards assembled from saved charts and shareable via public link or embed."
+---
+
+## Home dashboard
+
+Your tenant home is a ready-made dashboard—no setup required. It greets you and summarizes the state of the business:
+
+* **Headline stats** — Signups, Active subscriptions, and Pending invoices, each linking through to the underlying list.
+* **Overview** — a Revenue / MRR chart (toggle between the two) with a plan filter and date presets, alongside **MRR breakdown** and **MRR logs**.
+* **Details** — New customers, Trial conversion rate, and Top revenue by customer.
+
+<Info>The home dashboard is available to every organization. The richer MRR panels are part of the Standard experience.</Info>
+
+## Composable dashboards
+
+Beyond the home page, you can build your own dashboards from saved charts. Open the **Dashboards** tab in **Intelligence > Analytics**.
+
+<Steps>
+<Step title="Save the charts you want">
+Build each view in the [explorer](/analytics/reports#the-explorer) and save it as a custom chart.
+</Step>
+<Step title="Assemble a dashboard">
+Create a dashboard and add your saved charts as **tiles**, laid out at half or full width to compose the cockpit you want.
+</Step>
+<Step title="Reuse it">
+Open the dashboard any time as a standing view—your morning revenue cockpit, a board-meeting summary, a team KPI wall.
+</Step>
+</Steps>
+
+## Sharing & embedding a dashboard
+
+A dashboard can be shared **outside** Meteroid—useful for investors, board members, or teammates without an account.
+
+From a dashboard, open **Share** to:
+
+* **Public link** — generate a tokenized, read-only URL (`/portal/dashboard?token=…`) that anyone with the link can open. No login required.
+* **Embed** — get an `<iframe>` snippet (the same URL with `&embed=1`) to drop the dashboard into a wiki, a Notion page, or an internal app.
+* **Powered by** — optionally hide the Meteroid attribution on the shared view.
+
+<Warning>A public dashboard link is **read-only** but **unauthenticated**—anyone who has the link can view the data it contains. Share it deliberately, and revoke it when it's no longer needed.</Warning>
+
+<Info>This is a separate surface from the [customer portal embed](/customer/customer-portal#embedded-ui-components): dashboards share **your** analytics with people you choose, whereas the customer portal shows a **single customer** their own billing.</Info>

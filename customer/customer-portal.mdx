@@ -66,16 +66,196 @@ In the subscription section, clicking "Manage" and then "Add-ons", End Users can
 
 # Portal Customization
 
-You can customize the look and feel of your Customer Portal to match your brand identity and provide a consistent experience for End Users. Customization is managed directly from the Settings > Merchant section. 
+You can customize the look and feel of your Customer Portal to match your brand identity and provide a consistent experience for End Users. Branding is configured **per invoicing entity** from the **Settings > Merchant** section, and applies to the hosted portal, the embedded components, and the checkout page:
+
+* **Logo** — appears in the portal header, on the checkout page, and on invoices.
+* **Brand / accent color** — the primary color used for buttons, links, and highlights.
+* **Theme mode** — `Light` or `Dark`.
+* **Corner roundness** — `Sharp`, `Modern`, or `Rounded`.
+
+A live preview shows how your settings look before you save. If you run multiple invoicing entities, any value left unset on a secondary entity is inherited from your **default** invoicing entity.
+
+<Frame>
+<img
+  src="/public/meteroid-portal-custom.png"
+  alt="Customizing Meteroid's Customer Portal branding"
+/>
+</Frame>
 
 # Integrating the Customer Portal
 
-## Using Meteroid's API
+You can bring the Customer Portal into your own product in two ways:
 
-You can generate a Customer Portal token for a given Customer using Meteroid's API. This token allows you to securely authenticate the Customer and redirect them to their dedicated Customer Portal.
+* **Hosted portal** — redirect Customers to a full-page portal hosted by Meteroid.
+* **Embedded components** — embed the whole portal, or individual widgets (invoices, current plan, payment methods, usage…), directly inside your application.
 
-Refer to the [API documentation](https://docs.meteroid.com/api-reference/customers/generate-a-portal-token-for-a-customer) for more details on generating a Customer Portal token.
+Both are authenticated with a short-lived **Customer Portal token** that scopes access to a single Customer.
 
-## Using Embedded UI Components
+## Generating a portal token
 
-Meteroid also provides embedded UI components that allow you to integrate Customer Portal features directly into your application. This approach enables your Customers to manage their subscriptions, invoices, payment methods, and billing information without leaving your product.
+Generate a token for a Customer from your backend using your **tenant API key**. Never expose your API key in the browser — mint the token server-side, then hand it to your frontend.
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://app.meteroid.com/api/v1/customers/{customer_id_or_alias}/portal-token \
+  -H "Authorization: Bearer $METEROID_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "expires_in_seconds": 86400 }'
+```
+</CodeGroup>
+
+The response returns the token and your portal base URL:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1Ni...",
+  "portal_url": "https://app.meteroid.com"
+}
+```
+
+<ParamField body="expires_in_seconds" type="integer" default="86400">
+  Token lifetime in seconds. Optional — defaults to **24 hours**. Must be between `60` (1 minute) and `2592000` (30 days).
+</ParamField>
+
+💡 **Note:** The `customer_id_or_alias` path segment accepts either the Meteroid Customer ID or the Alias (External ID) you assigned. See the [API reference](https://docs.meteroid.com/api-reference/customers/generate-a-portal-token-for-a-customer) for the full schema.
+
+## Hosted portal (redirect)
+
+The simplest integration: build a portal URL with the token and send the Customer to it (a link, a redirect, or a new tab).
+
+```
+https://app.meteroid.com/portal/customer?token=<CUSTOMER_PORTAL_TOKEN>
+```
+
+The hosted portal is already branded with your **Settings > Merchant** configuration. You can still override the appearance per link with the [query parameters](#appearance-and-behavior-parameters) below (for example `&theme=light`).
+
+## Embedded UI components
+
+Instead of sending Customers away, embed the portal — or a single widget — inside your own app. Embedding is driven by one query parameter, **`?embed=`**, which selects what to render:
+
+```
+https://app.meteroid.com/portal/customer?token=<CUSTOMER_PORTAL_TOKEN>&embed=invoices
+```
+
+### Available embed views
+
+| `embed=` value | What it renders |
+| --- | --- |
+| `portal` | The complete self-service portal (all sections) |
+| `plan` | Compact card for the current plan — name, status, price, next charge |
+| `subscriptions` | List of the Customer's active subscriptions |
+| `subscription` | A single subscription — **requires** `&subscription=<subscription_id>` |
+| `usage` | Metered usage for the current billing period |
+| `invoices` | Recent invoices with pay & download actions |
+| `payment-methods` | Saved payment methods, with add-card and set-default |
+
+If `embed` is omitted (or set to an unknown value), the full portal is rendered.
+
+### Appearance and behavior parameters
+
+Every embed view accepts the following optional parameters. Precedence is **URL parameter → your portal branding (Settings > Merchant) → Meteroid default**, so a parameter always wins when present.
+
+| Parameter | Values | Default | Description |
+| --- | --- | --- | --- |
+| `token` | JWT string | — | **Required.** The Customer Portal token. |
+| `embed` | one of the views above | full portal | Which widget to render. |
+| `theme` | `light`, `dark` | `dark` | Color mode. |
+| `accent` | hex color (`#RRGGBB`) | your brand color | Accent / primary color. |
+| `radius` | `Sharp`, `Modern`, `Rounded` | `Modern` | Corner roundness. |
+| `bg` | hex color | derived | Page background override. |
+| `surface` | hex color | derived | Card / panel surface override. |
+| `text` | hex color | derived | Primary text color override. |
+| `border` | hex color | derived | Border & divider color override. |
+| `branding` | `false` | shown | Set to `false` to hide the "Powered by Meteroid" footer. |
+| `count` | `1`–`20` | `5` | Number of rows in the `invoices` widget. |
+| `subscription` | subscription id | — | Target subscription for the `subscription` view. |
+
+<Info>Color parameters accept hex only (`#RGB` or `#RRGGBB`). Values that don't parse are ignored and fall back to your branding, then the default.</Info>
+
+### Adding the embed to your app
+
+<Tabs>
+<Tab title="Embed script (no build step)">
+
+Drop the Meteroid embed script into your page and describe the widget with `data-*` attributes. The script auto-mounts every matching element and keeps the frame sized to its content.
+
+```html
+<div
+  data-meteroid-portal
+  data-token="CUSTOMER_PORTAL_TOKEN"
+  data-view="invoices"
+  data-theme="dark"
+  data-accent="#C6F94E"
+  data-count="10"
+></div>
+
+<script src="https://app.meteroid.com/embed.js" async></script>
+```
+
+Prefer to mount it yourself? The script also exposes a global:
+
+```html
+<script src="https://app.meteroid.com/embed.js"></script>
+<script>
+  Meteroid.mountBillingPortal('#billing', {
+    token: 'CUSTOMER_PORTAL_TOKEN',
+    view: 'portal',
+    theme: 'dark',
+  })
+</script>
+```
+
+</Tab>
+<Tab title="React">
+
+For bundled apps, the `@md/portal-embed` package ships a React component that renders the iframe and handles auto-resize for you:
+
+```jsx
+import { BillingPortal } from '@md/portal-embed/react'
+
+export function Billing({ token }) {
+  return (
+    <BillingPortal
+      token={token}
+      view="invoices"
+      theme="dark"
+      accent="#C6F94E"
+      count={10}
+      onNavigate={(target) => router.push(`/billing/${target}`)}
+    />
+  )
+}
+```
+
+The same package exposes framework-agnostic `mountBillingPortal(target, options)` and `buildEmbedUrl(options)` helpers.
+
+</Tab>
+<Tab title="Plain iframe">
+
+You can embed with a raw iframe and no dependencies. Point it at the embed URL and listen for the resize message so the frame grows to fit its content (embedded widgets never show their own scrollbar):
+
+```html
+<iframe
+  id="meteroid-billing"
+  src="https://app.meteroid.com/portal/customer?token=CUSTOMER_PORTAL_TOKEN&embed=invoices&theme=dark"
+  style="width: 100%; border: 0"
+  allow="payment"
+></iframe>
+
+<script>
+  const frame = document.getElementById('meteroid-billing')
+  window.addEventListener('message', (e) => {
+    if (e.source !== frame.contentWindow) return
+    if (e.data?.type === 'meteroid:resize') {
+      frame.style.height = e.data.height + 'px'
+    }
+  })
+</script>
+```
+
+</Tab>
+</Tabs>
+
+<Info>**Auto-resize.** The embedded portal reports its height to the parent window via a `postMessage` of `{ type: 'meteroid:resize', height }`. The embed script and React component handle this automatically; with a plain iframe, add the listener shown above. When you pass an `onNavigate` handler, in-widget links post `{ type: 'meteroid:navigate', target }` instead of opening a new tab, so navigation stays inside your app.</Info>
+
+💡 **Note:** Embedded widgets render on a transparent background so they blend into your page, and can be embedded on any origin — access is controlled entirely by the Customer Portal token, not by domain.
