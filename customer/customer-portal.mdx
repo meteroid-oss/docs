@@ -20,74 +20,74 @@ However, the payment method that will actually be used to process payments is de
 Customers can update directly in the Portal their billing info (email, billing adress, tax number...). They updated information are automatically reflected in Meteroid and applied to future invoices.
 
 <Frame>
-<img
-  src="/public/meteroid-customer-portal-billing-details.png"
-  alt="Update billing details from Meteroid's Customer Portal"
-/>
+  <img
+    src="/public/meteroid-customer-portal-billing-details.png"
+    alt="Update billing details from Meteroid's Customer Portal"
+  />
 </Frame>
 
 ## Manage & Pay Invoices
 
-Customers can view and download their past invoices with their payment status. If the invoices have not already been paid, they can pay them using the pre-defined payment method: 
-* If the subscritpion payment method has been set to "Online (card/direct debit)", Customers will be able to update their card / account informations 
-* If the subscritpion payment method has been set to "Bank transfer", Customers will access the bank details set in settings > Payment methods
+Customers can view and download their past invoices with their payment status. If the invoices have not already been paid, they can pay them using the pre-defined payment method:
 
-In the Subscription section, clicking "Manage", Customer can access a preview of their upcoming invoices. 
+- If the subscritpion payment method has been set to "Online (card/direct debit)", Customers will be able to update their card / account informations
+- If the subscritpion payment method has been set to "Bank transfer", Customers will access the bank details set in settings > Payment methods
+
+In the Subscription section, clicking "Manage", Customer can access a preview of their upcoming invoices.
 
 <Frame>
-<img
-  src="/public/meteroid-customer-portal-invoice.png"
-  alt="Manage and pay invoices from Meteroid's Customer Portal"
-/>
+  <img
+    src="/public/meteroid-customer-portal-invoice.png"
+    alt="Manage and pay invoices from Meteroid's Customer Portal"
+  />
 </Frame>
-
 
 ## Upgrade/downgrade their subscriptions and buy Add Ons
 
 In the subscription section, clicking "Manage" and then "Change Plan", End Users can upgrade/downgrade their subscription in full autonomy.
 
 <Frame>
-<img
-  src="/public/meteroid-customer-portal-upgrade.png"
-  alt="Upgrade / downgrade from Meteroid's Customer Portal"
-/>
+  <img
+    src="/public/meteroid-customer-portal-upgrade.png"
+    alt="Upgrade / downgrade from Meteroid's Customer Portal"
+  />
 </Frame>
 
-💡**Note:** By default billing behaviour: 
-* downgrades take effect at the end of the current billing period (no credits).
-* upgrades take effect immediately. A prorated invoice is immediately issued including credit for the former plan and charge for the new one. 
+💡**Note:** By default billing behaviour:
+
+- downgrades take effect at the end of the current billing period (no credits).
+- upgrades take effect immediately. A prorated invoice is immediately issued including credit for the former plan and charge for the new one.
 
 💡**Note:** To have more information on Plans that are displayed in the Customer Portal (and so eligible for upgrade/downgrade), please read the managing plans section.
 
-In the subscription section, clicking "Manage" and then "Add-ons", End Users can buy Add-ons in full autonomy. 
+In the subscription section, clicking "Manage" and then "Add-ons", End Users can buy Add-ons in full autonomy.
 
 💡**Note:** To have more information on Add-Ons that are displayed in the Customer Portal (and so that can be bought by End Users), please read the managing add-ons section.
-
 
 # Portal Customization
 
 You can customize the look and feel of your Customer Portal to match your brand identity and provide a consistent experience for End Users. Branding is configured **per invoicing entity** from the **Settings > Merchant** section, and applies to the hosted portal, the embedded components, and the checkout page:
 
-* **Logo** — appears in the portal header, on the checkout page, and on invoices.
-* **Brand / accent color** — the primary color used for buttons, links, and highlights.
-* **Theme mode** — `Light` or `Dark`.
-* **Corner roundness** — `Sharp`, `Modern`, or `Rounded`.
+- **Logo** — appears in the portal header, on the checkout page, and on invoices.
+- **Brand / accent color** — the primary color used for buttons, links, and highlights.
+- **Theme mode** — `Light` or `Dark`.
+- **Corner roundness** — `Sharp`, `Modern`, or `Rounded`.
 
 A live preview shows how your settings look before you save. If you run multiple invoicing entities, any value left unset on a secondary entity is inherited from your **default** invoicing entity.
 
 <Frame>
-<img
-  src="/public/meteroid-portal-custom.png"
-  alt="Customizing Meteroid's Customer Portal branding"
-/>
+  <img
+    src="/public/meteroid-portal-custom.png"
+    alt="Customizing Meteroid's Customer Portal branding"
+  />
 </Frame>
 
 # Integrating the Customer Portal
 
 You can bring the Customer Portal into your own product in two ways:
 
-* **Hosted portal** — redirect Customers to a full-page portal hosted by Meteroid.
-* **Embedded components** — embed the whole portal, or individual widgets (invoices, current plan, payment methods, usage…), directly inside your application.
+- **Hosted portal** — redirect Customers to a full-page portal hosted by Meteroid.
+- **Embedded components** — embed the whole portal, or individual widgets (invoices, current plan, payment methods, usage…), directly inside your application.
 
 Both are authenticated with a short-lived **Customer Portal token** that scopes access to a single Customer.
 
@@ -114,7 +114,8 @@ The response returns the token and your portal base URL:
 ```
 
 <ParamField body="expires_in_seconds" type="integer" default="86400">
-  Token lifetime in seconds. Optional — defaults to **24 hours**. Must be between `60` (1 minute) and `2592000` (30 days).
+  Token lifetime in seconds. Optional — defaults to **24 hours**. Must be
+  between `60` (1 minute) and `2592000` (30 days).
 </ParamField>
 
 💡 **Note:** The `customer_id_or_alias` path segment accepts either the Meteroid Customer ID or the Alias (External ID) you assigned. See the [API reference](https://docs.meteroid.com/api-reference/customers/generate-a-portal-token-for-a-customer) for the full schema.
@@ -139,15 +140,15 @@ https://app.meteroid.com/portal/customer?token=<CUSTOMER_PORTAL_TOKEN>&embed=inv
 
 ### Available embed views
 
-| `embed=` value | What it renders |
-| --- | --- |
-| `portal` | The complete self-service portal (all sections) |
-| `plan` | Compact card for the current plan — name, status, price, next charge |
-| `subscriptions` | List of the Customer's active subscriptions |
-| `subscription` | A single subscription — **requires** `&subscription=<subscription_id>` |
-| `usage` | Metered usage for the current billing period |
-| `invoices` | Recent invoices with pay & download actions |
-| `payment-methods` | Saved payment methods, with add-card and set-default |
+| `embed=` value    | What it renders                                                        |
+| ----------------- | ---------------------------------------------------------------------- |
+| `portal`          | The complete self-service portal (all sections)                        |
+| `plan`            | Compact card for the current plan — name, status, price, next charge   |
+| `subscriptions`   | List of the Customer's active subscriptions                            |
+| `subscription`    | A single subscription — **requires** `&subscription=<subscription_id>` |
+| `usage`           | Metered usage for the current billing period                           |
+| `invoices`        | Recent invoices with pay & download actions                            |
+| `payment-methods` | Saved payment methods, with add-card and set-default                   |
 
 If `embed` is omitted (or set to an unknown value), the full portal is rendered.
 
@@ -155,22 +156,25 @@ If `embed` is omitted (or set to an unknown value), the full portal is rendered.
 
 Every embed view accepts the following optional parameters. Precedence is **URL parameter → your portal branding (Settings > Merchant) → Meteroid default**, so a parameter always wins when present.
 
-| Parameter | Values | Default | Description |
-| --- | --- | --- | --- |
-| `token` | JWT string | — | **Required.** The Customer Portal token. |
-| `embed` | one of the views above | full portal | Which widget to render. |
-| `theme` | `light`, `dark` | `dark` | Color mode. |
-| `accent` | hex color (`#RRGGBB`) | your brand color | Accent / primary color. |
-| `radius` | `Sharp`, `Modern`, `Rounded` | `Modern` | Corner roundness. |
-| `bg` | hex color | derived | Page background override. |
-| `surface` | hex color | derived | Card / panel surface override. |
-| `text` | hex color | derived | Primary text color override. |
-| `border` | hex color | derived | Border & divider color override. |
-| `branding` | `false` | shown | Set to `false` to hide the "Powered by Meteroid" footer. |
-| `count` | `1`–`20` | `5` | Number of rows in the `invoices` widget. |
-| `subscription` | subscription id | — | Target subscription for the `subscription` view. |
+| Parameter      | Values                       | Default          | Description                                              |
+| -------------- | ---------------------------- | ---------------- | -------------------------------------------------------- |
+| `token`        | JWT string                   | —                | **Required.** The Customer Portal token.                 |
+| `embed`        | one of the views above       | full portal      | Which widget to render.                                  |
+| `theme`        | `light`, `dark`              | `dark`           | Color mode.                                              |
+| `accent`       | hex color (`#RRGGBB`)        | your brand color | Accent / primary color.                                  |
+| `radius`       | `Sharp`, `Modern`, `Rounded` | `Modern`         | Corner roundness.                                        |
+| `bg`           | hex color                    | derived          | Page background override.                                |
+| `surface`      | hex color                    | derived          | Card / panel surface override.                           |
+| `text`         | hex color                    | derived          | Primary text color override.                             |
+| `border`       | hex color                    | derived          | Border & divider color override.                         |
+| `branding`     | `false`                      | shown            | Set to `false` to hide the "Powered by Meteroid" footer. |
+| `count`        | `1`–`20`                     | `5`              | Number of rows in the `invoices` widget.                 |
+| `subscription` | subscription id              | —                | Target subscription for the `subscription` view.         |
 
-<Info>Color parameters accept hex only (`#RGB` or `#RRGGBB`). Values that don't parse are ignored and fall back to your branding, then the default.</Info>
+<Info>
+  Color parameters accept hex only (`#RGB` or `#RRGGBB`). Values that don't
+  parse are ignored and fall back to your branding, then the default.
+</Info>
 
 ### Adding the embed to your app
 
@@ -197,21 +201,21 @@ Prefer to mount it yourself? The script also exposes a global:
 ```html
 <script src="https://app.meteroid.com/embed.js"></script>
 <script>
-  Meteroid.mountBillingPortal('#billing', {
-    token: 'CUSTOMER_PORTAL_TOKEN',
-    view: 'portal',
-    theme: 'dark',
-  })
+  Meteroid.mountBillingPortal("#billing", {
+    token: "CUSTOMER_PORTAL_TOKEN",
+    view: "portal",
+    theme: "dark",
+  });
 </script>
 ```
 
 </Tab>
-<Tab title="React">
+<Tab title="React (SOON)">
 
 For bundled apps, the `@md/portal-embed` package ships a React component that renders the iframe and handles auto-resize for you:
 
 ```jsx
-import { BillingPortal } from '@md/portal-embed/react'
+import { BillingPortal } from "@md/portal-embed/react";
 
 export function Billing({ token }) {
   return (
@@ -223,7 +227,7 @@ export function Billing({ token }) {
       count={10}
       onNavigate={(target) => router.push(`/billing/${target}`)}
     />
-  )
+  );
 }
 ```
 
@@ -243,13 +247,13 @@ You can embed with a raw iframe and no dependencies. Point it at the embed URL a
 ></iframe>
 
 <script>
-  const frame = document.getElementById('meteroid-billing')
-  window.addEventListener('message', (e) => {
-    if (e.source !== frame.contentWindow) return
-    if (e.data?.type === 'meteroid:resize') {
-      frame.style.height = e.data.height + 'px'
+  const frame = document.getElementById("meteroid-billing");
+  window.addEventListener("message", (e) => {
+    if (e.source !== frame.contentWindow) return;
+    if (e.data?.type === "meteroid:resize") {
+      frame.style.height = e.data.height + "px";
     }
-  })
+  });
 </script>
 ```
 
