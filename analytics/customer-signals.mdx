@@ -1,0 +1,48 @@
+---
+title: "Customer signals"
+description: "Account-level intelligence for sales and CS—who's slipping, who's expanding, and live rosters of at-risk and opportunity accounts."
+---
+
+Where [Steering](/analytics/steering) watches your **metrics**, **Customer Signals** (**Intelligence > Customer Signals**) watches your **accounts**. It's built for sales and customer success: surface the customers who need attention today, and act on them.
+
+![Analytics signals](/assets/analytics_signal.png)
+
+## Momentum board
+
+At the top of the page, the **Momentum board** is always on and needs no configuration. It shows two columns computed from your revenue movements:
+
+- **Slipping** — accounts whose MRR is contracting.
+- **Expanding** — accounts whose MRR is growing.
+
+Each row shows the customer, their current MRR and the MRR change, and links straight to the [customer detail page](/customer/managing-customers) so you can act. Use **View all** to open the full **Risk** or **Opportunity** report.
+
+## Signals
+
+A **Signal** is a watch on a [customer segment](/analytics/segments) that produces a live, actionable roster. Instead of firing once, a signal tracks membership over time: **one alert per customer as they enter the segment, resolved when they leave**—so the signal's roster is always the current worklist.
+
+Create one with **New signal**:
+
+- **Name**
+- **Type** — **Risk** or **Opportunity** (this controls where it surfaces and how it's colored).
+- **Segment** — a saved segment, or an inline cohort defined on the spot.
+- **Usage lookback** — the window usage predicates evaluate over: 7, 14, 30, 60 or 90 days (default 30).
+- **Deliver to** — [notification channels](/analytics/steering#notification-channels).
+
+Signals appear as cards, filterable by **all / risk / opportunity**.
+
+## Signal roster (detail)
+
+Opening a signal shows the actionable roster:
+
+- **Stat tiles** — In segment now, MRR at risk / Expansion MRR, Entered this week, Median time in segment.
+- **Member table** — each customer with their MRR, 30-day MRR change, and how long they've been in the segment; every row links to the customer.
+- **Export CSV** — hand the roster to your CRM or a campaign.
+- **Definition & recent membership** — what the signal watches, and who recently entered or left.
+
+## On the customer page
+
+Signals are also surfaced **per customer**: the customer detail page has a **Signals** card showing which risk/opportunity segments that account currently belongs to, so a rep sees the context without leaving the account.
+
+## Risk & opportunity reports
+
+The **Risk** and **Opportunity** reports (reached from the Momentum board's **View all**, or under Analytics) rank every account by revenue momentum—the biggest contractions and the biggest expansions—each row linking to the customer. They're the zero-setup companion to user-defined signals.
