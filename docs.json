@@ -119,7 +119,8 @@
               "settings/invoices-settings",
               "settings/tenants",
               "settings/payment-methods",
-              "settings/security-management"
+              "settings/security-management",
+              "settings/single-sign-on"
             ]
           },
           {
