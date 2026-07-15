@@ -19,7 +19,6 @@ To create a new metric, navigate to: **Product Catalog > Metrics > New Metric**
 Then, you will need to enter the following details:
 
 * **Metric Name** – A unique name that will help identify the billable metric when defining pricing strategies.
-* **Product Line** – A Product Line represents a category or grouping of related Plans (*cf*. Glossary for more details). If needed, Account Managers can activate the Product Line feature in Settings. Once activated, when Account Managers create a Plan, they must assign it to a specific Product Line and only Metrics from the same Product Line can be used to define pricing components for that Plan. **By default, Meteroid automatically assigns Metrics and Plans to the "Default" Product Line**.
 * **Event Code** – This is the usage event used to build a billable Metric. It corresponds to the name of the event that your system sends to Meteroid and that Meteroid should consider to build the billable Metric. Indeed, Metrics are assembled by filtering and aggregating (cf. Aggragation Type below) these incoming events.
 * **Description** – A brief explanation of the metric and what it measures.
 * **Aggregation Type** – Defines how the data is processed by Meteroid. It is applied to the values included in the events matching the Event Code.
@@ -80,11 +79,10 @@ For example, for cloud providers and geographies:
 
 💡 **Note**: You can **edit existing Segmentation** without archiving and recreating a Metric by clicking Metrics > Edit. It allows you for instance to add a new Cloud Provider or Region to an existing Metric.
 
-Optionally, you can configure the **usage grouping** as well. To do so, enter a **grouping key**.\
-This allows you to group usage events by values from your events (e.g., `cluster_id`, `project_id`). These groups will then be displayed on Invoices, making it easier for Customers to understand how usage is allocated across different projects, clusters, or other attributes.
-
-💡 **Note**: **Groups are considered independent**. For exampple, if you configure a tiered pricing model, the usage within each group will be evaluated separately. The consumption from different groups will not be summed across groups when determining the applicable tier.
-
+Optionally, you can configure as well:
+* **usage grouping**: To do so, enter a **grouping key**. This allows you to group usage events by values from your events (e.g., `cluster_id`, `project_id`). These groups will then be displayed on Invoices, making it easier for Customers to understand how usage is allocated across different projects, clusters, or other attributes.
+  💡 **Note**: **Groups are considered independent**. For exampple, if you configure a tiered pricing model, the usage within each group will be evaluated separately. The consumption from different groups will not be summed across groups when determining the applicable tier.
+* **filters* to restrict which events are considered when calculating a Billable Metric. Filters are based on event properties. Only events matching all configured filters are included in the metric. 
 
 # Manage Metrics in Meteroid
 
