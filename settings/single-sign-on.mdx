@@ -1,0 +1,179 @@
+---
+title: "Single Sign-On (SSO)"
+sidebarTitle: "Single Sign-On"
+description: "Let your team sign in through your organization's OIDC identity provider."
+---
+
+Single Sign-On lets your team sign in to Meteroid with your company credentials
+instead of a Meteroid password. Meteroid connects to your identity provider (IdP)
+over **OIDC** — Okta, Microsoft Entra ID, Google Workspace, Auth0, and any
+OIDC-compliant provider are supported.
+
+<Info>
+  SSO is an organization-level feature configured by **admins** under
+  **Settings → Security → SSO**, and is available on plans that include SSO
+  (Enterprise). Domain ownership and the identity-provider connection are managed
+  per organization.
+</Info>
+
+## How it works
+
+- You prove ownership of one or more **email domains** (for example `acme.com`)
+  with a DNS record.
+- You connect your **OIDC identity provider** and attach it to those domains.
+- When a member signs in with an email on a verified domain, Meteroid routes them
+  to your IdP through the standard OIDC authorization-code flow.
+- Optionally, you can **require** SSO for those domains and **auto-provision**
+  members on their first sign-in.
+
+Setup has three parts: verify a domain, connect your identity provider, then
+enable SSO.
+
+## Before you begin
+
+- You are an **organization admin**.
+- You can add a **DNS TXT record** for the domain you want to use.
+- You can create an **OIDC application** in your identity provider.
+
+## Step 1 — Verify your domain
+
+Only **verified** domains route logins, so start here. Go to
+**Settings → Security → Domains**.
+
+<Steps>
+  <Step title="Add your domain">
+    Enter your organization's email domain (for example `acme.com`) and click
+    **Add domain**.
+  </Step>
+  <Step title="Add the DNS TXT record">
+    Meteroid shows a TXT record to publish at your DNS provider:
+
+    | Field       | Value                              |
+    | ----------- | ---------------------------------- |
+    | Type        | `TXT`                              |
+    | Name / Host | `_meteroid-challenge.<domain>`     |
+    | Value       | the verification token shown in-app |
+
+    <Note>
+      Some DNS providers append the domain automatically. If yours does, enter
+      just `_meteroid-challenge` as the name.
+    </Note>
+  </Step>
+  <Step title="Verify">
+    Click **Verify domains**. DNS can take a few minutes to propagate, so if the
+    domain is still **Pending**, wait and re-check (there's a short cooldown
+    between checks). Once the record is found, the domain flips to **Verified**.
+  </Step>
+</Steps>
+
+## Step 2 — Create the OIDC application in your identity provider
+
+In **Settings → Security → SSO**, copy the **Redirect URI** shown in-app (it
+ends in `/sso/callback`) — you'll register this exact value in your provider.
+Then create an OIDC application and collect its **Issuer URL**, **Client ID**,
+and **Client secret**.
+
+<Tabs>
+  <Tab title="Google Workspace">
+    Create an **OAuth 2.0 Client ID** (type: *Web application*) in Google Cloud
+    Console → **APIs & Services → Credentials**, and add the Meteroid redirect
+    URI as an authorized redirect URI.
+
+    - **Issuer:** `https://accounts.google.com`
+  </Tab>
+  <Tab title="Microsoft Entra ID">
+    Register an app in Entra ID → **App registrations**, add the Meteroid
+    redirect URI as a **Web** platform redirect, and create a **client secret**.
+
+    - **Issuer:** `https://login.microsoftonline.com/<tenant-id>/v2.0`
+      (replace `<tenant-id>` with your directory/tenant ID)
+  </Tab>
+  <Tab title="Okta">
+    Create an OIDC **Web** application in Okta and add the Meteroid redirect URI
+    as a sign-in redirect URI.
+
+    - **Issuer:** `https://<your-domain>.okta.com`
+  </Tab>
+  <Tab title="Auth0">
+    Create a **Regular Web Application** in Auth0 and add the Meteroid redirect
+    URI to its allowed callback URLs.
+
+    - **Issuer:** `https://<your-tenant>.<region>.auth0.com`
+  </Tab>
+  <Tab title="Other (OIDC)">
+    Any OIDC-compliant provider works. Create a confidential/web application, add
+    the Meteroid redirect URI, and use your provider's **Issuer URL** — the base
+    of its `/.well-known/openid-configuration` document.
+  </Tab>
+</Tabs>
+
+## Step 3 — Configure the connection in Meteroid
+
+Back in **Settings → Security → SSO**, fill in the connection:
+
+- **Identity provider** — pick your provider to prefill the issuer, or choose
+  *Other (OIDC)*.
+- **Issuer URL**, **Client ID**, **Client secret** — from the app you just
+  created.
+- **Email domains** — the domains this provider covers, space- or comma-separated.
+  Only domains you verified in Step 1 will route logins.
+
+Meteroid resolves the authorization, token, and userinfo endpoints automatically
+from the issuer's discovery document. If your provider needs them set by hand,
+expand **Advanced** to enter the endpoints manually and adjust the requested
+**scopes** (default: `openid email profile`).
+
+Click **Create connection**. New connections are always created **disabled** — you
+enable them in the next step.
+
+## Step 4 — Enable SSO
+
+Once at least one attached domain is **Verified**, turn on **Enable SSO**.
+Members on your verified domains will now see a **Continue with SSO** option on
+the login screen.
+
+<Tip>
+  Test the sign-in flow with your own account before rolling SSO out to the team,
+  and especially before requiring it.
+</Tip>
+
+### Require SSO (enforcement)
+
+Turn on **Require SSO** to refuse password and social sign-in for your verified
+domains — members on those domains must sign in through your identity provider.
+
+<Warning>
+  Enforcement disables password and social login for everyone on the verified
+  domains. Confirm SSO works end to end first, or you risk locking your team out.
+</Warning>
+
+### Auto-provision members
+
+With **Auto-provision members** enabled (the default), a member account is
+created and added to your organization on their first successful SSO sign-in — no
+invite required. When a member signs in through an invite link, they join with
+the **role from the invite** instead of the default membership.
+
+## How members sign in
+
+Login is email-first:
+
+1. The member enters their email and clicks **Continue**.
+2. Meteroid looks up the identity provider for that email's domain.
+3. If SSO is **required** for the domain, they're sent straight to your IdP.
+   Otherwise the password field appears alongside a **Continue with SSO** button.
+4. After authenticating with your IdP, they're returned to Meteroid and signed in.
+
+## Security log
+
+Every SSO and domain action is recorded in the **Security log**
+(**Settings → Security → Security log**), including SSO sign-ins, connection
+created/updated/removed, the requirement being turned on or off, and domains
+added, verified, or removed. See [Security Management](/settings/security-management#security-log).
+
+## Managing the connection
+
+- **Edit configuration** — update the provider, endpoints, domains, or secret.
+  Leave the client secret blank to keep the stored one.
+- **Remove** — deletes the connection. Members fall back to password and social
+  sign-in, and enforcement (if on) is lifted immediately.
