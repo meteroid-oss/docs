@@ -117,6 +117,7 @@
               "settings/merchant",
               "settings/taxes",
               "settings/invoices-settings",
+              "settings/custom-properties",
               "settings/tenants",
               "settings/payment-methods",
               "settings/security-management",
