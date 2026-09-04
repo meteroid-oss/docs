@@ -4,19 +4,121 @@ ContentWidth: 734
 ---
 <Info>[Get started with Meteroid for free](https://app.meteroid.com/registration)</Info>
 
-{/* UNPUBLISHED DRAFT — SSO changelog entry. Remove these comment markers to publish.
+<Update label="August 2026" description="v1.0.0">
+
+## Multi-language Invoicing
+
+Invoices can now be issued in the customer's or invoicing entity's preferred language:
+* Set an invoicing language per Customer or Invoicing Entity
+* Invoice footers are translated accordingly
+
+<Frame>
+<img
+  src="/public/meteroid-invoice-language.png" 
+  alt="Multi-language invoicing settings in Meteroid"
+/>
+</Frame>
+
+## Enhanced Invoice Corrections
+
+You can now add or edit rows in invoice annexes directly within a correction, giving you full control over the breakdown Customers see when an invoice is corrected.
+
+## New Payment Payments
+
+We shipped a new payment provider architecture that makes it much easier to contribute and integrate new payment providers. Thanks to community contributor **ibougihub**, who built the new Stancer integration on top of it. We added as well the GoCardless integration.
+
+<Frame>
+<img
+  src="/public/meteroid-payment-providers.png" 
+  alt="Payment provider integrations in Meteroid, including the new Stancer plugin"
+/>
+</Frame>
+
+## Automatic Refresh of Draft Invoices
+
+Draft invoices are now automatically refreshed in the background on an hourly basis, so they stay up to date even before finalization.
+
+## Self-hosting: Helm Chart
+
+We've published an official Helm chart for deploying Meteroid open source, making it easier to run Meteroid on Kubernetes.
+
+</Update>
 
 <Update label="July 2026" description="v1.0.0">
 
-## Single Sign-On (SSO)
+## Meteroid Intelligence
+
+We released Meteroid Intelligence that turns the billing and usage data you already have into a full analytics suite, computed from the same subscriptions, invoices, payments and events that drive your billing. 
+
+**27 built-in metrics**
+
+MRR, ARR, NRR, churn, cash, retention, revenue mix — plus your own usage metrics — in one explorer you can break down, filter, compare and forecast.
+
+**Steering**
+
+Put a monitor on any metric and get alerted on thresholds, % changes, anomalies, usage limits, even forecast breaches.
+
+**Customer Signals**
+
+A live roster of who's slipping and who's expanding, with the MRR at stake, wired straight to the account — for your sales & CS teams.
+
+**Dashboards**
+
+Live data, refreshed hourly. Configure and add your charts and KPIs, then share your dashboards externally with your team or stakeholders.
+
+<Frame>
+<img
+  src="/public/meteroid-intelligence-dashboard.png" 
+  alt="Meteroid Intelligence dashboard with ARR, billed revenue and usage charts"
+/>
+</Frame>
+
+## Security
+
+We've extended our Security module with two new capabilities:
+
+**Roles & Permissions (RBAC)**
+
+Define granular roles and permissions to control what each team member can access and do in Meteroid.
+
+<Frame>
+<img
+  src="/public/meteroid-rbac-permissions.png" 
+  alt="Roles and permissions management in Meteroid"
+/>
+</Frame>
+
+**Single Sign-On (SSO)**
 
 Your team can now sign in through your organization's OIDC identity provider — Okta, Microsoft Entra ID, Google Workspace, Auth0, or any OIDC-compliant provider. Admins verify their email domains, connect the provider, and can optionally require SSO and auto-provision members on first sign-in.
 
 💡 More information on SSO in Meteroid [here](https://docs.meteroid.com/settings/single-sign-on)
 
-</Update>
+<Frame>
+<img
+  src="/public/meteroid-sso.png" 
+  alt="Single Sign-On configuration in Meteroid"
+/>
+</Frame>
 
-*/}
+## Billable Metrics Filters & Live Usage Preview
+
+**Filter events** — Only count what matters. Include or exclude events by their properties — region, status, anything on the event — so a metric measures exactly what you mean.
+
+**Preview & explore usage** — Once your events are ingested, explore them directly in Meteroid and split usage by customer, before it ever reaches an invoice.
+
+<Frame>
+<img
+  src="/public/meteroid-billable-metric-preview.png" 
+  alt="Registering a billable metric with live usage preview in Meteroid"
+/>
+</Frame>
+
+## Custom Properties in CSV Imports
+
+Customer and subscription CSV imports now support custom properties, so you can bring your own metadata along when importing data into Meteroid.
+
+</Update>
 
 <Update label="June 2026" description="v1.0.0">
 
