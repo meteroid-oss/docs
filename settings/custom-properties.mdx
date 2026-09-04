@@ -1,0 +1,124 @@
+---
+title: Custom properties
+---
+
+Custom properties let you attach your own **typed, validated fields** to Meteroid's core
+entities — the same idea as metadata in Stripe or custom properties in HubSpot, but strongly
+typed and enforced at write time.
+
+Use them to store business-specific data that Meteroid doesn't model natively, for example a
+customer's CRM account ID, a subscription's internal cost center, an invoice's PO approval
+status, or a credit note's accounting reference.
+
+You define properties once per entity type in **Settings > Custom Properties**, and every entity
+of that type then carries those values — visible in tables, on create/edit forms, in the API,
+and in webhooks.
+
+## Supported entities
+
+Custom properties can be defined for the following entity types:
+
+* **Customer**
+* **Subscription**
+* **Invoice**
+* **Credit note**
+
+Each entity type has its own independent set of properties.
+
+## Property types
+
+When you create a property you pick a type. The type drives how the value is rendered in the app
+and how it is validated on write.
+
+| Type | Stores | Notes |
+| --- | --- | --- |
+| **Text** | A free-form string | Optional maximum length |
+| **Number** | A numeric value | Optional min / max bounds |
+| **Boolean** | `true` / `false` | |
+| **Date** | A calendar date | |
+| **Date & time** | A timestamp | |
+| **Single select** | One value from a fixed list | You configure the allowed options |
+| **Multi select** | Several values from a fixed list | You configure the allowed options |
+| **JSON** | An arbitrary JSON object | |
+| **URL** | A URL string | Validated as a URL |
+| **Email** | An email string | Validated as an email address |
+
+## Defining a property
+
+Go to **Settings > Custom Properties** and click **New property**.
+
+<Steps>
+  <Step title="Choose the entity type">
+    Select whether the property applies to Customers, Subscriptions, Invoices or Credit notes.
+    A property belongs to a single entity type.
+  </Step>
+
+  <Step title="Set a key and a name">
+    * **Key** — the immutable machine name used in the API and in webhook payloads
+      (e.g. `crm_account_id`). It may only contain **letters, digits and underscores**, and must
+      be **unique per entity type**. The key cannot be changed after creation, so pick a stable
+      one.
+    * **Name** — the human-friendly label shown in the app.
+    * **Description** *(optional)* — a short note explaining what the property is for.
+  </Step>
+
+  <Step title="Pick the type and its constraints">
+    Choose one of the [property types](#property-types). Depending on the type you can configure
+    extra rules:
+
+    * **Single / Multi select** — the list of allowed **options**.
+    * **Number** — an optional **minimum** and **maximum**.
+    * **Text** — an optional **maximum length**.
+  </Step>
+
+  <Step title="Set required and default (optional)">
+    * **Required** — when enabled, the property must be present when the entity is created or
+      fully updated through the API.
+    * **Default value** — pre-filled when no value is supplied.
+    * **Display order** — controls where the property appears relative to the others.
+  </Step>
+</Steps>
+
+## Filling in values
+
+Once a property is defined, it shows up automatically:
+
+* On the entity's **create and edit forms** in the app.
+* As a **column** in the entity's list view.
+* On the entity's **detail** view.
+
+💡 **Note:** Values are validated against the definition every time they are written. Selects must
+match a configured option, numbers must respect their min/max, text respects its maximum length,
+and URL/Email values must be well-formed. A required property must be provided on full writes.
+
+Custom properties are external workflow metadata, so they stay editable throughout an entity's
+lifecycle — including after an invoice or credit note is finalized. This is intentional: you can
+keep tracking things like a tax-filing or accounting-export status on a document long after its
+financial content is locked.
+
+## Using values in the API and webhooks
+
+Custom property values are exposed as a JSON object, keyed by each property's `key`, on the
+corresponding entity in the REST and gRPC APIs, and on the matching webhook events. For example an
+invoice or credit note payload carries a `custom_properties` object:
+
+```json
+{
+  "custom_properties": {
+    "crm_account_id": "acct_1837",
+    "po_status": "approved"
+  }
+}
+```
+
+Because values are stored in a structured, indexed way, you can also filter and segment entities
+by their custom property values in analytics and workflows.
+
+## Editing and archiving definitions
+
+You can rename a property, change its description, tweak its constraints, and toggle whether it is
+required. The **key** and **entity type** are fixed once created.
+
+When you no longer need a property, **archive** it. Archiving stops the property from being
+enforced or offered on new writes, but **keeps the values already stored on existing entities**, so
+your history stays intact and readable.
