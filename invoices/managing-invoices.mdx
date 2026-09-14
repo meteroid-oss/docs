@@ -132,6 +132,17 @@ If both conditions are met, Meteroid sends one of the following emails:
 * **Receipt Email**: Sent when an automatic payment method (e.g., credit card, direct debit) is configured and the payment succeeds. This email includes attached the payment receipt.
 * **Invoice Email**: Sent when no automatic payment method is available or when payment fails. This email contains the invoice as an attachment and includes a **“View and Pay”** button redirecting the End User to the checkout page where they can pay their invoice.
 
+# Invoice Language
+Meteroid can issue invoices, credit notes and their footers in **8 languages**: English, French, German, Spanish, Italian, Dutch, and Portuguese (Portugal and Brazil are handled as two separate variants). 
+
+📌 **Note**: If you want to bill in a language that is not yet supported, please contact us at 👉 [**hey@meteroid.com**](#)
+
+The language of a given document is resolved in this order:
+1. **Customer preference** — set on the Customer record (Customers > Invoice language). If the chosen language is not supported, it falls through to the next entry in the list.
+2. **Invoicing Entity** — the invoicing entity's incorporation country set when creating the invoicing entity in Settings > Invoices. 
+3. **English** — the final fallback. 
+
+Invoice footers (Settings > Invoices > Invoice footer) can be written separately for each supported language, so the correct legal mentions appear regardless of which language a given document renders in.
 
 # E-Invoices
 
@@ -143,12 +154,11 @@ This process is particularly important in jurisdictions like the **European Unio
 
 #### E-invoices in Meteroid
 
-Meteroid supports e-invoicing in compliance with European standards. Here’s how it works:
+Meteroid's invoices and credit notes are modeled on **EN 16931**, the European semantic standard for electronic invoices, and can be rendered into any of the following formats:
+* **Factur-X / ZUGFeRD**:  a CII-format XML file embedded directly inside the invoice PDF, so the Customer gets one file that is both human-readable and machine-readable.
+* **XRechnung**: also carried as CII embedded in the PDF. Used for invoicing German public-sector buyers.
+* **Peppol BIS Billing 3.0**: format used on the Peppol network, carried as UBL. Unlike the two formats above, it's transport-only and isn't embedded in a PDF
 
-* Meteroid supports the **Factur-X** format, which combines a human-readable **PDF** with a machine-readable **XML** file. We currently support the **“Basic” profile**, which is sufficient for most B2B invoicing needs.
-
-📌 **Note**: By default, Meteroid issues invoices in **PDF format**. To enable e-invoicing in Factur-X format please contact us at 👉 [**hey@meteroid.com**](#)
-
-* Depending on countries, Meteroid can **automatically send e-invoices** to your **Partenaire de Dématérialisation (PDP)** (mandatory in France as of September 2026) or directly to \*\*Tax Authorities. \*\*For more information, please contact us at 👉 [**hey@meteroid.com**](#)
+📌 **Note**: As of today, **Factur-X / ZUGF is the format you can enable** for an Invoicing Entity (Settings > Invoices > Structured e-invoicing). XRechnung and Peppol BIS are built into Meteroid but aren't selectable from the UI as they need a transport/network connection Meteroid doesn't yet offer self-serve. Get in touch at [hey@meteroid.com](mailto:hey@meteroid.com) for more informations.
 
           

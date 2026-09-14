@@ -17,9 +17,16 @@ In Settings > Invoices, you can also update the following settings:
 
 📌 **Priority Rule**: If **Net Terms** are defined at the **Plan level** (in **Product Catalog > Plan**), they will override the Net Terms of the invoicing entity. Otherwise, the default Net Terms from the invoicing entity apply.
 
-* **Invoice footer** – Space for additional or legal information, which appears at the bottom of invoices. This could include: headquarters address, legal registration number, juridical status (e.g., SAS, GmbH, Ltd.), VAT number or any other compliance-required text.
+* **Invoice footer** – Space for additional or legal information, which appears at the bottom of invoices. This could include: headquarters address, legal registration number, juridical status (e.g., SAS, GmbH, Ltd.), VAT number or any other compliance-required text. The footer can be written separately for each language you invoice in. 
 
 📌 **Best Practice:** If a Customers' **billing address** (under **Customers > Billing Address**) is located in **France**, the invoice will automatically be issued in **French**. For all other Customers, invoices are issued in **English**. To ensure clarity and compliance across Customer geographies, consider writing your **invoice footnotes in both English and French**.
+
+* **Structured e-invoicing**
+    * if set as **Off — PDF only** (default): invoices are issued as a regular PDF.
+    * if set as *Factur-X / ZUGFeRD (France, Germany)**: Meteroid embeds an EN 16931-compliant XML file inside the invoice PDF.
+        📌 **Note:** Before finalization, draft invoices are checked against the format's requirements and anything missing is surfaced on the draft so it can still be corrected.
+
+📌 **Note**: As of today, **Factur-X / ZUGF is the format you can enable** for an Invoicing Entity (Settings > Invoices > Structured e-invoicing). XRechnung and Peppol BIS are built into Meteroid but aren't selectable from the UI as they need a transport/network connection Meteroid doesn't yet offer self-serve. Get in touch at [hey@meteroid.com](mailto:hey@meteroid.com) for more informations.
 
 # Consolidating Recurring Invoices
 
