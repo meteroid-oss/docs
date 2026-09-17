@@ -13,16 +13,34 @@ To create a new Customer, go to **Customers > New Customer**. You will then need
 * **Email address:** The contact email your Sales team use to contact Customers. This email is not used by Meteroid.
 * **Invoicing email:** The email you want Meteroid to use to send invoices to your Customers.
 * **Phone:** An optional contact phone number for the Customer.
+* **Invoice language:** The language this Customer's invoices and credit notes are issued in. Leave it on *Default (inherit)* to use the invoicing entity's setting. See [Invoice language](https://docs.meteroid.com/invoices/managing-invoices#invoice-language).
 * **VAT number:** This field must be filled if you want to use Meteroid VAT tax engine.
-* **Tax exempt:** Mark the Customer as exempt from tax, so no tax is applied on their invoices.
+* **Registration number:** The Customer's company registration number, if you need it on their invoices.
 * **Custom taxes:** This field must be filled if you want to apply custom tax rates or a tax rate outside of the EU. You can add several cumulative custom taxes.
+* **Tax status:** *Taxable* (the default), *Exempt*, or *Reverse charge*. See [Customer tax status](#customer-tax-status) below.
+* **Exemption reason:** Shown when the tax status is *Exempt* or *Reverse charge*. The legal mention printed on the Customer's documents.
 * **Billing Address:** This will appear on Invoices.
-* **Shipping Address:** If applicable.
+* **Shipping Address:** If applicable. When it differs from the billing address, it is the destination used to match custom tax rates.
 
 Once created, you can connect a customer to external providers by clicking "manage" in the integrations section. For example, if you use Stripe for credit card payments, you can link there an existing Stripe customer ID to a Customer created in Meteroid for seamless payment processing.
 
 
 📌 **Note:** If *“Disable all email notifications”* is enabled in Settings > General, no business emails (*e.g* invoicing, payment emails) will be sent to Customers. 
+
+# Customer tax status
+
+**Tax status** replaces the former *Tax exempt* checkbox with three states:
+
+* **Taxable** — normal taxation. This is the default.
+* **Exempt** — no tax is applied on any line of this Customer's invoices.
+* **Reverse charge** — the Customer accounts for the tax themselves. This is an explicit choice on top of the intra-EU B2B reverse charge Meteroid already derives from a validated VAT number.
+
+Choosing **Exempt** or **Reverse charge** reveals **Exemption reason**, a free-text legal mention printed on the Customer's invoices and credit notes. EU exempt and reverse-charge documents are legally required to carry one.
+
+📌 **Note:** **Tax status** is hidden while the Customer has **Custom taxes** defined, because those rates govern the Customer's taxation entirely.
+
+The Customer's tax status is the **first** thing Meteroid looks at when taxing an invoice line — it outranks tax categories, custom rates and the calculated VAT. The full order is documented in [Managing taxes](https://docs.meteroid.com/settings/taxes#how-tax-is-decided).
+
 
 # Import your Customers into Meteroid 
 

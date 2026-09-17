@@ -24,9 +24,7 @@ How Invoice elements are determined:
 * Due date: Automatically calculated using the invoice date plus the configured net payment terms.
 * Bill to: Pulled directly from the Customer’s details (Name and Billing Address).
 
-📌 **Note**: Meteroid supports localized invoice generation:
-If a Customer's billing address (under Customers > Billing Address) is in France, the invoice will automatically be generated in French.
-For all other end users, invoices are generated in English by default.
+📌 **Note**: Meteroid supports localized invoice generation in eight languages, resolved per document. See [Invoice language](#invoice-language) below.
 
 ## Edit generated invoices
 
@@ -137,12 +135,24 @@ Meteroid can issue invoices, credit notes and their footers in **8 languages**: 
 
 📌 **Note**: If you want to bill in a language that is not yet supported, please contact us at 👉 [**hey@meteroid.com**](#)
 
-The language of a given document is resolved in this order:
-1. **Customer preference** — set on the Customer record (Customers > Invoice language). If the chosen language is not supported, it falls through to the next entry in the list.
-2. **Invoicing Entity** — the invoicing entity's incorporation country set when creating the invoicing entity in Settings > Invoices. 
-3. **English** — the final fallback. 
+The language of a given document is resolved in this order, first match wins:
 
-Invoice footers (Settings > Invoices > Invoice footer) can be written separately for each supported language, so the correct legal mentions appear regardless of which language a given document renders in.
+1. **Customer preference** — **Customers > Invoice language** on the Customer record. Leave it on *Default (inherit)* to fall through.
+2. **Invoicing entity default** — **Settings > Invoices > Default invoice language**.
+3. **The invoicing entity's country** — the locale of the incorporation country set when the invoicing entity was created.
+4. **English** — the final fallback.
+
+Regional variants collapse onto the language they belong to: `fr-BE` and `fr-CH` both render from the French bundle, `de-AT` and `de-CH` from the German one. Portuguese is the exception, shipped as two distinct bundles — `pt-BR` for Brazil, `pt-PT` for everywhere else — because the two diverge on the vocabulary a document is made of.
+
+Invoice footers (**Settings > Invoices > Invoice footer**) can be written separately for each supported language, so the correct legal mentions appear regardless of which language a given document renders in.
+
+📌 **Note**: A document never fails to render over a language tag — an unrecognised one falls back to English. Meteroid rejects unsupported language tags when you *save* them, so the mistake surfaces while you're still there to fix it, rather than silently at render time.
+
+## When the issuer's law decides the language
+
+For a **Belgian** invoicing entity the order above is inverted: the entity's own setting outranks the customer's preference. A Belgian invoice is a document prescribed by law, which brings it under the language legislation — Dutch in Flanders, French in Wallonia — and a document in the wrong language can be void. Setting a Walloon customer to French on a Flemish seller's account is exactly the well-meant change that would otherwise produce a void invoice, so Meteroid does not let the customer preference win there.
+
+Meteroid warns in **Settings > Invoices** when a Belgian entity has no explicit language set, and prompts for an explicit choice when you create a Belgian or Swiss entity. Switzerland is a prompt only, not a precedence rule — Swiss law imposes no language requirement on an invoice, but with four official languages no single default serves them.
 
 # E-Invoices
 
@@ -159,6 +169,45 @@ Meteroid's invoices and credit notes are modeled on **EN 16931**, the European s
 * **XRechnung**: also carried as CII embedded in the PDF. Used for invoicing German public-sector buyers.
 * **Peppol BIS Billing 3.0**: format used on the Peppol network, carried as UBL. Unlike the two formats above, it's transport-only and isn't embedded in a PDF
 
-📌 **Note**: As of today, **Factur-X / ZUGF is the format you can enable** for an Invoicing Entity (Settings > Invoices > Structured e-invoicing). XRechnung and Peppol BIS are built into Meteroid but aren't selectable from the UI as they need a transport/network connection Meteroid doesn't yet offer self-serve. Get in touch at [hey@meteroid.com](mailto:hey@meteroid.com) for more informations.
+📌 **Note**: **Factur-X / ZUGFeRD is the only format you can enable today** for an Invoicing Entity (Settings > Invoices > Structured e-invoicing). XRechnung and Peppol BIS are built into Meteroid but aren't selectable from the UI as they need a transport/network connection Meteroid doesn't yet offer self-serve. Get in touch at [hey@meteroid.com](mailto:hey@meteroid.com) for more information.
 
-          
+## The compliance report
+
+Every invoice and credit note issued by an entity with structured e-invoicing enabled is checked against the format's requirements. The result is shown in the **E-invoicing** section of the document's side panel in **Billing > Invoices**.
+
+On a **draft**, the check is a dry run against the live Customer and invoicing entity records. The status reads either:
+
+* **Ready to issue as Factur-X** — nothing is missing.
+* **Would not be issued** — with the number of issues, and the list a click away.
+
+On a **finalized** document, the same section reports what actually happened: **Issued as Factur-X**, or **Not issued** with the reasons. When the e-invoice was issued you can download the **XML file**, and for a hybrid format the **Hybrid PDF** that carries the XML inside it.
+
+### Generating an e-invoice never blocks billing
+
+An invoice that cannot be expressed as a structured document is still a legally issued invoice: it is numbered, it is owed, and it is sent. Meteroid will not refuse to issue an invoice because a VAT number is missing — that would take down billing over metadata. The PDF goes out either way, and the findings are recorded against the document instead.
+
+### Reading the findings
+
+Findings are reported in the standard's own vocabulary, so they name the exact field to fill rather than saying "not compliant":
+
+```
+BG-8/BT-55 — The Seller country code shall be provided.
+```
+
+* The **business term path** (`BG-8/BT-55`) is where in the document the field belongs.
+* The **message** is the rule's own wording, verbatim, so you can look it up in CEN's or KoSIT's index.
+* Some findings carry a short **hint** where the rule text alone isn't actionable.
+
+### Fix findings before finalization
+
+This matters more than it looks. A draft still reads the **live** Customer and invoicing entity records, so filling in a missing field and refreshing the draft fixes *that* invoice.
+
+A finalized invoice is immutable — French law is explicit about it — and the seller and customer identity are frozen onto the document at finalization. Correcting your entity's registration number today does **not** make yesterday's invoice compliant, because yesterday's invoice no longer reads from the entity. After finalization, the findings only tell you what to fix for the next document.
+
+📌 **Note**: The draft check re-runs every time you open the invoice, so the verdict always reflects what you just filled in on the Customer or entity.
+
+# Tax mentions on invoices
+
+When a document carries no tax — reverse charge, an exemption, or a cross-border export — the corresponding statutory mention is generated automatically, with the legal reference matching your jurisdiction and the wording in the document's language. There is nothing to configure.
+
+See [Legal tax mentions on documents](https://docs.meteroid.com/settings/taxes#legal-tax-mentions-on-documents) for what is generated and when.
