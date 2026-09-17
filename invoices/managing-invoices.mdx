@@ -164,12 +164,13 @@ This process is particularly important in jurisdictions like the **European Unio
 
 #### E-invoices in Meteroid
 
-Meteroid's invoices and credit notes are modeled on **EN 16931**, the European semantic standard for electronic invoices, and can be rendered into any of the following formats:
-* **Factur-X / ZUGFeRD**:  a CII-format XML file embedded directly inside the invoice PDF, so the Customer gets one file that is both human-readable and machine-readable.
-* **XRechnung**: also carried as CII embedded in the PDF. Used for invoicing German public-sector buyers.
-* **Peppol BIS Billing 3.0**: format used on the Peppol network, carried as UBL. Unlike the two formats above, it's transport-only and isn't embedded in a PDF
+Meteroid's invoices and credit notes are modeled on **EN 16931**, the European semantic standard for electronic invoices, and are issued as **Factur-X / ZUGFeRD** — a CII-format XML file embedded directly inside the invoice PDF. Your Customer receives a single file that is both human-readable and machine-readable, and their accounting system can import it without re-keying anything.
 
-📌 **Note**: **Factur-X / ZUGFeRD is the only format you can enable today** for an Invoicing Entity (Settings > Invoices > Structured e-invoicing). XRechnung and Peppol BIS are built into Meteroid but aren't selectable from the UI as they need a transport/network connection Meteroid doesn't yet offer self-serve. Get in touch at [hey@meteroid.com](mailto:hey@meteroid.com) for more information.
+Factur-X / ZUGFeRD is recognised in **France and Germany**, and is the format the French e-invoicing reform is built around.
+
+Enable it per invoicing entity under **Settings > Invoices > Structured e-invoicing**.
+
+📌 **Note**: Need another EN 16931 format — XRechnung for German public-sector buyers, or Peppol BIS Billing 3.0 to send over the Peppol network? Tell us at 👉 [**hey@meteroid.com**](mailto:hey@meteroid.com). We're expanding format coverage based on what customers actually need to send.
 
 ## The compliance report
 
