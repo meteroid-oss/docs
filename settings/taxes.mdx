@@ -1,33 +1,131 @@
 ---
-Managing Taxes in Meteroid
+title: Managing taxes
 ---
 
-To configure taxes, navigate to Settings > Taxes. Here, you can select the tax calculation method for each **Invoicing Entity**. The available options are: **None, Manual, or Meteroid EU VAT**.
+Tax in Meteroid is configured per **Invoicing Entity**, under **Settings > Taxes**. If you use several invoicing entities, configure each one separately by switching entity with the button in the upper right corner.
 
-## Tax Calculation Logic
+There are three things to set up, in this order:
 
-Meteroid determines the applicable tax rate for a Customer invoice by following a specific hierarchy. The decision tree below visualizes this process.
+1. **A method** — how tax is calculated for this entity.
+2. **Tax categories** — what you sell, classified for tax purposes.
+3. **Custom rates** — the rates that apply to a category, by customer location.
 
-<Frame>
-<img
-  src="/public/meteroid-tax1.png"
-  alt="Tax rate decision tree"
-/>
-</Frame>
+Customer-level settings (tax status, VAT number, customer-specific rates) live on the Customer record and are covered in [Managing customers](https://docs.meteroid.com/customer/managing-customers).
 
-📌 **Note**: 
-- Customer tax characteristics, such as exemption status or a custom tax rate, are configured in the Customer section of Meteroid. Meteroid also supports **multiple tax rates per Customer**, whether it’s TPS and TVQ in Canada or IGST, SGST, and CGST in India allowing you to accurately reflect complex regional tax structures.
-- If you use multiple Invoicing Entities, be sure to configure the tax calculation logic for each one by clicking the invoicing entity button in the upper right corner.
+# Tax calculation method
 
+Under **Settings > Taxes > Tax calculation**, pick a **Method**:
 
-### Details of the Meteroid EU VAT Engine
-When you select the Meteroid EU VAT tax calculation logic, Meteroid will automatically suggest the relevant VAT rate for the transaction. The following decision tree illustrates how the system determines this rate.
+* **No tax** — nothing is taxed. Custom rates and customer tax status are ignored entirely.
+* **Manual — custom rates only** — there is no calculated VAT. Each line uses the customer's own flat rate, or a matching custom rate; otherwise it is untaxed.
+* **Automatic EU VAT** — Meteroid computes VAT by scenario (your domestic rate, reverse charge for intra-EU B2B, the customer's country rate for intra-EU B2C, zero-rating for exports).
+
+📌 **Note**: **Automatic EU VAT** is available to EU-based sellers only. Non-EU sellers use manual rates.
+
+Two more settings appear once the method is anything other than **No tax**:
+
+* **Default product tax category** — used for invoice lines whose product has no tax category set.
+* **Require a valid tax ID for reverse charge** — when on, reverse charge is applied only after the customer's VAT number passes [VIES](https://ec.europa.eu/taxation_customs/vies/). Until it does, the customer's country standard rate applies. When off, a correctly formatted VAT number is enough.
+
+## How tax is decided
+
+The method is the gate. When it is **No tax**, nothing is taxed. Otherwise every invoice line is resolved in the order below, and **the first match wins**:
+
+1. **The customer is exempt or reverse-charged.** The customer's tax status wins first — a tax-exempt customer is untaxed, and intra-EU B2B reverse charge shifts the liability to them (validated by VIES when required).
+2. **The product's tax category is Non-taxable.** Lines whose category is Non-taxable carry no tax, whatever the method or custom rates say.
+3. **A custom rate matches the category and country.** A custom rate targeting the line's tax category, with a rule matching the customer's destination country, applies to that line. Under **Automatic EU VAT** it *replaces* the calculated VAT; under **Manual** it *sets* the tax.
+4. **Otherwise, the method decides.** Manual — the customer's own flat rate applies, otherwise the line is untaxed. Automatic EU VAT — the engine computes the statutory rate for the scenario.
+
+This ladder is also available in the app, behind the **How is tax decided?** link next to the Method selector.
+
+📌 **Note**: Custom rates match against the customer's **destination** address — their shipping address when they have one that differs from billing, their billing address otherwise.
+
+# Tax categories
+
+A **tax category** classifies *what you sell*, independently of any specific tax provider. Manage them under **Settings > Taxes > Tax categories**.
+
+Meteroid ships three built-in categories:
+
+| Category | Behaviour |
+| --- | --- |
+| **Digital services** | Standard-rated. Covers SaaS, software and electronically supplied services. |
+| **Physical goods** | Standard-rated. |
+| **Non-taxable / exempt** | Never yields tax, on any line, under any method. |
+
+You can add your own categories on top (for example *Streaming services*, or *Training*), optionally nested under a parent category. Built-in categories are marked **Built-in** in the table and cannot be deleted; your own show as **Custom**.
+
+## Assigning a category to a product
+
+Open **Product Catalog > Products**, select a product, and set **Tax category** in the detail panel.
+
+Leaving it on **Entity default** means the line falls back to the invoicing entity's **Default product tax category**. If neither is set, the line is unclassified and the method alone decides its tax.
+
+# Custom rates
+
+Under **Settings > Taxes**, the section is called **Custom rates** under the Manual method and **Overrides** under Automatic EU VAT — same mechanism, different consequence:
+
+* Under **Manual**, a custom rate *defines* the tax for a category, since there is no calculated VAT to replace.
+* Under **Automatic EU VAT**, a custom rate *replaces* the VAT Meteroid calculated for that line.
+
+Each rate has:
+
+* **Name** — as it appears on the invoice, e.g. *French VAT*, *US sales tax*.
+* **Applies to** — the tax category this rate targets. It then applies to every line whose resolved category matches, rather than being wired product by product.
+* **Rate by customer location** — one or more rules, each with a customer country (or *any country*), an optional region, and a percentage. The most specific matching rule wins: **region beats country, country beats a rule with neither**.
+* **Accounting code** — the reporting code carried onto the invoice's tax breakdown, e.g. `VAT_FR`, `SALES_US`. It must be unique within your tenant.
+
+📌 **Note**: Rules with no country act as an "everywhere" fallback for that category. If no rule matches the customer's destination, the custom rate doesn't apply and the line falls through to the method.
+
+# Customer tax status
+
+Set on each Customer record, under **Customers > Tax information** (see [Managing customers](https://docs.meteroid.com/customer/managing-customers#customer-tax-status)). **Tax status** is one of:
+
+* **Taxable** — normal taxation. This is the default.
+* **Exempt** — no tax applies on any line.
+* **Reverse charge** — the buyer accounts for the tax. This is an explicit choice, and it is *additive* to the intra-EU B2B reverse charge Meteroid already derives from the VAT number.
+
+Selecting **Exempt** or **Reverse charge** reveals an **Exemption reason** field. This free-text legal mention is printed on the customer's invoices and credit notes, and is legally required on EU exempt and reverse-charge documents.
+
+📌 **Note**: **Tax status** is hidden when the Customer has customer-level **Custom Taxes** defined, because those rates take over the customer's taxation entirely. Meteroid supports **multiple cumulative rates per customer** — TPS and TVQ in Canada, IGST, SGST and CGST in India — so complex regional structures can be reflected accurately.
+
+# Automatic EU VAT in detail
+
+When the method is **Automatic EU VAT**, Meteroid resolves the statutory scenario from the seller's country, the customer's country, and whether the customer is a business:
+
+* A customer is treated as a **business (B2B)** when they carry a VAT number that passes format validation — and, if **Require a valid tax ID for reverse charge** is on, VIES validation as well. Without a VAT number, the customer is **B2C**.
+* Domestic supplies take your own country's rate.
+* Intra-EU B2B supplies are reverse-charged.
+* Intra-EU B2C supplies take the customer's country rate.
+* Supplies outside your VAT territory are zero-rated as exports, and carry the corresponding legal mention.
+
 <Frame>
 <img
   src="/public/meteroid-eu-vat.png"
   alt="Meteroid EU VAT decision tree"
 />
 </Frame>
-📌 **Note**:
-- Meteroid uses the intra-community VAT number or Tax ID to classify a Customer as either Business-to-Business (BtB) or Business-to-Consumer (BtC). If no intra-community VAT number is filled, Meteroid classifies the Customer as BtC.
-- For international BtB customers, the invoice will automatically include relevant mentions like for the reverse charge mechanism.
+
+# Legal tax mentions on documents
+
+When a document carries no tax — because of reverse charge, an exemption, or a cross-border export — Meteroid prints the corresponding statutory mention automatically. You don't configure these.
+
+The mention is **selected** from the seller's tax jurisdiction and **worded** in the document's language (see [Invoice language](https://docs.meteroid.com/invoices/managing-invoices#invoice-language)). Examples of what is generated:
+
+* **Reverse charge** — *"VAT to be accounted for by the customer (Article 196 of Directive 2006/112/EC)."*
+* **Export, B2B** — for a French seller, *"Article 259-1° of the French General Tax Code (CGI): supply of services to a taxable person established outside the European Union (Article 44 of Directive 2006/112/EC)."*
+* **Export, B2C** — a different provision is cited, because it is a different rule.
+* **Exemption** — the headline plus the customer's own **Exemption reason**.
+
+Any EU seller gets EU VAT Directive wording. On top of that, a growing set of jurisdictions carry their own **national statute citations** and **registration-number labels** — *MWST-Nr.*, *UID-Nummer*, *NIF*, *CNPJ* rather than a generic "VAT ID" — and those are used in preference to the directive wording wherever we support them. A seller outside the EU never receives EU directive wording.
+
+📌 **Note**: We add national wording jurisdiction by jurisdiction. If you need a specific country's statutory mentions and don't see them on your documents, tell us at 👉 [**hey@meteroid.com**](mailto:hey@meteroid.com) — it's a small, self-contained addition.
+
+The tax rows themselves are labelled in the document's language too — a German invoice shows *USt.*, a Swiss one *MWST* — rather than the engine's internal English label.
+
+📌 **Note**: Meteroid makes a document *say* the right thing. It is not a substitute for country-specific issuance requirements. For example, a Portuguese seller still needs AT-certified software with an ATCUD and QR code, and a Brazilian sale is still documented by an NF-e or NFS-e issued through the state or municipal system.
+
+# VAT number validation
+
+VAT numbers entered on a Customer are checked for format, then validated against **VIES** in the background. Results are re-checked periodically, and the evidence VIES returns (request date, registered name and address) is kept alongside the customer as an audit trail for reverse-charge decisions.
+
+A pending or unavailable VIES answer is not treated as a failure. Whether it blocks reverse charge depends on the **Require a valid tax ID for reverse charge** setting on the invoicing entity.

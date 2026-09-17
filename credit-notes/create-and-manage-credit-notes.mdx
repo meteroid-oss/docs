@@ -1,5 +1,5 @@
 ---
-Create and Manage Credit Notes
+title: Create and manage credit notes
 ---
 
 ## Create a Credit Note
@@ -39,3 +39,11 @@ If the invoice is marked as Paid or Partially Paid, you will be able to choose h
 All issued credit notes can be found in **Billing > Credit Notes**, where you get an overview of their amount, status, associated invoice, and Customer.
 
 💡 **Note:** Unlike invoices, once finalized, credit notes are not automatically sent by email to Customers.
+
+## Language, e-invoicing and tax mentions
+
+Credit notes are rendered by the same document pipeline as invoices, so they follow the same rules:
+
+* They are issued in the **same eight languages**, resolved the same way. See [Invoice language](https://docs.meteroid.com/invoices/managing-invoices#invoice-language).
+* Where structured e-invoicing is enabled on the invoicing entity, credit notes are issued as **EN 16931** documents too, and get the same [compliance report](https://docs.meteroid.com/invoices/managing-invoices#the-compliance-report).
+* **Statutory tax mentions** are generated automatically, worded for a credit note rather than an invoice — a reverse-charged credit note states that the tax is to be accounted for by the recipient *on the original invoice*. See [Legal tax mentions on documents](https://docs.meteroid.com/settings/taxes#legal-tax-mentions-on-documents).
