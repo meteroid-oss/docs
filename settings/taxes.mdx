@@ -95,7 +95,7 @@ When the method is **Automatic EU VAT**, Meteroid resolves the statutory scenari
 * A customer is treated as a **business (B2B)** when they carry a VAT number that passes format validation — and, if **Require a valid tax ID for reverse charge** is on, VIES validation as well. Without a VAT number, the customer is **B2C**.
 * Domestic supplies take your own country's rate.
 * Intra-EU B2B supplies are reverse-charged.
-* Intra-EU B2C supplies take the customer's country rate.
+* Intra-EU B2C supplies take the customer's country rate, subject to the EU distance-selling threshold.
 * Supplies outside your VAT territory are zero-rated as exports, and carry the corresponding legal mention.
 
 <Frame>
@@ -120,7 +120,7 @@ Any EU seller gets EU VAT Directive wording. On top of that, a growing set of ju
 
 📌 **Note**: We add national wording jurisdiction by jurisdiction. If you need a specific country's statutory mentions and don't see them on your documents, tell us at 👉 [**hey@meteroid.com**](mailto:hey@meteroid.com) — it's a small, self-contained addition.
 
-The tax rows themselves are labelled in the document's language too — a German invoice shows *USt.*, a Swiss one *MWST* — rather than the engine's internal English label.
+Tax rows are labelled in the document's language rather than the engine's internal English label, so a German-language invoice shows *USt.* A jurisdiction whose own abbreviation differs overrides that from the seller's side: a Swiss seller invoicing in German shows *MWST*.
 
 📌 **Note**: Meteroid makes a document *say* the right thing. It is not a substitute for country-specific issuance requirements. For example, a Portuguese seller still needs AT-certified software with an ATCUD and QR code, and a Brazilian sale is still documented by an NF-e or NFS-e issued through the state or municipal system.
 

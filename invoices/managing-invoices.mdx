@@ -164,12 +164,13 @@ This process is particularly important in jurisdictions like the **European Unio
 
 #### E-invoices in Meteroid
 
-Meteroid's invoices and credit notes are modeled on **EN 16931**, the European semantic standard for electronic invoices, and can be rendered into any of the following formats:
-* **Factur-X / ZUGFeRD**:  a CII-format XML file embedded directly inside the invoice PDF, so the Customer gets one file that is both human-readable and machine-readable.
-* **XRechnung**: also carried as CII embedded in the PDF. Used for invoicing German public-sector buyers.
-* **Peppol BIS Billing 3.0**: format used on the Peppol network, carried as UBL. Unlike the two formats above, it's transport-only and isn't embedded in a PDF
+Meteroid's invoices and credit notes are modeled on **EN 16931**, the European semantic standard for electronic invoices, and are issued as **Factur-X / ZUGFeRD** — a CII-format XML file embedded directly inside the invoice PDF. Your Customer receives a single file that is both human-readable and machine-readable, and their accounting system can import it without re-keying anything.
 
-📌 **Note**: **Factur-X / ZUGFeRD is the only format you can enable today** for an Invoicing Entity (Settings > Invoices > Structured e-invoicing). XRechnung and Peppol BIS are built into Meteroid but aren't selectable from the UI as they need a transport/network connection Meteroid doesn't yet offer self-serve. Get in touch at [hey@meteroid.com](mailto:hey@meteroid.com) for more information.
+Factur-X / ZUGFeRD is the Franco-German hybrid standard, and one of the formats accepted under the French e-invoicing reform.
+
+Enable it per invoicing entity under **Settings > Invoices > Structured e-invoicing**.
+
+📌 **Note**: Need another EN 16931 format — XRechnung for German public-sector buyers, or Peppol BIS Billing 3.0 to send over the Peppol network? Tell us at 👉 [**hey@meteroid.com**](mailto:hey@meteroid.com). We're expanding format coverage based on what customers actually need to send.
 
 ## The compliance report
 
@@ -177,10 +178,10 @@ Every invoice and credit note issued by an entity with structured e-invoicing en
 
 On a **draft**, the check is a dry run against the live Customer and invoicing entity records. The status reads either:
 
-* **Ready to issue as Factur-X** — nothing is missing.
+* **Ready to issue**, naming the profile — nothing is missing.
 * **Would not be issued** — with the number of issues, and the list a click away.
 
-On a **finalized** document, the same section reports what actually happened: **Issued as Factur-X**, or **Not issued** with the reasons. When the e-invoice was issued you can download the **XML file**, and for a hybrid format the **Hybrid PDF** that carries the XML inside it.
+On a **finalized** document, the same section reports what actually happened: **Issued**, again naming the profile, or **Not issued** with the reasons. When the e-invoice was issued you can download the **XML file**, and for a hybrid format the **Hybrid PDF** that carries the XML inside it.
 
 ### Generating an e-invoice never blocks billing
 
@@ -191,7 +192,7 @@ An invoice that cannot be expressed as a structured document is still a legally 
 Findings are reported in the standard's own vocabulary, so they name the exact field to fill rather than saying "not compliant":
 
 ```
-BG-8/BT-55 — The Seller country code shall be provided.
+BG-8/BT-55 — The Buyer postal address shall contain a Buyer country code.
 ```
 
 * The **business term path** (`BG-8/BT-55`) is where in the document the field belongs.
