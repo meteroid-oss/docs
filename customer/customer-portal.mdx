@@ -66,7 +66,7 @@ In the subscription section, clicking "Manage" and then "Add-ons", End Users can
 
 # Portal Customization
 
-You can customize the look and feel of your Customer Portal to match your brand identity and provide a consistent experience for End Users. Branding is configured **per invoicing entity** from the **Settings > Merchant** section, and applies to the hosted portal, the embedded components, and the checkout page:
+You can customize the look and feel of your Customer Portal to match your brand identity and provide a consistent experience for End Users. Branding is configured **per invoicing entity** from the **Settings > Branding** section (see [Branding](/settings/branding)), and applies to the hosted portal, the embedded components, and the checkout page:
 
 - **Logo** — appears in the portal header, on the checkout page, and on invoices.
 - **Brand / accent color** — the primary color used for buttons, links, and highlights.
@@ -128,7 +128,7 @@ The simplest integration: build a portal URL with the token and send the Custome
 https://app.meteroid.com/portal/customer?token=<CUSTOMER_PORTAL_TOKEN>
 ```
 
-The hosted portal is already branded with your **Settings > Merchant** configuration. You can still override the appearance per link with the [query parameters](#appearance-and-behavior-parameters) below (for example `&theme=light`).
+The hosted portal is already branded with your **Settings > Branding** configuration. You can still override the appearance per link with the [query parameters](#appearance-and-behavior-parameters) below (for example `&theme=light`).
 
 ## Embedded UI components
 
@@ -154,7 +154,7 @@ If `embed` is omitted (or set to an unknown value), the full portal is rendered.
 
 ### Appearance and behavior parameters
 
-Every embed view accepts the following optional parameters. Precedence is **URL parameter → your portal branding (Settings > Merchant) → Meteroid default**, so a parameter always wins when present.
+Every embed view accepts the following optional parameters. Precedence is **URL parameter → your portal branding (Settings > Branding) → Meteroid default**, so a parameter always wins when present.
 
 | Parameter      | Values                       | Default          | Description                                              |
 | -------------- | ---------------------------- | ---------------- | -------------------------------------------------------- |

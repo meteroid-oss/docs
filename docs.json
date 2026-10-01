@@ -115,6 +115,7 @@
             "group": "Settings",
             "pages": [
               "settings/merchant",
+              "settings/branding",
               "settings/taxes",
               "settings/invoices-settings",
               "settings/custom-properties",
