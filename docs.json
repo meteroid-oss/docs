@@ -135,6 +135,10 @@
             "group": "Integrations",
             "pages": [
               "integrations/general-information",
+              "integrations/stripe",
+              "integrations/gocardless",
+              "integrations/mollie",
+              "integrations/stancer",
               "integrations/hubspot",
               "integrations/pennylane"
             ]
