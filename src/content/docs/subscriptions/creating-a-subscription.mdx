@@ -1,0 +1,72 @@
+---
+title: Creating a subscription
+---
+
+import { Note } from "perseid-docs/mintlify";
+
+A Subscription can be created either: 
+
+* manually by Account Managers directly in Meteroid
+* automatically on CheckOut
+* automatically via API (cf. API Reference) 
+* via a csv file upload 
+
+## Creating a subscription direclty in Meteroid
+
+To create a subscription manually:
+
+* Go to Billing > Subscription and click **"+ New Subscription"**.
+* Choose a **Plan** from your existing Product Catalog. You can use the Pricing section to customize the pricing inherited from the Plan.
+
+<Note>
+When assigning a subscription, customizing the information inherited from the Plan does not affect the original Plan.
+</Note>
+
+* Assign the plan to a **Customer** by selecting one from the list.
+* Set the **Start Date** using the **"From Date"** field. If needed, define an **End Date** with the **"To Date"** field. If no End Date is set, the Subscription will continue indefinitely until it is canceled.
+
+<Note>
+If the Start Date is set in the future, the Subscription will remain in **Pending** status until that date is reached **and** the payment is successfully processed. Once these conditions are met, the Subscription will automatically move to **Active** (cf. Managing Subscriptions). When an End Date is defined, the Subscription will automatically transition to **Expired** status once that date is reached.
+</Note>
+
+<Note>
+If a Subscription is created with a start date in the past, a Skip past invoices option appears. If enabled, Meteroid will not generate invoices for past billing periods and will only consider the current billing period and future ones. This is particularly useful when migrating or importing existing Subscriptions into Meteroid, as it prevents **double invoicing Customers** for periods that have already been billed outside of Meteroid.
+</Note>
+
+* Choose a **Billing Cycle**:
+  * **1<sup>st</sup> of the month**: Customers will be charged each billing period (e.g monthly) the 1<sup>st</sup> of the month.
+
+    💡**Note**: For the first Invoice, the Customer will be charged for the full month, even if they subscribed mid-month.
+
+  * **Anniversary date of the Subscription**: Customers will be charged each billing period (e.g monthly) at the Subscription's anniversary date.
+  
+* Configure Advanced Settings:
+  * **Auto-Advance Invoice**: When **activated**, the invoice is first created in Draft status and automatically transitions to Finalized status at the end of the Grace Period. When deactivated, the Invoice remains in Draft status until it is manually finalized by selecting Actions > Finalize & Send.
+  * **Charge Automatically**: When this setting is **enabled**, and if a Payment Method is configured in **Settings > Payment Methods**, Meteroid will automatically charge the Customer once the invoice is finalized.
+  * **Purchase Order (PO)**: You can enter a PO number associated with the Subscription. This PO number will be automatically displayed on every invoice generated from that Subscription.
+  * **Activation condition**:
+    * **On start date**: If the start date is in the past, the subscription is created with the Active status. If the **start date is set in the future**, the subscription is created with the **Pending** status and automatically moves to **Active** once the start date is reached
+    * **On Checkout**: The subscription is created with the **Pending** status and automatically moves to Active once the Customer completes the payment through the checkout flow
+    * **Manual activation**: The subscription is created with the **Pending** status and **remains pending** until manually activated. To activate it, go to the subscription and click Actions > Activate Subscription
+  * **Payment methods strategy**:
+    * **Default**: Meteroid tries to use any online payment methods configured in **Settings > Payment Methods** for the invoicing entity (e.g., credit card, direct debit). If no online payment method is configured, a **“Pay online”** button appears on the invoice, redirecting the Customer to bank details to complete the payment manually.
+    * **Bank transfer**: If bank account details are configured in **Settings > Payment Methods**, these details are automatically displayed on the invoice. The Customer is expected to pay using a manual bank transfer.
+    * **External**: Payment is handled entirely outside of Meteroid.
+
+## Creating a subscription using Meteroid's APIs
+
+To create a subscription via API, please refer to the [API documentation](https://docs.meteroid.com/api-reference/subscriptions/create-subscription).  
+
+## Creating a subscription via a csv file upload
+
+To upload Subscriptions in bulk via CSV:
+
+1. Go to **Subscriptions > Import CSV**.
+2. Upload your CSV file following Meteroid’s required structure.
+
+📌 **Need a template?** We can provide a ready-to-use CSV template to help you format your data correctly. Simply reach out to 👉 [**hey@meteroid.com**](#)
+
+<Note>
+You can monitor and manage batch processing at any time by consulting the Developers > Batch Jobs section. This allows you to track the progress and see if the import was successful, partially successful, or failed.
+</Note>
+

@@ -1,0 +1,122 @@
+---
+title: Billable Metrics
+description: Learn how to create and manage your billable metrics in Meteroid.
+---
+
+import { Info, Note, Warning } from "perseid-docs/mintlify";
+
+Billable Metrics are at the core of Usage-Based Billing in Meteroid. Unlike subscriptions, which apply fixed recurring charges, Metrics allow you to bill customers based on real usage—giving you the opportunity to monetize metered features and consumption.
+
+Meteroid is built to ingest and process high volumes of events efficiently, thanks to a robust and scalable event processing pipeline written in Rust, leveraging Kafka and Clickhouse. 
+
+Meteroid makes it easy to send raw, unaggregated event data, automatically handling aggregation based on your configured logic—so you can ensure accuracy without pre-processing your data.
+
+<Info>As you get started, we strongly recommend using a Meteroid Test Tenant to define and test your Metrics setup without impacting your production environment.</Info>
+
+
+## Adding a Metric in Meteroid
+
+To create a new metric, navigate to: **Product Catalog > Metrics > New Metric**
+
+Then, you will need to enter the following details:
+
+* **Metric Name** – A unique name that will help identify the billable metric when defining pricing strategies.
+* **Event Code** – This is the usage event used to build a billable Metric. It corresponds to the name of the event that your system sends to Meteroid and that Meteroid should consider to build the billable Metric. Indeed, Metrics are assembled by filtering and aggregating (cf. Aggragation Type below) these incoming events.
+* **Description** – A brief explanation of the metric and what it measures.
+* **Aggregation Type** – Defines how the data is processed by Meteroid. It is applied to the values included in the events matching the Event Code.
+  * **Count** – Counts the number of occurrences of an event (e.g., API calls).
+  * **Count Distinct** – Counts the number of unique occurrences (e.g., unique users accessing a feature).
+  * **Sum** – Sums up numerical values (e.g., total data usage in GB).
+  * **Mean** – Calculates the average value (e.g., average response time).
+  * **Min** – Retrieves the minimum recorded value.
+  * **Max** – Retrieves the maximum recorded value.
+  * **Latest** – Captures the most recent recorded value.
+
+<Note>
+You can optionally define a **Conversion Factor** for Billable Metric. The raw usage value sent to Meteroid will be **divided** by this factor before billing calculations take place. This is useful when your system reports usage in a base unit that you want to convert into a more readable Billable Metric. For example, if your application tracks storage in **bytes**, you can set a conversion factor of **1024** to bill in **kilobytes (KB)**.
+</Note>
+
+<Warning>
+Meteroid automatically aggregates Metrics at the end of each billing period based on the selected Aggregation Type. To avoid double counting or incorrect calculations, **you should send raw, unprocessed data rather than pre-aggregated values.**
+</Warning>
+
+In option you can configure the segmentation for more granular pricing strategies:
+  * **No Segmentation** – By default, the metric is not segmented.
+  * **Single Dimension Segmentation** – Allows different pricing strategies based on a single attribute (e.g., Cloud Provider).
+    * **Example**: You want different pricing for AWS, Azure, and GCP.
+    * Fields to fill:
+      * **Dimension** (e.g., "Cloud Provider")
+      * **Values** – List the different values, separated **only by a comma without spaces** (e.g., "AWS,Azure Cloud,GCP", not "AWS, Azure Cloud, GCP"
+    * When configuring a plan, you can set different prices for each cloud provider.
+  * **Two-Dimensional (Independent) Segmentation** – Allows separate pricing for two independent attributes (e.g., Cloud Provider & Region).
+    * Fields to fill:
+      * **Dimension 1** (e.g., "Cloud Provider") with values "AWS,Azure Cloud,GCP" (separated by coma without spaces).
+      * **Dimension 2** (e.g., "Geography") with values "North America,Europe,Asia" (separated by coma without spaces).
+    * Each dimension is independent, meaning pricing can be set separately for each cloud provider in each region.
+  * **Two-Dimensional (Dependent) Segmentation** – Allows pricing variations based on two interdependent attributes (e.g., Cloud Provider & Region).
+    * Fields to fill:
+      * **Dimension** (e.g., "Cloud Provider")
+      * **Relative Dimension** (e.g., "Geography")
+      * **Values:** The possible combinations of the two dimensions, formatted as follows:
+
+```
+{
+  "DimensionValue1": ["RelativeDimensionValue1", "RelativeDimensionValue2", ...],
+  "DimensionValue2": ["RelativeDimensionValue3", "RelativeDimensionValue4", ...],
+  "DimensionValue3": ["RelativeDimensionValue5", "RelativeDimensionValue6", ...],
+  ...
+}
+```
+
+For example, for cloud providers and geographies:
+
+```
+{
+  "AWS": ["North America", "Europe"],
+  "Azure Cloud": ["Europe", "Asia"],
+  "GCP": ["North America", "Asia"]
+}
+``` 
+
+  💡 **Note**: Difference Between Dependent vs. Independent Dimensions
+
+  - **Two Dimensions (Independent):** You must define a price for **every possible combination** of the two dimensions (e.g., every Cloud Provider in every Geography).
+  - **Two Dimensions (Dependent):** You can **restrict pricing to specific valid combinations** (e.g., AWS may only be available in North America and Europe).
+
+<Note>
+You can **edit existing Segmentation** without archiving and recreating a Metric by clicking Metrics > Edit. It allows you for instance to add a new Cloud Provider or Region to an existing Metric.
+</Note>
+
+Optionally, you can configure as well:
+* **usage grouping**: To do so, enter a **grouping key**. This allows you to group usage events by values from your events (e.g., `cluster_id`, `project_id`). These groups will then be displayed on Invoices, making it easier for Customers to understand how usage is allocated across different projects, clusters, or other attributes.
+  💡 **Note**: **Groups are considered independent**. For exampple, if you configure a tiered pricing model, the usage within each group will be evaluated separately. The consumption from different groups will not be summed across groups when determining the applicable tier.
+* **filters** to restrict which events are considered when calculating a Billable Metric. Filters are based on event properties. Only events matching all configured filters are included in the metric. 
+
+# Manage Metrics in Meteroid
+
+## Editing a Metric
+
+To edit a Metric, go to **Metrics > Edit**. You can modify the:
+
+* **Metric Name**
+* **Segmentation values** (e.g., adding a new region, etc.). This is especially useful if you need to introduce new segmentation options while keeping existing Plan configurations intact.
+<Note>
+Modifying the dimensions of an existing metric may impact your current pricing structures. For more informations, please read the managing upgrade & downgrade and price updates section.
+</Note>
+
+<Note>
+The Event Code and the Aggregation Type of a Metric cannot be edited once the Metric has been created. If you need to change either of these, you must archive the Metric and create a new one.
+</Note>
+
+
+## Archiving a Metric
+
+Metrics can be archived by clicking **Metrics > Archive**. Archived Metrics cannot be used to create or update Plans but billing for existing Plans using archived metrics is **not disrupted**.
+
+If required, you can **unarchive** a metric by filtering on Archived metrics in the Metrics list and clicking **Unarchive**.
+
+
+## Duplicating a Metric
+
+You can duplicate a Metric by selecting **Metrics > Duplicate**.
+This feature is useful if you want to create a new Metric based on the configuration of an existing one—for example, reusing the same event setup while changing the aggregation type.

@@ -1,0 +1,52 @@
+---
+title: Create and Manage Quotes
+---
+
+import { Note } from "perseid-docs/mintlify";
+
+## Create a Quote
+
+To create a new Quote, go to **Billing > Quotes** and click **+ Create Quote.**
+
+Steps:
+
+1. **Choose a Customer and a Plan.**
+2. **Fill in the Quote details:**
+3. **Subscription Settings:** If enabled, Meteroid will automatically create a Subscription once the Quote is signed by all the required recipients (*cf*. below). For more details (*e.g* susbcription dates, billing configuration), refer to the Creating a Subscription section.
+
+<Note>
+If disabled, Account Managers can always create a subscription from a specific quote by clicking Actions > convert to subscription.
+</Note>
+
+4. **Recipient(s):** Choose who should receive and sign the Quote. If you select multiple recipients, the Quote will only be considered accepted once **all recipients** have signed.
+
+Once the required fields are complete, click **Create Quote** in the upper right.
+
+* Quotes are created in **Draft** status by default.
+* To move the Quote to **Pending** status, click **Actions > Publish Quote.**
+
+<Note>
+Publishing a Quote will not automatically send it to the Customer. To do so, click Actions > Send to Customer. By doing so, the Quote will be sent to the Customer using the Email (and not the Invoicing email).
+</Note>
+
+If needed, you can resend the Quote to Customers by:
+
+* Clicking **Actions > Send to Customer**
+* Clicking **Actions > Generate portal link**
+* Clicking on a given quote and copy-pasting the portal link from the Recipient section and sending it manually.
+
+Once signed by all recipients, the Quote will move to the **Accepted** status.
+
+## Signature
+
+Meteroid provides a built-in signature feature. The recipient simply enters their name and signs in the dedicated section to validate the Quote.
+
+<Note>
+Meteroid's built-in signature featrue \*\*does not have probative legal value \*\*but serves as a lightweight, easy-to-use confirmation step.
+</Note>
+
+📌 **Note:** Meteroid is continuously expanding its integration library to better support your workflows. If your organization requires integration with a third-party e-signature provider that is not currently available, feel free to contact us at 👉 [**hey@meteroid.com**](https://docs.meteroid.com/integrations/general-information#)
+
+## Manage Quotes
+
+In **Billing > Quotes**, you’ll find an overview of all created Quotes, along with their current status (Draft, Pending, Accepted). This gives your team full visibility on deal progress and pending customer actions.

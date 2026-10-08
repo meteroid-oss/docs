@@ -1,0 +1,45 @@
+---
+title: Invoices settings
+---
+
+The Settings > Invoices section allows you to configure key invoice-related details.
+
+By clicking "Default" (upper right) and selecting "New Invoicing Entity," you can create an additional invoicing entity. You'll need to enter:
+
+* **Name** – Used internally in Meteroid (only the name in Settings > Merchant appears on invoices sent to customers).
+* **Incorporation country** – Determines the default currency in which this invoicing entity will bill. You can always change the currency for a specific plan by going to Product Catalog > Currency.
+
+In Settings > Invoices, you can also update the following settings:
+
+* **Invoice number pattern** – Defines how invoice numbers appear in Billing > Invoices.
+* **Grace period** – The time frame before an invoice is considered finalized and officially due.
+* **Net terms** – The number of days customers have to pay their invoice.
+
+📌 **Priority Rule**: If **Net Terms** are defined at the **Plan level** (in **Product Catalog > Plan**), they will override the Net Terms of the invoicing entity. Otherwise, the default Net Terms from the invoicing entity apply.
+
+* **Invoice footer** – Space for additional or legal information, which appears at the bottom of invoices. This could include: headquarters address, legal registration number, juridical status (e.g., SAS, GmbH, Ltd.), VAT number or any other compliance-required text. The footer can be written separately for each language you invoice in. 
+
+* **Default invoice language** – The language documents from this invoicing entity are issued in, unless the Customer has their own preference. Meteroid supports eight languages; see [Invoice language](https://docs.meteroid.com/invoices/managing-invoices#invoice-language) for how a document's language is resolved.
+
+📌 **Best Practice:** Write an **invoice footer for every language you invoice in**. A document renders its footer in the language it was issued in, and falls back where you haven't written one — so a missing translation means legal mentions in the wrong language.
+
+* **Structured e-invoicing**
+    * if set as **Off — PDF only** (default): invoices are issued as a regular PDF.
+    * if set as **Factur-X / ZUGFeRD (France, Germany)**: Meteroid embeds an EN 16931-compliant XML file inside the invoice PDF.
+        📌 **Note:** Draft invoices are checked against the format's requirements, and anything missing is surfaced on the draft while it can still be corrected. Generating the e-invoice never blocks the invoice itself from being issued. See [The compliance report](https://docs.meteroid.com/invoices/managing-invoices#the-compliance-report).
+
+📌 **Note**: Need another EN 16931 format — XRechnung for German public-sector buyers, or Peppol BIS Billing 3.0 to send over the Peppol network? Tell us at 👉 [**hey@meteroid.com**](mailto:hey@meteroid.com).
+
+# Consolidating Recurring Invoices
+
+By default, Meteroid creates one invoice per Subscription. You can instead consolidate invoices by enabling "Consolidate recurring invoices" in Settings > Invoices.
+
+When enabled, Meteroid automatically groups recurring invoices from multiple Subscriptions into a single invoice, provided the Subscriptions share the same billing properties:
+* Customer
+* Invoice date
+* Currency
+* Payment method
+* Net terms
+* Auto-advance setting
+
+If any of these properties differ, separate invoices are generated.
