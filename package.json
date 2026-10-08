@@ -3,16 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "reference": "perseid-docs build --config perseid.toml --out reference.json",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview"
   },
   "dependencies": {
     "astro": "^7.3.6",
-    "perseid-docs": "^0.1.1"
-  },
-  "devDependencies": {
-    "perseid": "^0.13.0"
+    "perseid-docs": "^0.1.2"
   }
 }

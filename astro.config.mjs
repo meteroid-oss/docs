@@ -7,7 +7,6 @@ export default defineConfig({
   integrations: [
     perseidDocs({
       title: "Meteroid Documentation",
-      reference: "reference.json",
       logo: { light: "./src/assets/logo/light.svg", dark: "./src/assets/logo/dark.svg", replacesTitle: true },
       favicon: "/favicon.svg",
       social: [{"icon":"github","label":"Github","href":"https://github.com/meteroid-oss/meteroid"},{"icon":"linkedin","label":"Linkedin","href":"https://www.linkedin.com/company/meteroid"},{"icon":"discord","label":"Discord","href":"https://go.meteroid.com/discord"}],
