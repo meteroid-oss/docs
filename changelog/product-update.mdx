@@ -4,6 +4,77 @@ ContentWidth: 734
 ---
 <Info>[Get started with Meteroid for free](https://app.meteroid.com/registration)</Info>
 
+<Update label="September 2026" description="v1.0.0">
+
+## E-invoicing and EU Compliance
+
+We've added **EN 16931 e-invoicing** (Factur-X/ZUGFeRD, or XRechnung for Germany), with a compliance report on each document to prepare you for European mandates. Reverse charge, VAT exemption and export mentions are now generated automatically, with the correct legal references for your jurisdiction, in the invoice's language.
+
+💡 More information on e-invoicing in Meteroid [here](https://docs.meteroid.com/invoices/managing-invoices#e-invoices)
+
+<Frame>
+<img
+  src="/public/meteroid-einvoicing.png" 
+  alt="E-invoicing format settings in Meteroid: Factur-X / ZUGFeRD or XRechnung"
+/>
+</Frame>
+
+## B2C Customers & Tax-inclusive Pricing
+
+Customers can now be created as an **Individual** (B2C) rather than a Company:
+* an individual is identified by first and last name, and a billing country
+* they are taxed as a consumer: VAT of the customer's country within the EU, and consumer-specific legal mentions on invoices
+* their name is passed as a person to payment providers (e.g. for SEPA mandates)
+
+Plans can also be set as **tax-included**: the price shown is the price paid (ie. tax included), and Meteroid carves the tax out of it on the invoice. 
+
+💡 More information on how B2B and B2C customers are taxed [here](https://docs.meteroid.com/settings/taxes#customer-tax-status)
+
+## Refunds
+
+Refund credit notes are now executed: online through **Stripe, Mollie or GoCardless**, or recorded as offline (e.g. bank transfer). Refunds made from your provider's dashboard and chargebacks are picked up automatically.
+
+<Frame>
+<img
+  src="/public/meteroid-refunds.png" 
+  alt="Issuing a refund credit note in Meteroid"
+/>
+</Frame>
+
+## Payments
+
+* **Mollie** — a new payment provider, supporting cards and SEPA Direct Debit ([documentation](https://docs.meteroid.com/integrations/mollie))
+* **Test gateway** — a simulated payment provider for sandbox environments, so you can try checkouts, invoice payments and the Customer Portal (successful payment, declined card, 3DS, SEPA…) without integrating a PSP
+* **Connection lifecycle** — payment provider connections can now be saved as draft, disabled and re-enabled, and their credentials can be rotated without disconnecting
+* **3D Secure from the portal** — customers can complete a payment awaiting 3DS authentication directly from the invoice page of the Customer Portal
+
+<Frame>
+<img
+  src="/public/meteroid-payment-providers-mollie.png" 
+  alt="Payment providers in Meteroid, including Mollie and the Test gateway"
+/>
+</Frame>
+
+## Meteroid Intelligence: Customer Activation Funnel
+
+Meteroid Intelligence gets a new view, **Activation**, that shows how your new customers progress to their first paid invoice: how many reach each step, how long it takes, and who is stuck where. 
+
+<Frame>
+<img
+  src="/public/meteroid-activation.png" 
+  alt="Activation view in Meteroid Intelligence"
+/>
+</Frame>
+
+## Developers
+
+* **Catalog in the REST API** — create and manage [products](https://docs.meteroid.com/api-reference/products/create-a-product), [plans](https://docs.meteroid.com/api-reference/plans/create-a-plan) and prices through the REST API
+* **Frontend SDK (preview)** — a new browser-facing client API, authenticated with scoped Customer Portal tokens, lets your frontend read a customer's subscriptions and entitlements directly
+* **Checkout redirect URLs** — [checkout sessions](https://docs.meteroid.com/api-reference/checkout-sessions/create-a-checkout-session) accept `success_url` and `cancel_url` to send customers back to your app
+* New endpoints to [refresh an invoice](https://docs.meteroid.com/api-reference/invoices/refresh-invoice) and get a [subscription summary](https://docs.meteroid.com/api-reference/subscriptions/get-subscription-summary)
+
+</Update>
+
 <Update label="August 2026" description="v1.0.0">
 
 ## Multi-language Invoicing
