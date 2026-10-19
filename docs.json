@@ -118,6 +118,7 @@
               "settings/branding",
               "settings/taxes",
               "settings/invoices-settings",
+              "settings/customer-emails",
               "settings/custom-properties",
               "settings/tenants",
               "settings/payment-methods",
@@ -142,7 +143,8 @@
                   "integrations/stripe",
                   "integrations/gocardless",
                   "integrations/mollie",
-                  "integrations/stancer"
+                  "integrations/stancer",
+                  "integrations/test-gateway"
                 ]
               },
               {

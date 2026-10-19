@@ -28,11 +28,42 @@ If the invoice is marked as Paid or Partially Paid, you will be able to choose h
 
 💡**Note:** This balance is credited even if the associated invoice's payment status is unpaid or partially paid.
 
-* **Refund**, the credit note indicates that the Customer should be refunded.
+* **Refund to customer**, the credit note records that the Customer must be paid back. Once the credit note is finalized, you issue the refund from it (see [Refunds](#refunds) below).
 
 💡**Note:** Refunds are only available for paid or partially paid invoices.
 
-💡**Note:** Refunds are **not handled by Meteroid** and must be processed on your side. Meteroid only records the credit note for accounting and tracking purposes.
+## Refunds
+
+A **Refund** credit note doesn't move money on its own: it states how much the Customer is owed. The money can be given back from the credit note, once it is finalized.
+
+### Issue a refund
+
+1. Go to **Billing > Credit Notes** and open the finalized refund credit note.
+2. In the **Refunds** section, click **Refund**.
+3. Choose how the money is given back:
+   * **Through the payment provider**: the provider sends the money back on the payment method the Customer originally paid with.
+   * **Record a refund made outside Meteroid**: for a bank transfer, cheque or cash refund you have already made yourself. You can add the refund date and a reference (e.g. the wire reference).
+4. Enter the **amount** and, optionally, a **reason**, then click **Refund**.
+
+💡**Note:** Partial refunds are supported: you can refund the credit note in several steps. The amount can't exceed what is left on the credit note, nor what was actually collected on the payment.
+
+💡**Note:** The refund is made on the **most recent settled payment** of the invoice. If the invoice has no settled payment, the **Refund** button is disabled.
+
+💡**Note:** **Through the payment provider** is only offered when the invoice was paid through a connected payment provider. Otherwise, only the offline option is available.
+
+### Follow a refund
+
+The **Refunds** section of the credit note shows:
+
+* **Refundable**: what is left to refund on this credit note.
+* **Refunded**: what has already been given back.
+* **In flight**: online refunds sent to the provider and not confirmed yet.
+
+Each refund is listed below, with its status. On the invoice, refunds appear in the payment list with a negative amount and a link to their credit note.
+
+💡**Note:** Issuing a refund doesn't change the invoice's amount due or payment status: the credit note is what reduces the invoice.
+
+💡**Note:** Refunds can also be issued from the invoice, in the payment list. See [Refunds and reversals](https://docs.meteroid.com/invoices/managing-invoices#refunds-and-reversals).
 
 ## Managing Credit Notes
 
