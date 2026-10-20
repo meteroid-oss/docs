@@ -1,0 +1,51 @@
+---
+title: Test Gateway
+---
+
+The **Test gateway** is a simulated payment provider. It lets you try the whole payment journey in a test environment — checkout, invoice payment and the Customer Portal — **without a PSP (Stripe, GoCardless or Mollie) account**, and without entering any real card or bank details. The integration enables:
+
+* **Card payments**: successful payments, declined cards, 3-D Secure authentication and pending payments.
+* **Direct Debit** (SEPA, ACH and Bacs): mandate setup, successful and refused debits.
+* **Simulated provider events**: settle or fail a pending payment, simulate a refund or a chargeback, directly from the invoice page.
+
+## Prerequisites
+
+* A **Development** or **Sandbox** tenant (see [Tenants](/settings/tenants)).
+
+📌 **Note**: The Test gateway is not available on **Production** tenants. A tenant connected to the Test gateway can't be moved to Production.
+
+## How to Set It Up
+
+1. Go to `Settings > Integrations` in your Meteroid dashboard.
+2. Under **Payment Providers**, select **Test gateway** and click **Connect**.
+3. Choose whether to use it for card payments, direct debit, or both. You can also do it later in `Settings > Payment methods` (see [Supported Payment Method](/settings/payment-methods)).
+
+## Test scenarios
+
+When paying (in the checkout or the Customer Portal), you need to pick one of the test scenarios below, which sets the outcome of the payment.
+
+| Payment method | Scenario | Outcome |
+|---|---|---|
+| Card | Visa •••• 4242 | Payment succeeds. |
+| Card | Visa •••• 0002 | Card is declined. |
+| Card | Visa •••• 3220 | Asks for 3-D Secure authentication. Renewals stay processing. |
+| Card | Visa •••• 3184 | Asks for 3-D Secure authentication on every charge, renewals included. |
+| Card | Mastercard •••• 0119 | Stays processing until settled from the invoice page. |
+| SEPA | SEPA account •••• 0009 | Mandate set up, payment succeeds. |
+| SEPA | SEPA account •••• 0002 | Debit is refused. |
+| SEPA | SEPA account •••• 0119 | Stays processing until settled from the invoice page. |
+| ACH | ACH account •••• 0009 | Mandate set up, payment succeeds. |
+| Bacs | Bacs account •••• 0009 | Mandate set up, payment succeeds. |
+
+## Simulate provider events
+
+With a real provider, some events arrive later (a pending payment that is confirmed, a refund made from the provider's dashboard, a chargeback). With the Test gateway, you trigger them yourself: open the invoice and, in the payment list, use the **Test gateway** actions next to the payment.
+
+| Payment status | Action | What it simulates |
+|---|---|---|
+| Pending | **Settle** | The provider confirms the payment. |
+| Pending | **Fail** | The provider reports the payment as failed. |
+| Settled | **Refund (provider-side)** | A refund issued from the provider's dashboard. The invoice stays paid, and a refund line is recorded against the payment. |
+| Settled | **Chargeback** | The provider claws the payment back. The invoice goes back to unpaid. |
+
+📌 Need help with the Test gateway? 👉 Contact us at hey@meteroid.com.

@@ -1,0 +1,192 @@
+---
+title: Customer emails
+---
+
+In the **Settings > Customer emails** section, you choose which emails your Customers receive, who they come from, and when payment reminders go out.
+
+Customer emails are configured **per invoicing entity**. To switch to another invoicing entity, use the selector in the upper right.
+
+The section has four tabs: **Emails**, **General**, **Payment reminders** and **Activity**.
+
+# Email delivery
+
+At the top of the section, a status bar shows where customer emails go. Unlike the tabs below, this setting applies to the **whole workspace** (tenant), across every invoicing entity. To change it, click **Change**.
+
+There are three delivery modes:
+
+| Mode | What happens |
+|---|---|
+| **Live** | Emails go to your Customers. |
+| **Test mode** | Only your team and the **test recipients** you list receive emails. Emails to anyone else are not sent, and are recorded as skipped on the invoice or quote. |
+| **Off** | No customer email is sent. Each one is recorded as skipped on the invoice or quote, and payment reminders are paused. |
+
+* **Test recipients**: in **Test mode**, add the email addresses allowed to receive emails, or a whole domain with `@example.com` (up to 50). Members of your organization always receive test emails.
+* **Only Production workspaces can go Live.** Development and Sandbox workspaces use **Test mode** or **Off**. Switching to **Live** asks for confirmation.
+* New Production workspaces start in **Live**, other workspaces in **Test mode**.
+
+💡 **Note**: The delivery mode only applies to emails sent to your Customers. Alert emails sent to your team are not affected.
+
+💡 **Note**: In **Test mode** or **Off**, a warning is shown when you send a quote to a Customer.
+
+# Emails
+
+This section lists every email Meteroid can send to your Customers, grouped by topic. Each email can be switched on or off individually.
+
+Each email shows a **PDF attached** label when the document (invoice, credit note…) is attached to it.
+
+Click an email to see a **preview** of it, rendered with your branding. From the preview, you can also send yourself a test email.
+
+## Choose who receives an email
+
+Under each email, the **Send to** button lets you restrict who receives it:
+
+* **Everyone**: every email of this kind is sent.
+* **Everyone except**: emails matching the conditions are skipped.
+* **Only**: only emails matching the conditions are sent.
+
+Conditions can be based on the **plan type**, the **plan**, the **invoice kind** (subscription, one-off, consolidated), the **payment method**, the **amount due**, the **currency**, the Customer's **country**, a specific **Customer**, or a custom propertyof the Customer. While you build the conditions, Meteroid shows an estimation of how many emails they would affect.
+
+# General
+
+This tab sets how your emails are addressed and what they look like.
+
+## Sender
+
+* **Sender address**: by default, emails are sent from a shared Meteroid address. The sender name below is shown in front of it.
+
+💡 **Note**: Meteroid can send emails from a custom domain. Contact your account manager to enable this feature.
+
+* **Sender name**: the name your Customers see as the sender (up to 80 characters).
+* **Reply-to**: the address your Customers' replies go to.
+* **Bcc**: every customer email is copied to these addresses.
+
+## Languages
+
+Each email is sent in a single language, chosen for each Customer among the customer-facing languages of the invoicing entity. The default and additional languages are set in [Branding](https://docs.meteroid.com/settings/branding).
+
+## Branding in emails
+
+Emails reuse the invoicing entity's branding: **logo** and **brand colour** come from [Branding](https://docs.meteroid.com/settings/branding), and the **footer** (legal name and address) comes from [Merchant](https://docs.meteroid.com/settings/merchant).
+
+💡 **Note**: Meteroid's branding ("Powered by Meteroid" at the bottom of the invoices) can be removed from emails. Contact your account manager to enable this feature.
+
+# Payment reminders
+
+Payment reminders are emails sent before and after an invoice's due date, until it is paid. They apply to **invoices paid by bank transfer**, and to invoices **whose automatic payment failed**. Invoices charged automatically don't receive reminders.
+
+Payment reminders are **off by default**. Turn them on with the switch at the top of the **Payment reminders** tab.
+
+## Sending time
+
+Next to **Send reminders at**, choose the hour and the time zone at which reminders go out (09:00 by default).
+
+## Reminder sequences
+
+A **sequence** is a series of reminder emails, each sent a given number of days before or after the due date.
+
+Meteroid provides a default sequence, **Everyone else**, which applies to every open invoice that no other sequence claims. It sends 4 reminders:
+
+* 3 days before the due date,
+* on the due date,
+* 7 days after the due date,
+* 14 days after the due date.
+
+💡 **Note**: The default sequence is **disabled** at first, like the reminders themselves. To start sending reminders, turn on the switch at the top of the tab **and** enable the default sequence (or one of your own).
+
+You can edit it, and create other sequences for specific groups of Customers (e.g. enterprise customers, a given country…) by clicking **New sequence**.
+
+## Create or edit a sequence
+
+A sequence has:
+
+* **Name**: e.g. *Enterprise customers*.
+* **Enabled**: a disabled sequence is skipped, and its invoices fall through to the next matching sequence.
+* **Audience**: the conditions an invoice must match to follow this sequence. The conditions are the same as for [Choose who receives an email](#choose-who-receives-an-email). Meteroid shows how many open invoices they match.
+* **Steps**: the reminders to send (up to 20). For each step, set **When** it is sent: a number of days before the due date, on the due date, or a number of days after it.
+
+💡 **Note**: To send no reminders to a group of Customers, create a sequence for them, keep it enabled, and leave it with no steps.
+
+## Which sequence applies?
+
+Sequences are checked **in order**, from top to bottom: the **first enabled sequence whose audience matches** the invoice is used. The default sequence, **Everyone else**, always comes last. Use the arrows to change the order.
+
+A Customer can also be assigned a specific sequence, which takes precedence over audiences. See [Reminders for a Customer](#reminders-for-a-customer).
+
+## When are reminders sent?
+
+### When an invoice starts receiving reminders
+
+An invoice enters its reminder sequence once it is **finalized**, has a **due date**, and its PDF has been generated, and:
+
+* it is paid by **bank transfer** or through the payment link (no automatic payment), **or**
+* it was charged automatically and the payment **failed** (payment status **Errored**).
+
+Reminders must also be switched on, an enabled sequence must match the invoice, and the Customer must not be set to **No reminders**.
+
+### On which dates
+
+Each step is sent on its **date**, at the **sending time** set for the invoicing entity (see [Sending time](#sending-time)). The date is counted from the invoice's **due date**.
+
+For example, with the default sequence, an invoice due on March 10 and a sending time of 09:00:
+
+| Step | Sent on |
+|---|---|
+| 3 days before | March 7, 09:00 |
+| Due day | March 10, 09:00 |
+| 7 days after | March 17, 09:00 |
+| 14 days after | March 24, 09:00 |
+
+A few rules apply:
+
+* **No reminder before the invoice exists.** A step whose date falls before the invoice was finalized is never sent. For example, an invoice due on receipt doesn't get the "3 days before" reminder.
+* **No catch-up of past steps.** When an invoice enters its sequence late, the steps whose date has already passed are skipped. If every step has already passed, the invoice gets no reminders.
+* **No burst of reminders.** If several steps were missed (for example, while reminders were paused), only the most recent one is sent.
+* **Spacing between emails.** A reminder is never sent within 20 hours of another email sent to the Customer about the same invoice (e.g. *Invoice ready*): it is postponed.
+* If the **due date is before the finalization date** (for example, a backdated invoice), the dates are counted from the finalization date instead.
+
+### When reminders stop or start again
+
+Reminders **stop** when:
+
+* the invoice is **paid**, **voided** or marked **uncollectible**,
+* the Customer **disputes** a payment (e.g. a card chargeback): reminders stay stopped until you restart them from the invoice,
+* you stop them on the invoice, the Customer is set to **No reminders**, or the sequence is archived.
+
+Reminders **start again** when the invoice becomes unpaid again, for example after a payment is reversed or returned by the bank.
+
+## Reminder content
+
+By default, each step sends a **built-in reminder**, already translated into every language.
+
+To write your own, enter a **Subject** and a **Message** for the step. You can insert variables (e.g. `{{customer_name}}`, `{{invoice_number}}`) by clicking them. The amount, the due date, a **Pay** button and the invoice PDF are always added below your message.
+
+💡 **Note**: A step with custom content needs it in **every enabled language**. A warning is shown on the sequence when a language is missing.
+
+## Reminders on an invoice
+
+The **Payment reminders** section of an invoice shows its reminder status: which sequence it follows and why, and when the next reminder is due. You can preview the next reminder, and:
+
+* **Pause** reminders for 7, 14 or 30 days, then **Resume** them,
+* **Stop** reminders for this invoice, then **Restart** them if needed,
+* **Send now**, to send the next reminder immediately.
+
+When an invoice can't receive reminders, the reason is shown (e.g. *charged automatically*, *no due date*, *customer opted out*).
+
+💡 **Note**: When a Customer disputes a payment (e.g. a card chargeback), reminders stop for the invoice. They don't restart on their own: restart them once the dispute is settled.
+
+## Reminders for a Customer
+
+On the Customer page, you can choose how payment reminders apply to this Customer:
+
+* **Default**: the audience rules pick the sequence for each invoice.
+* **Specific sequence**: always use this sequence, whatever the audiences say.
+* **No reminders**: this Customer never receives payment reminders.
+
+💡 **Note**: **No reminders** also stops invoices already in progress. The other options only apply to new invoices.
+
+# Activity
+
+The **Activity** tab lists the emails of the invoicing entity. Use the switch at the top to show:
+
+* **Sent**: the emails sent to your Customers, with their recipients and date.
+* **Skipped**: the emails that were not sent, with the date, the email type, the related document (invoice, credit note or quote), the Customer and the reason. For example: *Customer emails are off for this workspace*, *Test mode: no allowed recipient*, *This email type is turned off*, *No recipient email address*, or *Excluded by the email's "Send to" rules*.

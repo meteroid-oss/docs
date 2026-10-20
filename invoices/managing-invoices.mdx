@@ -84,6 +84,58 @@ In addition to invoice status, Meteroid tracks **Payment Status**:
 
 💡 **Note**: Meteroid automatically updates the payment status if the payment method is Direct Debit or Credit Card. If the payment method is set at bank transfer, payment status for a given invoice can be updated by clicking on Actions > Mark as Paid.
 
+## Refunds and reversals
+
+💡 **Note**: Refunds are only possible on invoices with the **Paid** or **Partially Paid** payment status, that is, invoices with at least one payment received.
+
+Each payment received on an invoice is listed in the **Payment Information** section of the invoice. Click the **⋯** menu next to a payment to give money back or cancel it. The actions offered depend on **how the invoice was paid**:
+
+| Invoice paid… | Actions available |
+|---|---|
+| **Through a payment provider** (card, direct debit) | **Refund…** and **Record offline refund…** |
+| **Manually** (e.g. bank transfer marked as paid) | **Record offline refund…** and **Reverse…** |
+
+### Refund…
+
+Opens the refund window, where you choose:
+
+* **How the money is given back**:
+  * **Through the payment provider**: the provider sends the money back on the payment method the Customer originally paid with. The refund shows as **In flight** until the provider confirms it.
+  * **Record a refund made outside Meteroid**: for a refund you have already made yourself (bank transfer, cheque, cash). You can add the refund date and a reference (e.g. the wire reference).
+* **Whether to link it to a credit note**:
+  * **A refund credit note**: if a finalized **Refund** credit note has previously been issued on the invoice, select it. You can refund up to what is left on it. See [Refunds](https://docs.meteroid.com/credit-notes/create-and-manage-credit-notes#refunds).
+  * **No credit note — overpayment only**: without a credit note, you can only give back what the Customer paid above the invoice total (for example, a duplicate payment).
+* The **amount** and, optionally, a **reason**.
+
+💡 **Note**: To refund a Customer for something you invoiced, issue a **Refund** credit note first. Without one, only an overpayment can be refunded.
+
+A refund line with a negative amount is then added under the payment. The refund doesn't change the invoice's amount due: the credit note is what reduces the invoice.
+
+### Record offline refund…
+
+Opens the same refund window, with **Record a refund made outside Meteroid** selected by default. Use it when you have already given the money back yourself. The options are the same as for **Refund…**.
+
+💡 **Note**: For invoices paid manually, this is the only refund option: the money can't be given back through a payment provider.
+
+### Reverse…
+
+Only available for **payments recorded manually**. Use it when a payment **never actually landed**, or was taken back by the bank (for example, a returned bank transfer or a bounced cheque). No credit note is needed.
+
+1. Click **Reverse…**.
+2. Select the **cause** (e.g. *Chargeback*, *Insufficient funds*, *Returned*), and optionally the reversal date and a reason.
+3. Click **Reverse payment**.
+
+The payment is clawed back and the invoice reopens as **Unpaid**: the amount is due again.
+
+💡 **Note**: In short: if **you** give money back, it's a refund. If the money **never reached you**, it's a reversal.
+
+### Refunds and chargebacks made outside Meteroid
+
+For invoices paid through a payment provider, Meteroid stays in sync automatically:
+
+* A refund made directly from your provider's dashboard is picked up and recorded on the invoice.
+* A chargeback, a lost dispute or a returned direct debit (e.g. a SEPA recall) is recorded as a reversal: the payment is cancelled and the invoice goes back to **Unpaid**.
+
 ## Previewing Upcoming Invoices
 
 Meteroid allows you to preview the estimated amount for the next billing cycle before the invoice is created. This is particularly useful for monitoring high-volume usage-based accounts. 
@@ -122,7 +174,7 @@ Examples:
 
 Moreover, when an invoice is finalized, Meteroid automatically sends an email to the End users provided the following conditions are met:
 
-* **“Disable all email notifications” is disabled in **Settings > General, AND
+* Customer emails are delivered by the workspace (delivery mode **Live**, or **Test mode** for allowed recipients), and the email is switched on in **Settings > Customer emails** (see [Customer emails](https://docs.meteroid.com/settings/customer-emails)), AND
 * An **Invoicing Email** is configured at the **Customer** level.
 
 If both conditions are met, Meteroid sends one of the following emails:

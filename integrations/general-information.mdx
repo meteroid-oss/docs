@@ -1,5 +1,6 @@
 ---
 title: Integrations
+sidebarTitle: Overview
 ---
 
 
@@ -22,7 +23,47 @@ Connect a Payment Service Provider (PSP) to collect payments on your invoices by
   <Card title="Stancer" icon="/public/integrations/stancer.svg" href="/integrations/stancer">
     European card payments platform.
   </Card>
+  <Card title="Test gateway" icon="flask" href="/integrations/test-gateway">
+    Simulated payments to test your setup, without a provider account.
+  </Card>
 </CardGroup>
+
+### Managing a payment provider connection
+
+Each payment provider connection is listed in **Settings > Integrations**, with its status, the payment methods it supports, and a **Manage** button.
+
+A connection can have one of the following statuses:
+
+* **Draft**: the setup was started but not finished. Your progress is saved: click **Resume setup** to finish it, or **Discard draft** to remove it. A draft is never used for payments.
+* **Active**: the connection can be used to collect payments.
+* **Disabled**: no new payments are collected through it (see below).
+
+Click **Manage** to open the connection. From there, you can:
+
+* **Check the connection**: Meteroid asks the provider whether the stored credentials still work, and shows when this was last checked. If the provider rejects them, the connection is flagged with **Invalid credentials**.
+* **Update credentials**: replace the keys (e.g. after rotating them in the provider's dashboard) without disconnecting. A field left blank keeps the stored value.
+* See the **payment methods** enabled on your provider account, the **webhook** setup, and what the connection is **used by** (invoicing entities, subscriptions, Customers with saved payment methods).
+
+#### Disable a connection
+
+Click **Disable connection** to stop using a provider without deleting it:
+
+* No new payments are started: subscriptions using it are no longer charged automatically, and their invoices stay open for manual payment.
+* Customers can't add new payment methods through it.
+* Payments already in progress still settle, and refunds still work.
+
+Click **Enable** to use it again. Meteroid first checks the credentials with the provider.
+
+#### Delete a connection
+
+Click **Delete connection** to remove it from Meteroid:
+
+* It is removed from **Integrations** and from the payment routing of your invoicing entities.
+* The stored credentials are wiped.
+* Customers' saved payment methods from this connection are hidden.
+* Invoices, payments and refunds keep their history.
+
+💡 **Note:** A connection can't be deleted while payments are still in progress through it. Disable it first to stop new charges, then delete it once they have settled (direct debits usually take up to 5 business days).
 
 ## CRM
 
