@@ -1,0 +1,59 @@
+---
+title: "Limits and budgets"
+description: "Decide what happens when credit runs out, and let customers control their spend."
+---
+
+Three controls decide whether a customer may keep consuming:
+
+| Control | Measures | Set in |
+| --- | --- | --- |
+| **When credit runs out** | The credit a subscription can spend | Plan details, and per customer in the wallet settings |
+| **Budget** | The estimated usage spend of the billing period | Customer page, **Budgets** tab, or by the customer in the portal |
+| **Entitlement limit** | The usage of one metered feature | Plan entitlements, or a customer override. See [Entitlements](/entitlements/create-and-manage-entitlements) |
+
+<Warning>
+  Meteroid never rejects usage events: every event you send is recorded and billed. Denying access changes the answer of the **entitlement check** your product calls before serving a request: your product must call it, and refuse the request when access is denied.
+</Warning>
+
+## When credit runs out
+
+Each plan defines what happens once the credit a subscription can spend is used up, under **When credit runs out**:
+
+| Rule | Behavior |
+| --- | --- |
+| **Invoice the overage** | Access stays allowed. Usage beyond the credit is invoiced. Default for plans without credit |
+| **Deny access at zero** | Access checks return denied when the balance reaches zero, until credit is added. Default for plans that grant credit or price usage in a credit unit |
+| **Invoice overage up to a cap, then deny access** | Usage beyond the credit is invoiced up to a cap per billing period, then access checks return denied |
+
+To override the plan for one customer, open the wallet settings and set **Access at zero balance** to **Always deny access** or **Never deny access**.
+
+Access comes back on the next check once credit is added, e.g. with a top-up. Pair **Deny access at zero** with [automatic top-up](/credits/top-ups#automatic-top-up) to avoid interruptions.
+
+## Budgets
+
+A budget watches the estimated usage spend of the current billing period, unbilled usage included, in one currency or credit unit. It never moves money.
+
+On the customer page, open the **Budgets** tab and add a budget:
+
+| Field | Description |
+| --- | --- |
+| **Applies to** | All the customer's subscriptions, or one subscription |
+| **Currency or credit unit**, **Amount** | The budget |
+| **At the budget** | **Soft budget**: alerts only. **Hard budget**: access checks return denied once it is reached, until the next billing period or until the budget is raised |
+| **Alert thresholds** | Percentages of the budget. Default: 50, 80 and 100 |
+
+The customer is emailed at each threshold.
+
+When budgets are enabled in the portal (see [Customer portal](/credits/customer-portal)), customers can set their own budget, to be alerted only or to stop their usage.
+
+## The entitlement check
+
+A check for a metered feature returns `has_access: false` with one of these reasons, evaluated in this order:
+
+| Reason | Meaning |
+| --- | --- |
+| `LIMIT_REACHED` | A hard entitlement limit is reached |
+| `BUDGET_EXCEEDED` | A hard budget is reached |
+| `INSUFFICIENT_BALANCE` | No credit is left for this usage, and the plan or wallet denies access at zero |
+
+Pass `subscription_id` in the check when the usage belongs to one subscription.
