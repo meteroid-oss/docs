@@ -8,11 +8,11 @@ Three controls decide whether a customer may keep consuming:
 | Control | Measures | Set in |
 | --- | --- | --- |
 | **When credit runs out** | The credit a subscription can spend | Plan details, and per customer in the wallet settings |
-| **Budget** | The estimated usage spend of the billing period | Customer page, **Budgets** tab, or by the customer in the portal |
+| **Budget** | The estimated usage spend of the billing period | Customer page, **Budgets** tab, or by the customer in the Customer Portal |
 | **Entitlement limit** | The usage of one metered feature | Plan entitlements, or a customer override. See [Entitlements](/entitlements/create-and-manage-entitlements) |
 
 <Warning>
-  Meteroid never rejects usage events: every event you send is recorded and billed. Denying access changes the answer of the **entitlement check** your product calls before serving a request: your product must call it, and refuse the request when access is denied.
+  Meteroid never rejects usage events: every event you send is recorded and billed. Denying access only changes the answer of the **access check**. Your product must call it before serving a request, and refuse the request when access is denied.
 </Warning>
 
 ## When credit runs out
@@ -44,11 +44,11 @@ On the customer page, open the **Budgets** tab and add a budget:
 
 The customer is emailed at each threshold.
 
-When budgets are enabled in the portal (see [Customer portal](/credits/customer-portal)), customers can set their own budget, to be alerted only or to stop their usage.
+When budgets are enabled in the Customer Portal (see [Credit in the Customer Portal](/credits/customer-portal)), customers can set their own budget, to be alerted only or to stop their usage.
 
-## The entitlement check
+## The access check
 
-A check for a metered feature returns `has_access: false` with one of these reasons, evaluated in this order:
+The access check (entitlement check API) for a metered feature returns `has_access: false` with one of these reasons, evaluated in this order:
 
 | Reason | Meaning |
 | --- | --- |

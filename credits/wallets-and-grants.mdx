@@ -7,16 +7,13 @@ description: "Where credit comes from, in which order it is used, and how it end
 
 Each customer's credit is on their page, in the **Credit** tab. A wallet shows:
 
-* the **balance**, with **+ Add credit** and the wallet settings (gear icon),
-* the usage of the current billing period, and a projection to the end of the period,
-* the **automatic top-up** rule, if any,
-* the credit grouped by kind: **Included with &lt;plan&gt;**, **Purchased credit**, **Free credit** and **Account balance**,
-* a **Credit usage** chart, by metric, with the top consumers,
-* the **Activity** (ledger, exportable as CSV), the **Grants** and a **Summary**.
+* the **balance**, with **+ Add credit** and the wallet settings (gear icon)
+* the usage of the current billing period, with a projection, and the automatic top-up
+* credit usage by metric, and the **Activity** (exportable as CSV), **Grants** and **Summary** tabs
 
 When the customer has several subscriptions, a **Subscription** filter narrows the wallet to the credit a given subscription can spend.
 
-To see every customer's wallet at once, go to **Billing > Wallets**, and filter on low, depleted or blocked wallets, or failing top-ups.
+To see every customer's wallet at once, go to **Billing > Wallets**, and filter on low, depleted or access-denied wallets, or failing top-ups.
 
 | Status | Meaning |
 | --- | --- |
@@ -33,29 +30,29 @@ To see every customer's wallet at once, go to **Billing > Wallets**, and filter 
 | Paid credit pack in a plan | Paid (+ bonus) | [Credit in plans](/credits/credit-packs) |
 | Included credit pack, rollover, welcome credit | Promotional | [Credit in plans](/credits/credit-packs) |
 | Promotion code | Promotional | [Promotional credit](/credits/promotional-credit) |
-| **Add credit** > Goodwill / promotional | Promotional | Below |
-| **Add credit** > Paid outside Meteroid | Paid | Below |
+| **Add credit** > **Free credit** | Promotional | [Adding credit by hand](#adding-credit-by-hand) |
+| **Add credit** > **Account balance** | Paid | [Adding credit by hand](#adding-credit-by-hand) |
 | Credit note applied as customer credit, overpayment | Paid | [Credit notes](#credit-notes-and-refunds) |
 
 ## Adding credit by hand
 
 On the wallet, click **+ Add credit** and choose a **Type**:
 
-* **Goodwill / promotional**: a discount, applied before tax. Use it to compensate an outage or for a commercial gesture.
-* **Paid outside Meteroid**: money you already received (wire, cheque…), applied after tax. A payment reference is required for French invoicing entities.
+* **Free credit**: goodwill or promotional credit, applied before tax like a discount. Use it to compensate an outage or as a commercial gesture.
+* **Account balance**: money you already received outside Meteroid (wire, cheque…), applied after tax. It can pay any charge, on any subscription. A payment reference is required for French invoicing entities.
 * **Sell credit**: charge the customer now or send them an invoice. See [Top-ups](/credits/top-ups).
 
 <Frame>
   <img src="/public/meteroid-credits-add-credit.png" alt="Adding credit to a customer's wallet" />
 </Frame>
 
-Goodwill credit has **Advanced settings**:
+Free credit also takes these options (most are under **Advanced settings**):
 
 | Field | Options |
 | --- | --- |
 | **Can be used for** | All of the customer's subscriptions, or one subscription only (the credit then ends with it) |
-| **Pays** | All charges, or **Usage only** (never subscription fees) |
-| **Applies to** | All products, or selected products |
+| **Pays** | All charges, or **Usage only** (never subscription fees). Money wallets only |
+| **Applies to** | All products, or selected products. Money wallets only |
 | **Expires after** | 1 to 120 months. Empty: never expires |
 | **Priority** | Lower numbers are used first (default 100) |
 
@@ -93,6 +90,6 @@ Grants cannot be edited: to correct one, remove it and add it again. Purchased c
 
 ## Several subscriptions: usage filters
 
-A customer can hold several subscriptions billing the same metric, e.g. one per team or per API key, each with its own credit. Set a **Usage filter** on each subscription (a property and a value, e.g. `api_key = key-A`, under **Advanced Settings**) so that each subscription bills, and spends credit on, its own events only.
+A customer can hold several subscriptions billing the same metric, e.g. one per team or per API key, each with its own credit. Set a **Usage filter** on each subscription (a property and an exact, case-sensitive value, e.g. `api_key = key-A`, under **Advanced Settings** when creating the subscription) so that each subscription bills, and spends credit on, its own events only.
 
 A subscription without a usage filter bills the events that no other subscription's filter matches.

@@ -8,10 +8,10 @@ Credit is value a customer holds with you. It is applied automatically to their 
 
 Use credit to:
 
-* sell prepaid usage (e.g. "$500 of API usage"), with optional automatic top-up,
-* include an allowance in a plan (e.g. "5,000 credits a month"), with rollover,
-* offer welcome credit, promotion codes or goodwill credit after an incident,
-* stop or cap usage once the credit runs out.
+* Sell prepaid usage (e.g. "$500 of API usage"), with optional automatic top-up
+* Include an allowance in a plan (e.g. "5,000 credits a month"), with rollover
+* Offer welcome credit, promotion codes or goodwill credit after an incident
+* Stop or cap usage once the credit runs out
 
 <Frame>
   <img src="/public/meteroid-credits-customer.png" alt="A customer's credit in Meteroid" />
@@ -20,7 +20,7 @@ Use credit to:
 ## Wallets and grants
 
 * A **wallet** holds one customer's credit, either in a **currency** (e.g. "USD credit") or in a **credit unit** you define (e.g. "API credits"). A wallet opens automatically the first time credit is added to it.
-* A **grant** is one amount of credit in a wallet, with its own type, expiry and scope: $500 bought on March 1st, 5,000 credits included with a plan this month, $25 of goodwill credit…
+* A **grant** is one amount of credit in a wallet, with its own type, expiry and scope: $500 bought on March 1st, 5,000 credits included with a plan this month, $25 of goodwill credit.
 * The **ledger** records every movement: credit added, applied to an invoice, expired, removed or returned.
 
 See [Wallets and grants](/credits/wallets-and-grants).
@@ -31,7 +31,7 @@ See [Wallets and grants](/credits/wallets-and-grants).
 | --- | --- | --- |
 | What it is | Credit you give: included with a plan, welcome credit, promotion codes, bonus credit, goodwill | Credit the customer paid for: top-ups, paid credit packs, payments received outside Meteroid, overpayments |
 | On the invoice | A price reduction, applied **before tax** (after coupons) | A means of payment, applied **after tax** |
-| Shown as | **Free credit** (**Promotional credit** on PDFs) | **Credits applied** |
+| On invoices, shown as | **Free credit** (**Promotional credit** on PDFs) | **Credits applied** |
 
 In a money wallet, promotional credit is always used before paid credit.
 
@@ -60,7 +60,7 @@ Credit is never converted between currencies, or between a unit and money. See [
 ## How credit is applied
 
 * Credit is applied when an invoice is **finalized**. Draft invoices show the credit expected.
-* Credit never pays for credit itself (a credit pack or a top-up).
+* Credit never pays for credit purchases (credit packs or top-ups).
 * When several grants can pay, the most specific one is used first, then the one that expires soonest. See [Order of consumption](/credits/wallets-and-grants#order-of-consumption).
 
 ## Balance and unbilled usage
@@ -74,7 +74,7 @@ Usage is priced continuously between invoices, so the wallet shows what is reall
 | **Balance** | Credit on account − unbilled usage |
 | **Scheduled** | Credit granted with a later start date |
 
-The balance is never shown below zero: usage the credit cannot cover is shown as "beyond credit" and billed on the next invoice, unless you choose to [deny access at zero](/credits/limits-and-budgets#when-credit-runs-out).
+The balance is never shown below zero: usage the credit cannot cover is shown as "beyond credit" and billed on the next invoice. To stop serving usage at zero, see [When credit runs out](/credits/limits-and-budgets#when-credit-runs-out).
 
 <Note>
   Balances can take a few minutes to update after new usage events.
