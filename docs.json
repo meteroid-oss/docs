@@ -166,6 +166,12 @@
             "pages": [
                "migration/stripe-migration-guide"
             ]
+          },
+          {
+            "group": "Self-hosting",
+            "pages": [
+              "self-hosting/telemetry"
+            ]
           }
         ]
       },
