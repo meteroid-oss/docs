@@ -449,7 +449,7 @@ webhook endpoint of that tenant, with:
   otherwise receive every event;
 - its signing secret. Its deliveries carry the `svix-id`, `svix-timestamp` and `svix-signature`
   headers next to the Standard Webhooks `webhook-*` ones, so your receivers keep verifying the
-  signatures without any change. The payload itself changed: see [Webhooks](#webhooks);
+  signatures without any change. Coming from 0.19, the payload changed: see [Webhooks](#webhooks);
 - its custom headers;
 - its state: an endpoint disabled in Svix is imported disabled.
 
@@ -573,7 +573,8 @@ reverted.
 - New endpoints are signed with the [Standard Webhooks](https://www.standardwebhooks.com)
   headers `webhook-id`, `webhook-timestamp` and `webhook-signature`. Endpoints imported from Svix
   also keep the `svix-*` headers.
-- The payload is no longer wrapped in `data`: the object's fields are at the top level, next to
+- Coming from 0.19, the payload is no longer wrapped in `data` (1.0.0-rc7 already sends the 2.0
+  format): the object's fields are at the top level, next to
   the event's `id`, `type` and `timestamp`, and the object's identifier has its own field. A
   `customer.created` event was
   `{"type": "customer.created", "id": "evt_…", "data": {"id": "cus_…", "name": "Acme", "discriminator": "CUSTOMER", …}}`
