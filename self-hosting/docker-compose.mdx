@@ -30,17 +30,6 @@ storage. Use it to try Meteroid or for a small installation. For production, pre
     cp .env.example .env
     ```
   </Step>
-  <Step title="Pin the version">
-    `METEROID_VERSION` in `.env` sets the version every Meteroid image runs. Set it to the
-    release you run:
-
-    ```bash .env
-    METEROID_VERSION=2.0.0
-    ```
-
-    `.env.example` pins the release it comes with. Keep a version pinned: `latest`, the fallback
-    when `METEROID_VERSION` is unset, moves with every release.
-  </Step>
   <Step title="Set the secrets">
     Replace the four placeholder secrets in `.env` before the first start:
 
@@ -134,13 +123,10 @@ volume.
     Back up the database first (see [Backups](#backups)). An upgrade cannot be undone except by
     restoring a backup.
   </Step>
-  <Step title="Change the version">
-    Set the new version in `.env`, and take the deployment files of that release if they
-    changed:
-
-    ```bash .env
-    METEROID_VERSION=2.0.1
-    ```
+  <Step title="Take the new deployment files">
+    Take `docker/deploy` from the tag of the new release if its files changed, and reapply your
+    changes to `docker-compose.yml`. If you pinned `METEROID_VERSION`, set it to the new
+    release.
   </Step>
   <Step title="Pull and restart">
     ```bash
@@ -153,7 +139,11 @@ volume.
   </Step>
 </Steps>
 
-Coming from a 1.0.0 release candidate, `latest` (0.19) or an older build? Follow
+The images run `latest`, so `docker compose pull` takes the newest release. To stay on one
+release, set its version in `.env`, for example `METEROID_VERSION=2.0.0`, and change it when you
+upgrade.
+
+Coming from a 1.0.0 release candidate, 0.19 or an older build? Follow
 [Upgrading to 2.0](/self-hosting/upgrading-to-2-0) instead.
 
 ## Run the open-source edition

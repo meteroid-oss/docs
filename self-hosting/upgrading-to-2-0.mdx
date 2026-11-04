@@ -284,7 +284,7 @@ leaves out the queues.
       <Step title="Update .env">
         Compare your `.env` with the new `.env.example` and:
 
-        - set `METEROID_VERSION=2.0.0`;
+        - if your `.env` sets `METEROID_VERSION`, set it to `2.0.0`;
         - keep `JWT_SECRET`, `INTERNAL_API_SECRET`, `DATABASE_*` and, above all, the same
           `SECRETS_CRYPT_KEY`;
         - if you use SMTP, make sure `MAILER_FROM` is set: 2.0 refuses to start without it;
