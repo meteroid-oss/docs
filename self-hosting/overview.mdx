@@ -4,36 +4,30 @@ sidebarTitle: "Overview"
 description: "What a self-hosted Meteroid installation runs, the two ways to deploy it, and which version to run."
 ---
 
-You can run Meteroid on your own infrastructure. A self-hosted installation runs four Meteroid
-processes on top of a PostgreSQL database, a ClickHouse database, a Kafka-compatible broker and
-an object store. This page describes those pieces and points you to the deployment guides.
+You can run Meteroid on your own infrastructure: on one machine with Docker Compose, or on
+Kubernetes with the Helm chart.
 
 ## What you run
 
-| Process | Image | Role |
-|---|---|---|
-| API | `ghcr.io/meteroid-oss/meteroid-api` | Serves the gRPC API the web app talks to and the REST API your integration calls, along with the customer portal, checkout and incoming payment-provider webhooks. |
-| Worker | `ghcr.io/meteroid-oss/meteroid-worker` | Runs the scheduled jobs (billing runs, invoice refreshes, payment reconciliation) and the queue consumers (outgoing webhooks, emails, invoice PDFs). |
-| Metering API | `ghcr.io/meteroid-oss/metering-api` | Receives usage events, sends them through Kafka into ClickHouse, and answers usage queries. |
-| Web | `ghcr.io/meteroid-oss/meteroid-web` | The web application, served by nginx. |
+Four processes, each an image under `ghcr.io/meteroid-oss/`:
 
-The API and the worker both run the PostgreSQL migrations when they start. They take a database
-lock first, so processes that start together run the migrations one at a time. The metering API
-runs the ClickHouse migrations when it starts. There is no separate migration step to run.
+- **API** (`meteroid-api`): the gRPC and REST APIs, the customer portal, checkout and incoming
+  payment-provider webhooks.
+- **Worker** (`meteroid-worker`): scheduled jobs and queue consumers, such as billing runs,
+  outgoing webhooks, emails and invoice PDFs.
+- **Metering API** (`metering-api`): usage event ingestion and queries.
+- **Web** (`meteroid-web`): the web app.
 
-You can run several replicas of each process. Work that must happen once, such as a scheduled
-job, is coordinated through PostgreSQL.
+They run their migrations when they start, and each can run several replicas. They need:
 
-## Infrastructure
-
-| Service | Used for | Notes |
-|---|---|---|
-| PostgreSQL 18 with the [`pgmq`](https://github.com/pgmq/pgmq) extension | All billing data, and the internal queues | The migrations run `CREATE EXTENSION pgmq` and use functions built into PostgreSQL 18. The `ghcr.io/meteroid-oss/meteroid-postgres:18.3-standard` image (and `18.3-cnpg` for CloudNativePG) includes `pgmq`. |
-| ClickHouse with Keeper (or ZooKeeper) | Usage events | The migrations create replicated tables `ON CLUSTER`, so ClickHouse needs a cluster definition, even for a single node. |
-| Kafka, or a Kafka-compatible broker such as Redpanda | Usage event ingestion | The `meteroid-events-raw` topic must exist; Meteroid does not create it. |
-| Object storage | Invoice PDFs, logos, uploaded files | An S3-compatible bucket in production. A local directory (`file://`) works for a single machine. |
-| Redis (optional) | State shared across API replicas | The Enterprise images count API rate limits in it; without Redis, no rate limits apply. |
-| SMTP server (optional) | Emails | Without SMTP, Meteroid sends no emails and new accounts are not asked to confirm their address. |
+| Service | Used for |
+|---|---|
+| PostgreSQL 18 with [`pgmq`](https://github.com/pgmq/pgmq) | Billing data and internal queues |
+| ClickHouse with Keeper | Usage events |
+| Kafka, or a compatible broker such as Redpanda | Usage event ingestion |
+| S3-compatible object storage, or a local directory on one machine | Invoice PDFs, logos, uploaded files |
+| Redis (optional) | API rate limits across replicas |
+| SMTP server (optional) | Emails |
 
 ## Ways to deploy
 
@@ -47,13 +41,20 @@ job, is coordinated through PostgreSQL.
   </Card>
 </CardGroup>
 
+Either way, the first account you sign up with creates the organization. After it, sign-up is
+closed and teammates join by invitation.
+
 ## Editions
 
-The official images are the Enterprise build: the open-source core plus the Enterprise modules.
-They are free to run without a license, and a license unlocks the paid features. The source
-repository, [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid), is licensed
-under AGPL-3.0 and builds the open-source edition. See [Editions](/self-hosting/editions) for
-what each one contains and how to switch.
+The open-source edition, built from
+[meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid) under AGPL-3.0, contains
+everything a business needs to run its billing, metering and invoicing. The official images run
+the Enterprise edition: it is free, adds features such as revenue reports, dunning and tax
+reports, and a license unlocks the rest. Both receive every bug fix and security patch.
+
+In production, we recommend the Enterprise edition with the Helm chart, or
+[Meteroid Cloud](https://meteroid.com), hosted in the EU, to run nothing yourself. See
+[Which one to run](/self-hosting/editions#which-one-to-run).
 
 ## Versions
 

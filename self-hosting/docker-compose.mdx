@@ -9,12 +9,6 @@ machine: PostgreSQL, ClickHouse, Redpanda (Kafka-compatible) and a local directo
 storage. Use it to try Meteroid or for a small installation. For production, prefer
 [Kubernetes](/self-hosting/kubernetes) with managed databases.
 
-## Before you begin
-
-- Docker with the Compose plugin (`docker compose`).
-- Git, to get the deployment files.
-- `openssl`, or another way to generate random strings.
-
 ## Install
 
 <Steps>
@@ -44,10 +38,9 @@ storage. Use it to try Meteroid or for a small installation. For production, pre
     characters that would need escaping.
 
     <Warning>
-      Set `SECRETS_CRYPT_KEY` before the first start and never change it. It encrypts the
-      credentials of your payment, accounting and CRM connectors in the database: with another
-      key, Meteroid can no longer read them. If it is left unset, it defaults to 32 zeros, which
-      offers no protection. Keep a copy of `.env` with your backups.
+      Never change `SECRETS_CRYPT_KEY` once set: it encrypts your connector credentials (see the
+      [configuration reference](/self-hosting/configuration#required)). Keep a copy of `.env`
+      with your backups.
     </Warning>
   </Step>
   <Step title="Set the public URLs">
@@ -74,11 +67,9 @@ storage. Use it to try Meteroid or for a small installation. For production, pre
     minutes. Follow it with `docker compose logs -f meteroid-api`.
   </Step>
   <Step title="Create the first account">
-    Open the web app at [http://localhost:3000](http://localhost:3000) and sign up. The first
-    account then creates the organization.
-
-    Once an account exists, sign-up is closed: invite your teammates from the app. When SMTP is
-    configured, a new account must first confirm its email address.
+    Open [http://localhost:3000](http://localhost:3000) and sign up: the first account creates
+    the organization. When SMTP is configured, a new account must first confirm its email
+    address.
   </Step>
 </Steps>
 
@@ -118,85 +109,20 @@ volume.
 
 ## Update Meteroid
 
-<Steps>
-  <Step title="Back up">
-    Back up the database first (see [Backups](#backups)). An upgrade cannot be undone except by
-    restoring a backup.
-  </Step>
-  <Step title="Take the new deployment files">
-    Take `docker/deploy` from the tag of the new release if its files changed, and reapply your
-    changes to `docker-compose.yml`. If you pinned `METEROID_VERSION`, set it to the new
-    release.
-  </Step>
-  <Step title="Pull and restart">
-    ```bash
-    docker compose pull
-    docker compose up -d --remove-orphans
-    ```
+[Back up](#backups) the database first: an upgrade cannot be undone except by restoring a
+backup. Take `docker/deploy` from the tag of the new release if its files changed, reapply your
+changes to `docker-compose.yml`, then:
 
-    The new processes run the migrations as they start. `--remove-orphans` stops containers of
-    services the new Compose file no longer defines.
-  </Step>
-</Steps>
+```bash
+docker compose pull
+docker compose up -d --remove-orphans
+```
 
 The images run `latest`, so `docker compose pull` takes the newest release. To stay on one
-release, set its version in `.env`, for example `METEROID_VERSION=2.0.0`, and change it when you
-upgrade.
+release, set `METEROID_VERSION` in `.env`, for example `2.0.0`, and change it when you upgrade.
 
 Coming from a 1.0.0 release candidate, 0.19 or an older build? Follow
 [Upgrading to 2.0](/self-hosting/upgrading-to-2-0) instead.
-
-## Run the open-source edition
-
-The official images are the Enterprise build, free to run (see [Editions](/self-hosting/editions)).
-To run the open-source edition, build the images yourself from the public repository: its
-Dockerfiles build the open-source edition. The Rust images take a few build arguments for the
-target architecture:
-
-```bash
-# From the repository root, for x86_64 (on arm64: aarch64, aarch_64 and arm64)
-ARGS="--build-arg PROFILE=release --build-arg EDITION=oss \
-  --build-arg MOLD_ARCH=x86_64 --build-arg PROTO_ARCH=x86_64 --build-arg GRPC_HEALTH_PROBE_ARCH=amd64"
-
-docker build $ARGS -f modules/meteroid/api.Dockerfile -t meteroid-api:oss .
-docker build $ARGS -f modules/meteroid/worker.Dockerfile -t meteroid-worker:oss .
-docker build $ARGS -f modules/metering/Dockerfile -t metering-api:oss .
-docker build -f modules/web/web-app/Dockerfile -t meteroid-web:oss .
-```
-
-You can also pass `--build-arg METEROID_VERSION=2.0.0` to the API and worker builds. It is optional, and
-only used as the version in the [anonymous telemetry report](/self-hosting/telemetry).
-
-Then point the services at your images, for example with a `docker-compose.override.yml` next
-to `docker-compose.yml`, which Compose reads automatically:
-
-```yaml docker-compose.override.yml
-services:
-  meteroid-api:
-    image: meteroid-api:oss
-  meteroid-worker:
-    image: meteroid-worker:oss
-  metering-api:
-    image: metering-api:oss
-  meteroid-web:
-    image: meteroid-web:oss
-```
-
-Both editions use the same database, so switching images never migrates data, in either
-direction.
-
-## Stop Meteroid
-
-```bash
-docker compose down
-```
-
-This stops and removes the containers and keeps your data, which lives in named volumes.
-
-<Warning>
-  `docker compose down -v` also deletes the volumes, and with them the database, the events and
-  the stored files.
-</Warning>
 
 ## Backups
 
@@ -208,6 +134,8 @@ The data lives in these volumes:
 | `clickhouse_data` | ClickHouse: usage events. |
 | `object_store_data` | Stored files, such as invoice PDFs and logos, with the default `file://` storage. |
 | `redpanda_data` | Events in transit to ClickHouse. |
+
+`docker compose down -v` deletes these volumes, and your data with them.
 
 Back up PostgreSQL with `pg_dump`, for example:
 

@@ -81,20 +81,17 @@ SMTP server (`global.smtp.*`).
     helm install meteroid oci://ghcr.io/meteroid-oss/charts/meteroid --version 2.0.0 -f values.yaml
     ```
 
-    The chart version is the Meteroid version: chart `2.0.0` runs the `2.0.0` images. Releases
-    are listed on the
+    Chart `2.0.0` runs the `2.0.0` images. Releases are listed on the
     [package page](https://github.com/orgs/meteroid-oss/packages/container/package/charts%2Fmeteroid).
-  </Step>
-  <Step title="Create the first account">
-    Once the pods are ready, open the web app at `publicAppUrl` and sign up. The first account
-    creates the organization; after it, sign-up is closed and teammates join by invitation.
   </Step>
 </Steps>
 
+Once the pods are ready, open `publicAppUrl` and sign up: the first account creates the
+organization.
+
 <Warning>
-  `global.secrets.secretsCryptkey` must be exactly 32 characters, set before the first start, and
-  never changed. It encrypts the credentials of your connectors (payment providers, accounting,
-  CRM) stored in PostgreSQL: with another key, Meteroid can no longer read them.
+  Never change `global.secrets.secretsCryptkey` once set: it encrypts your connector credentials
+  (see the [configuration reference](/self-hosting/configuration#required)).
 </Warning>
 
 ## Values to set
@@ -136,29 +133,11 @@ keys from it:
 | `oauth-google-client-id`, `oauth-google-client-secret` | No | Sign in with Google |
 | `oauth-hubspot-client-id`, `oauth-hubspot-client-secret`, `oauth-pennylane-client-id`, `oauth-pennylane-client-secret` | No | HubSpot and Pennylane connectors |
 
-### The worker
-
-The worker's values are under `worker`: image, replicas, resources and its own settings.
-
-<Note>
-  The chart used to call it `scheduler`. Until 2.1 the chart still reads a `scheduler:` section,
-  and its settings win over `worker:`: move them to `worker:` in your values. The chart warns
-  after an install or upgrade while `scheduler:` is set.
-</Note>
-
 ### License
 
 The chart runs the official images, which are free without a license (see
-[Editions](/self-hosting/editions)). To license the installation:
-
-| Value | Description |
-|---|---|
-| `global.secrets.licenseKey` | An offline license (`license-key` in an existing Secret), passed as `LICENSE_KEY`. |
-| `global.licenseServerUrl` | The license server an online license refreshes against. Defaults to `https://api.meteroid.com`; set it only if you were told to. |
-| `global.adminOrganizationId` | On an installation with several organizations, the organization whose admins manage the license. |
-
-You can also activate a license online from **Settings → License** in the app, with no change
-to your values.
+[Editions](/self-hosting/editions)). You can activate a license online from
+**Settings → License** in the app, with no change to your values.
 
 ### Telemetry
 
@@ -177,12 +156,8 @@ Back up the database, then upgrade the release to the new chart version:
 helm upgrade meteroid oci://ghcr.io/meteroid-oss/charts/meteroid --version 2.0.1 -f values.yaml
 ```
 
-The new pods run the migrations as they start. Until the last old pod is replaced, the old
-version runs against the new schema and may fail some requests.
-
-Leave the `image.tag` values unset: they default to the chart's version, so the chart version
-alone decides what runs. If your values set `image.repository` to an image name ending in `-ee`,
-remove it: those names are deprecated, still published for 2.0, and will stop.
+Leave the `image.tag` values unset, so the chart version alone decides what runs. Until the last
+old pod is replaced, the old pods may fail some requests against the new schema.
 
 Coming from an earlier public release? Read [Upgrading to 2.0](/self-hosting/upgrading-to-2-0)
 first: the chart changed.

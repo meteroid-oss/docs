@@ -6,61 +6,29 @@ description: "The anonymous daily report a self-hosted install sends, what it co
 A self-hosted Meteroid install sends one anonymous report a day. It tells us how many installs are
 running, which versions are in use and roughly how much they bill, so we know where to spend our time.
 It contains counts, never your data: no names, emails, ids of your customers or invoices, credentials
-or hostnames.
-
-The code that builds and sends the report is open source (`instance_telemetry` in the Meteroid
-repository), and a snapshot test makes any change to its content visible in review.
+or hostnames. The code that builds it is open source (`instance_telemetry` in the repository).
 
 ## Turning it off
 
-Set `METEROID_TELEMETRY=off` on the worker (the `meteroid-worker` process), which sends the
-report. With the Helm chart, set `global.usageTelemetry: false`.
-
-The official images set `METEROID_TELEMETRY=on`, and so do images you build from the
-repository's Dockerfiles. The Helm chart sets it from `global.usageTelemetry`, which is `true`
-by default. A binary you build with `cargo` leaves it unset, which means off.
-
-The first rule that matches decides:
-
-| Setting | Result |
-|---|---|
-| `DO_NOT_TRACK` set to any value other than empty, `0`, `false`, `off` or `no` | off |
-| `ANALYTICS_ENABLED=false` (the former tracking opt-out) | off |
-| `METEROID_TELEMETRY` set to a non-empty value | off for `0`, `false`, `off` or `no`; on for any other value |
-| a debug build, or `CI` set to any value other than empty, `0`, `false`, `off` or `no` | off |
-| none of the above | off |
-
-Values are compared without regard to case or surrounding spaces. So `DO_NOT_TRACK=1` turns the
-report off, while `DO_NOT_TRACK=0` or `DO_NOT_TRACK=off` counts as not set.
-
-The worker logs at every start whether the report is on, and why.
-
-To see exactly what would be sent, set `METEROID_TELEMETRY_DEBUG=1`: the worker then logs the
-report every hour and never sends it.
-
-## When it is sent
-
-The worker checks every hour whether a report is due, and one replica at a time does it. The
-first report goes out about an hour after the install's identity is created, then one about
-every day, with a `POST` to `https://api.metero.id/oss/v1/telemetry`, the host installs already
-call for exchange rates. The collector keeps the country derived from the IP address, never the
-address itself.
-
-The install is identified by a random UUID, created by the worker the first time the report is
-on (or in debug mode) and stored in your database. It is derived from nothing and is not your
-license's instance id.
+Set `METEROID_TELEMETRY=off` (or `DO_NOT_TRACK=1`) on the worker, which sends the report. With the
+Helm chart, set `global.usageTelemetry: false`. To see what would be sent instead, set
+`METEROID_TELEMETRY_DEBUG=1`: the worker logs the report every hour and never sends it.
 
 ## What the report contains
+
+The worker sends it to `https://api.metero.id/oss/v1/telemetry`, the host installs already call for
+exchange rates. The install is identified by a random UUID stored in your database, unrelated to
+your license. The collector keeps the country derived from the IP address, never the address.
 
 ```json
 {
   "schema": 1,
   "instance_id": "5f0c3a9e-8b1d-4c2e-9f3a-0d1e2f3a4b5c",
   "sent_at": "2026-11-02T03:12:00Z",
-  "install": { "installed_on": "2026-10-14", "first_version": "v1.4.0" },
-  "build": { "version": "v1.5.2", "edition": "oss", "os": "linux", "arch": "x86_64" },
+  "install": { "installed_on": "2026-10-14", "first_version": "v2.0.0" },
+  "build": { "version": "v2.0.1", "edition": "oss", "os": "linux", "arch": "x86_64" },
   "deployment": "docker-compose",
-  "infra": { "postgres_major": 16, "object_storage": "s3" },
+  "infra": { "postgres_major": 18, "object_storage": "s3" },
   "usage": {
     "organizations": 1,
     "tenants_live": 1,
@@ -79,22 +47,8 @@ license's instance id.
 }
 ```
 
-| Field | Content |
-|---|---|
-| `schema` | Version of this format. |
-| `instance_id` | The install's random UUID. |
-| `install.installed_on`, `install.first_version` | Day and version at which the identity was created. On an install upgraded from a version without the report, that is the first start of a version with it, not the original installation. |
-| `build` | Running version, edition (`oss` or `enterprise`), operating system and CPU architecture. |
-| `deployment` | `docker`, `docker-compose`, `helm` or `unknown`, from `METEROID_DEPLOYMENT`. |
-| `infra.postgres_major` | Major version of PostgreSQL. |
-| `infra.object_storage` | Scheme of the object store URL only (`s3`, `gs`, `file`…), never the bucket or host. |
-| `usage.organizations`, `usage.users` | Counts, archived ones excluded. |
-| `usage.tenants_live`, `usage.tenants_other` | Production tenants, and every other tenant. |
-| `usage.customers` … `usage.invoices_finalized_30d` | Counts in production tenants only: customers, active and trialing subscriptions, published plans, billable metrics, invoices finalized over the last 30 days. |
-| `usage.currencies` | Currencies of active subscriptions in production tenants. |
-| `usage.billed_30d_usd` | Revenue billed by production tenants over the last 30 days, in USD, as a band: `0`, `<1k`, `1k-10k`, `10k-100k`, `100k-1M`, `1M-10M`, `10M+`. Never the amount. |
-| `integrations` | Providers of active connectors in production tenants (`stripe`, `hubspot`…). |
-| `modules` | Enterprise modules of the build; empty in OSS. |
+Customers, subscriptions, plans, metrics, invoices, currencies and integrations are counted in
+Production tenants only. `billed_30d_usd` is a band (`0`, `<1k` … `10M+`), never the amount, and
+`object_storage` is the URL scheme only.
 
-The report of the Enterprise edition is the same. The license usage report an Enterprise install
-sends under its license is separate from this one.
+The license usage report an Enterprise install sends under its license is separate from this one.
