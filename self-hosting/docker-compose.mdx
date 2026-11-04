@@ -1,0 +1,226 @@
+---
+title: "Deploy with Docker Compose"
+sidebarTitle: "Docker Compose"
+description: "Run Meteroid and every service it needs on one machine with Docker Compose."
+---
+
+The public repository ships a Compose file that runs Meteroid with all its infrastructure on one
+machine: PostgreSQL, ClickHouse, Redpanda (Kafka-compatible) and a local directory for object
+storage. Use it to try Meteroid or for a small installation. For production, prefer
+[Kubernetes](/self-hosting/kubernetes) with managed databases.
+
+## Before you begin
+
+- Docker with the Compose plugin (`docker compose`).
+- Git, to get the deployment files.
+- `openssl`, or another way to generate random strings.
+
+## Install
+
+<Steps>
+  <Step title="Get the deployment files">
+    The files live in `docker/deploy` of the
+    [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid) repository:
+    `docker-compose.yml`, `.env.example`, and the ClickHouse configuration under `volume/`.
+
+    ```bash
+    git clone https://github.com/meteroid-oss/meteroid.git
+    cd meteroid/docker/deploy
+    cp .env.example .env
+    ```
+
+    {/* TODO(owner): name the release tag to check out (e.g. `git clone --branch <tag>`) once the 2.0 tag naming in the public repository is fixed, so the files match the pinned version. */}
+  </Step>
+  <Step title="Pin the version">
+    `.env` sets the version every Meteroid image runs:
+
+    ```bash .env
+    METEROID_VERSION=2.0.0
+    ```
+
+    Keep it pinned. Without it, the images fall back to `latest`, which moves with every release.
+  </Step>
+  <Step title="Set the secrets">
+    Replace the four placeholder secrets in `.env` before the first start:
+
+    | Variable | Value | Generate with |
+    |---|---|---|
+    | `JWT_SECRET` | Long random string signing user sessions | `openssl rand -hex 32` |
+    | `INTERNAL_API_SECRET` | Long random string authenticating calls between Meteroid processes | `openssl rand -hex 32` |
+    | `SECRETS_CRYPT_KEY` | **Exactly 32 characters**, encrypting stored connector credentials | `openssl rand -hex 16` |
+    | `DATABASE_PASSWORD` | PostgreSQL password | `openssl rand -hex 24` |
+
+    `DATABASE_PASSWORD` is inserted into the database URL, so a hexadecimal value avoids
+    characters that would need escaping.
+
+    <Warning>
+      Set `SECRETS_CRYPT_KEY` before the first start and never change it. It encrypts the
+      credentials of your payment, accounting and CRM connectors in the database: with another
+      key, Meteroid can no longer read them. If it is left unset, it defaults to 32 zeros, which
+      offers no protection. Keep a copy of `.env` with your backups.
+    </Warning>
+  </Step>
+  <Step title="Set the public URLs">
+    The browser talks to the API directly, so the web app needs the addresses at which your
+    users reach it. The defaults work when you open Meteroid on the same machine:
+
+    ```bash .env
+    METEROID_PUBLIC_URL=http://localhost:3000
+    VITE_METEROID_API_EXTERNAL_URL=http://localhost:50061
+    VITE_METEROID_REST_API_EXTERNAL_URL=http://localhost:8084
+    ```
+
+    On a server, replace `localhost` with its address or domain name. `METEROID_PUBLIC_URL` is
+    the address of the web app, used in links Meteroid generates (emails, portal and checkout
+    links).
+
+    {/* TODO(owner): the compose file does not pass METEROID_REST_API_EXTERNAL_URL to meteroid-api/meteroid-worker, so they keep the default http://127.0.0.1:8080 (used for portal logo URLs, OAuth and SSO callbacks). Add it to the compose file (e.g. ${VITE_METEROID_REST_API_EXTERNAL_URL}) and document it here. */}
+  </Step>
+  <Step title="Start Meteroid">
+    ```bash
+    docker compose up -d
+    ```
+
+    The first start downloads the images and runs the database migrations, which takes a few
+    minutes. Follow it with `docker compose logs -f meteroid-api`.
+  </Step>
+  <Step title="Create the first account">
+    Open the web app at [http://localhost:3000](http://localhost:3000) and sign up. The first
+    account then creates the organization.
+
+    Once an account exists, sign-up is closed: invite your teammates from the app. When SMTP is
+    configured, a new account must first confirm its email address.
+  </Step>
+</Steps>
+
+## Services and ports
+
+| Service | Purpose | Port on the host |
+|---|---|---|
+| `meteroid-web` | Web app | `3000` |
+| `meteroid-api` | gRPC API (used by the web app) and REST API | `50061`, `8084` |
+| `meteroid-worker` | Scheduled jobs and queue consumers | none |
+| `metering-api` | Usage event ingestion | `50062` |
+| `meteroid-db` | PostgreSQL 18 with `pgmq` (`ghcr.io/meteroid-oss/meteroid-postgres:18.3-standard`) | `5432` |
+| `clickhouse` | ClickHouse, single node with its embedded Keeper | `8123`, `9000` |
+| `redpanda` | Kafka-compatible broker | `9092` |
+| `clickhouse-volume-init`, `redpanda-topic-create` | One-shot setup: volume permissions, the `meteroid-events-raw` topic | none |
+
+The Compose file publishes the database and broker ports on the host as well. On a machine
+reachable from the internet, restrict them with a firewall, or remove their `ports:` entries.
+
+## Configure optional settings
+
+Compose passes to each container only the variables listed under its `environment:` in
+`docker-compose.yml`; a variable that is only in `.env` is not seen by Meteroid. Optional
+settings (S3 storage, SMTP, Google sign-in, OpenTelemetry) are listed there, commented out. To
+use one, uncomment its lines in both `meteroid-api` and `meteroid-worker`, then set the values in
+`.env`. For a setting that is not listed, such as `REDIS_URL` or `LICENSE_KEY`, add a line to the
+`environment:` of both services.
+
+To turn off the [anonymous telemetry report](/self-hosting/telemetry), uncomment
+`METEROID_TELEMETRY=off` in the same two services.
+
+See the [configuration reference](/self-hosting/configuration) for every setting.
+
+{/* TODO(owner): with the default OBJECT_STORE_URI=file:///data/object-store, only meteroid-api mounts the object_store_data volume; meteroid-worker writes generated PDFs to its own container filesystem. Mount the volume on meteroid-worker too, or confirm the worker never writes there. */}
+
+## Update Meteroid
+
+<Steps>
+  <Step title="Back up">
+    Back up the database first (see [Backups](#backups)). An upgrade cannot be undone except by
+    restoring a backup.
+  </Step>
+  <Step title="Change the version">
+    Set the new version in `.env`, and take the deployment files of that release if they
+    changed:
+
+    ```bash .env
+    METEROID_VERSION=2.0.1
+    ```
+  </Step>
+  <Step title="Pull and restart">
+    ```bash
+    docker compose pull
+    docker compose up -d --remove-orphans
+    ```
+
+    The new processes run the migrations as they start. `--remove-orphans` stops containers of
+    services the new Compose file no longer defines.
+  </Step>
+</Steps>
+
+Coming from a 1.0.0 release candidate, `latest` (0.19) or an older build? Follow
+[Upgrading to 2.0](/self-hosting/upgrading-to-2-0) instead.
+
+## Run the open-source edition
+
+The official images are the Enterprise build, free to run (see [Editions](/self-hosting/editions)).
+To run the open-source edition, build the images yourself from the public repository: its
+Dockerfiles build the open-source edition. The Rust images take a few build arguments for the
+target architecture:
+
+```bash
+# From the repository root, for x86_64 (on arm64: aarch64, aarch_64 and arm64)
+ARGS="--build-arg PROFILE=release --build-arg EDITION=oss \
+  --build-arg MOLD_ARCH=x86_64 --build-arg PROTO_ARCH=x86_64 --build-arg GRPC_HEALTH_PROBE_ARCH=amd64"
+
+docker build $ARGS -f modules/meteroid/api.Dockerfile -t meteroid-api:oss .
+docker build $ARGS -f modules/meteroid/scheduler.Dockerfile -t meteroid-worker:oss .
+docker build $ARGS -f modules/metering/Dockerfile -t metering-api:oss .
+docker build -f modules/web/web-app/Dockerfile -t meteroid-web:oss .
+```
+
+{/* TODO(owner): confirm the worker Dockerfile name after the scheduler -> worker rename (currently modules/meteroid/scheduler.Dockerfile), and whether METEROID_VERSION should be passed as a build argument (it is what the telemetry report shows as the version). */}
+
+Then point the services at your images, for example with a `docker-compose.override.yml` next
+to `docker-compose.yml`, which Compose reads automatically:
+
+```yaml docker-compose.override.yml
+services:
+  meteroid-api:
+    image: meteroid-api:oss
+  meteroid-worker:
+    image: meteroid-worker:oss
+  metering-api:
+    image: metering-api:oss
+  meteroid-web:
+    image: meteroid-web:oss
+```
+
+Both editions use the same database, so switching images never migrates data, in either
+direction.
+
+## Stop Meteroid
+
+```bash
+docker compose down
+```
+
+This stops and removes the containers and keeps your data, which lives in named volumes.
+
+<Warning>
+  `docker compose down -v` also deletes the volumes, and with them the database, the events and
+  the stored files.
+</Warning>
+
+## Backups
+
+The data lives in these volumes:
+
+| Volume | Contents |
+|---|---|
+| `pg_data` | PostgreSQL: all billing data. |
+| `clickhouse_data` | ClickHouse: usage events. |
+| `object_store_data` | Stored files, such as invoice PDFs and logos, with the default `file://` storage. |
+| `redpanda_data` | Events in transit to ClickHouse. |
+
+Back up PostgreSQL with `pg_dump`, for example:
+
+```bash
+docker compose exec -T meteroid-db pg_dump -U meteroid -Fc meteroid > meteroid.dump
+```
+
+Use the user and database names of your `.env` (`DATABASE_USER`, `DATABASE_NAME`) if you
+changed them. Store the dump, and your `.env`, away from the machine.

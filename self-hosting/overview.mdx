@@ -1,0 +1,74 @@
+---
+title: "Self-hosting Meteroid"
+sidebarTitle: "Overview"
+description: "What a self-hosted Meteroid installation runs, the two ways to deploy it, and which version to run."
+---
+
+You can run Meteroid on your own infrastructure. A self-hosted installation runs four Meteroid
+processes on top of a PostgreSQL database, a ClickHouse database, a Kafka-compatible broker and
+an object store. This page describes those pieces and points you to the deployment guides.
+
+## What you run
+
+| Process | Image | Role |
+|---|---|---|
+| API | `ghcr.io/meteroid-oss/meteroid-api` | Serves the gRPC API the web app talks to and the REST API your integration calls, along with the customer portal, checkout and incoming payment-provider webhooks. |
+| Worker | `ghcr.io/meteroid-oss/meteroid-worker` | Runs the scheduled jobs (billing runs, invoice refreshes, payment reconciliation) and the queue consumers (outgoing webhooks, emails, invoice PDFs). |
+| Metering API | `ghcr.io/meteroid-oss/metering-api` | Receives usage events, sends them through Kafka into ClickHouse, and answers usage queries. |
+| Web | `ghcr.io/meteroid-oss/meteroid-web` | The web application, served by nginx. |
+
+The API and the worker both run the PostgreSQL migrations when they start. They take a database
+lock first, so processes that start together run the migrations one at a time. The metering API
+runs the ClickHouse migrations when it starts. There is no separate migration step to run.
+
+You can run several replicas of each process. Work that must happen once, such as a scheduled
+job, is coordinated through PostgreSQL.
+
+## Infrastructure
+
+| Service | Used for | Notes |
+|---|---|---|
+| PostgreSQL 18 with the [`pgmq`](https://github.com/pgmq/pgmq) extension | All billing data, and the internal queues | The migrations run `CREATE EXTENSION pgmq` and use functions built into PostgreSQL 18. The `ghcr.io/meteroid-oss/meteroid-postgres:18.3-standard` image (and `18.3-cnpg` for CloudNativePG) includes `pgmq`. |
+| ClickHouse with Keeper (or ZooKeeper) | Usage events | The migrations create replicated tables `ON CLUSTER`, so ClickHouse needs a cluster definition, even for a single node. |
+| Kafka, or a Kafka-compatible broker such as Redpanda | Usage event ingestion | The `meteroid-events-raw` topic must exist; Meteroid does not create it. |
+| Object storage | Invoice PDFs, logos, uploaded files | An S3-compatible bucket in production. A local directory (`file://`) works for a single machine. |
+| Redis (optional) | State shared across API replicas | The Enterprise images count API rate limits in it; without Redis, no rate limits apply. |
+| SMTP server (optional) | Emails | Without SMTP, Meteroid sends no emails and new accounts are not asked to confirm their address. |
+
+## Ways to deploy
+
+<CardGroup cols={2}>
+  <Card title="Docker Compose" icon="brand-docker" href="/self-hosting/docker-compose">
+    One machine, every service included. To try Meteroid or run a small installation.
+  </Card>
+  <Card title="Kubernetes (Helm)" icon="brand-kubernetes" href="/self-hosting/kubernetes">
+    The Meteroid processes on your cluster, connected to PostgreSQL, ClickHouse, Kafka and
+    object storage you operate. For production.
+  </Card>
+</CardGroup>
+
+## Editions
+
+The official images are the Enterprise build: the open-source core plus the Enterprise modules.
+They are free to run without a license, and a license unlocks the paid features. The source
+repository, [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid), is licensed
+under AGPL-3.0 and builds the open-source edition. See [Editions](/self-hosting/editions) for
+what each one contains and how to switch.
+
+## Versions
+
+Every release publishes the images tagged with its version (`2.0.0`), and moves the `2.0`, `2`
+and `latest` tags to it. Pin the exact version in your deployment and change it when you
+upgrade, so that every process runs the same release and nothing changes on a restart.
+
+The Helm chart is versioned with Meteroid: chart `2.0.0` runs the `2.0.0` images.
+
+## Next steps
+
+- [Deploy with Docker Compose](/self-hosting/docker-compose) or [on Kubernetes](/self-hosting/kubernetes).
+- Review the [configuration reference](/self-hosting/configuration), in particular the
+  secrets that must be set before the first start.
+- Upgrading an installation of an earlier public release? Read
+  [Upgrading to 2.0](/self-hosting/upgrading-to-2-0) first.
+- Read what the [anonymous telemetry report](/self-hosting/telemetry) contains, and how to turn
+  it off.

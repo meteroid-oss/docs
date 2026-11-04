@@ -1,0 +1,341 @@
+---
+title: "Upgrading to Meteroid 2.0"
+sidebarTitle: "Upgrading to 2.0"
+description: "Move a self-hosted installation of an earlier public release to Meteroid 2.0: preparation, upgrade, webhook import, verification and rollback."
+---
+
+This guide is for installations of an earlier public release of Meteroid: the 1.0.0 release
+candidates (`1.0.0-rc1` to `1.0.0-rc7`), the `latest` images (0.19.0), or builds of the `main` or
+`tip` images. You upgrade directly to 2.0, with no intermediate version: 2.0 accepts a database
+from any of them.
+
+Installations created with 2.0 or later follow the usual update steps of
+[Docker Compose](/self-hosting/docker-compose#update-meteroid) or
+[Kubernetes](/self-hosting/kubernetes#upgrade) instead.
+
+## What happens during the upgrade
+
+The migration history of the Meteroid repository was reorganized after the last public release:
+some migrations were renumbered. When a 2.0 process starts on a database of an earlier release,
+it first moves the database's migration history onto the new one, then runs the 2.0 migrations.
+The API and the worker both do it at startup, one at a time, behind a database lock. You do not
+run any migration command yourself.
+
+This first step checks the database before changing anything. If a migration it is about to
+map is recorded but its schema changes are missing, it refuses and leaves the database
+unchanged. On a database that does not need it, it changes nothing.
+
+<Warning>
+  Do not run `diesel migration run` against the database before 2.0 has started once. Let the
+  2.0 processes run the migrations.
+</Warning>
+
+## Before you start
+
+<Steps>
+  <Step title="Check your PostgreSQL version">
+    Meteroid 2.0 requires **PostgreSQL 18**: its migrations use functions built into
+    PostgreSQL 18. Check the version of your server:
+
+    ```sql
+    SHOW server_version;
+    ```
+
+    Docker Compose files from before PostgreSQL 18 ran `ghcr.io/meteroid-oss/meteroid-postgres:17.4`,
+    with the volume mounted at `/var/lib/postgresql/data`. The 2.0 Compose file runs
+    `meteroid-postgres:18.3-standard` with the volume mounted at `/var/lib/postgresql`, and
+    PostgreSQL 18 cannot open a PostgreSQL 17 data directory. If your server runs an earlier
+    major version, upgrade it to PostgreSQL 18, with `pgmq` available, before you upgrade
+    Meteroid.
+
+    {/* TODO(owner): document the supported PostgreSQL 17 -> 18 procedure for Compose installs (dump with the 17.4 image, restore into a fresh 18.3-standard volume?) and confirm pgmq version compatibility between meteroid-postgres:17.4 and 18.3. */}
+  </Step>
+  <Step title="Back up the database">
+    Take a full backup of the PostgreSQL database, and keep a copy of your configuration,
+    including `SECRETS_CRYPT_KEY`. Rolling back means restoring this backup: the 2.0 migrations
+    are not meant to be reverted onto an older version.
+
+    With Docker Compose:
+
+    ```bash
+    docker compose exec -T meteroid-db pg_dump -U meteroid -Fc meteroid > meteroid-before-2.0.dump
+    ```
+  </Step>
+  <Step title="Run the preflight query">
+    One 2.0 migration moves customer balances onto a new credit ledger, and aborts on data it
+    cannot carry over. A read-only query lists that data so you can deal with it before the
+    upgrade. It is in the repository at
+    [`modules/meteroid/migrations/preflight/customer_credit_ledger.sql`](https://github.com/meteroid-oss/meteroid/blob/main/modules/meteroid/migrations/preflight/customer_credit_ledger.sql).
+    Run it against your production database right before upgrading. From `docker/deploy` in a
+    clone of the repository:
+
+    ```bash
+    docker compose exec -T meteroid-db psql -U meteroid -d meteroid \
+      < ../../modules/meteroid/migrations/preflight/customer_credit_ledger.sql
+    ```
+
+    The query writes nothing. Its first result lists the rows to deal with:
+
+    | `issue` | Meaning |
+    |---|---|
+    | `negative balance` | A customer with a negative balance. The migration aborts on it. |
+    | `credit purchase` | A pending credit purchase. 2.0 does not carry these over, and the migration aborts on it. |
+    | `overpaid invoice` | An invoice of a non-sandbox tenant that collected more than its total. Not blocking, but at its next payment event the whole excess becomes customer credit. |
+
+    An empty first result means the database is ready. The second result gives, per currency,
+    the positive balances that become customer credit, so you can check the amounts after the
+    upgrade.
+
+    {/* TODO(owner): explain how to resolve each blocking row in the app (negative balance, pending credit purchase) and what to do about overpaid invoices. */}
+  </Step>
+  <Step title="Rehearse on a copy (large installations)">
+    Restore your backup into a scratch database, start 2.0 against it once, and run the
+    [checks](#verify-the-upgrade) there before upgrading production.
+  </Step>
+  <Step title="Read what changes">
+    Read [What changed](#what-changed), in particular for webhooks, email and
+    telemetry, and gather what you need for the [Svix import](#import-your-webhook-endpoints-from-svix)
+    if you used outgoing webhooks.
+  </Step>
+</Steps>
+
+## Upgrade
+
+<Tabs>
+  <Tab title="Docker Compose">
+    <Steps>
+      <Step title="Stop the current installation">
+        With your current Compose file, stop the containers. The volumes, and your data, stay.
+
+        ```bash
+        docker compose down
+        ```
+
+        Stopping everything first makes sure no container of the old version, such as the former
+        `meteroid-scheduler` service, keeps running against the new schema.
+      </Step>
+      <Step title="Take the 2.0 deployment files">
+        Replace `docker-compose.yml` with the one of the 2.0 release, from `docker/deploy` in the
+        repository, and reapply your own changes to it (the optional settings you uncommented).
+        The scheduler service is now `meteroid-worker`.
+      </Step>
+      <Step title="Update .env">
+        Compare your `.env` with the new `.env.example` and:
+
+        - add `METEROID_VERSION=2.0.0`;
+        - keep `JWT_SECRET`, `INTERNAL_API_SECRET`, `DATABASE_*` and, above all, the same
+          `SECRETS_CRYPT_KEY`;
+        - if you use SMTP, make sure `MAILER_FROM` is set: 2.0 refuses to start without it;
+        - remove `SVIX_SERVER_URL` and `SVIX_JWT_TOKEN`, but keep their values for the
+          [Svix import](#import-your-webhook-endpoints-from-svix).
+      </Step>
+      <Step title="Start 2.0">
+        ```bash
+        docker compose pull
+        docker compose up -d --remove-orphans
+        docker compose logs -f meteroid-api meteroid-worker
+        ```
+
+        The first process to start logs `Legacy OSS migration history moved onto the current
+        history`, then each migration it applies. The others wait for it, then find nothing left
+        to do.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Kubernetes (Helm)">
+    <Warning>
+      The chart of earlier releases could deploy PostgreSQL and Kafka as bundled subcharts
+      (`postgresql.enabled`, `kafka.enabled`) and ClickHouse as part of the release
+      (`clickhouse.enabled`), all enabled by default. The 2.0 chart deploys only Meteroid and
+      connects to services you provide. If your release used any of the bundled services,
+      upgrading it to the 2.0 chart removes them from the release: move them out of the release,
+      with their data, before you upgrade. The bundled PostgreSQL must also become PostgreSQL 18
+      with `pgmq`.
+    </Warning>
+
+    {/* TODO(owner): document how to take an existing bundled postgresql/kafka/clickhouse out of a legacy release without data loss (PVC retention, helm upgrade behaviour, target services), or state that such installs must migrate data to external services first. */}
+
+    <Steps>
+      <Step title="Update your values">
+        Start from the [values of the 2.0 chart](/self-hosting/kubernetes#values-to-set) and
+        carry over your settings:
+
+        - Point `global.secrets.databaseUrl`, `global.kafka.*` and `global.clickhouse.*` at your
+          external services, and fill in the [prerequisites](/self-hosting/kubernetes#prerequisites).
+        - Rename the `scheduler:` section to `worker:`.
+        - Remove the Svix values: `api.config.svixServerUrl`, `scheduler.config.svixServerUrl`,
+          `global.secrets.svixJwtToken` and `global.secrets.svixOperationalWebhookSecret`. Keep
+          the token for the [Svix import](#import-your-webhook-endpoints-from-svix).
+        - Remove `image.tag` (the old values pinned `tip`) and any `image.repository` override,
+          so that the chart version decides the images.
+        - Check the ingress: the old chart defaulted to a standard `Ingress` with class `nginx`,
+          the 2.0 chart to Traefik `IngressRoute`s. To keep your ingress, set
+          `ingress.useIngressRoute: false` and `ingress.className`.
+        - If `global.smtp.host` is set, set `global.smtp.from`.
+      </Step>
+      <Step title="Upgrade the release">
+        ```bash
+        helm upgrade meteroid oci://ghcr.io/meteroid-oss/charts/meteroid --version 2.0.0 -f values.yaml
+        ```
+
+        The new pods run the migrations as they start. Until the last old pod is replaced, the
+        old version runs against the new schema and may fail some requests; it does not run any
+        migration.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+The migrations build one index on the `entity_activity` table without `CONCURRENTLY`: on a large
+table, writes to it wait while it is built.
+
+## Import your webhook endpoints from Svix
+
+Earlier releases delivered outgoing webhooks through a Svix server you ran. 2.0 delivers them
+itself and no longer uses Svix, so your webhook endpoints, which lived in your Svix server, must
+be copied into Meteroid. A one-shot command does it, once 2.0 has started.
+
+It copies, for each endpoint, its URL, event filters, signing secret and custom headers. Imported
+endpoints keep receiving the `svix-*` signature headers, so your receivers keep verifying
+deliveries unchanged.
+
+<Steps>
+  <Step title="Preview the import">
+    With your Svix server still running, run the command without arguments. It prints what it
+    would import and changes nothing:
+
+    ```bash
+    docker compose run --rm \
+      -e SVIX_SERVER_URL=<your Svix server URL> \
+      -e SVIX_JWT_TOKEN=<your Svix token> \
+      meteroid-api meteroid-svix-import
+    ```
+
+    The command also needs `DATABASE_URL` and `SECRETS_CRYPT_KEY`, which the `meteroid-api`
+    service already has. The Svix server must be reachable from the container.
+
+    On Kubernetes, run it in an API pod, here for a release named `meteroid`:
+
+    ```bash
+    kubectl exec deploy/meteroid-api -- env \
+      SVIX_SERVER_URL=<your Svix server URL> SVIX_JWT_TOKEN=<your Svix token> \
+      meteroid-svix-import
+    ```
+  </Step>
+  <Step title="Apply it">
+    Run the same command with `--apply`:
+
+    ```bash
+    docker compose run --rm \
+      -e SVIX_SERVER_URL=<your Svix server URL> \
+      -e SVIX_JWT_TOKEN=<your Svix token> \
+      meteroid-api meteroid-svix-import --apply
+    ```
+
+    It is safe to run again.
+  </Step>
+  <Step title="Complete the endpoints with sensitive headers">
+    Svix never returns the values of sensitive headers. Endpoints that have some are imported
+    disabled: under **Settings → Webhooks**, fill in those header values, then enable the
+    endpoints.
+  </Step>
+  <Step title="Shut Svix down">
+    Once the endpoints are imported and deliveries arrive, stop your Svix server: Meteroid no longer
+    uses it.
+  </Step>
+</Steps>
+
+{/* TODO(owner): confirm the Kubernetes procedure for the Svix import (kubectl exec into the API deployment, or a one-off Job with the API image and values) once meteroid-svix-import ships. */}
+
+## Verify the upgrade
+
+Run these queries against the database:
+
+```sql
+SELECT version FROM __diesel_schema_migrations
+WHERE version IN ('20260515000000', '20260828102119', '20261101100305');
+-- three rows
+
+SELECT to_regclass('connect_oauth_app') IS NOT NULL,
+       EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_entity_activity_user_created'),
+       EXISTS (SELECT 1 FROM information_schema.columns
+               WHERE table_name = 'user' AND column_name = 'preferences');
+-- t, t, t
+```
+
+Then, in the app:
+
+- sign in, and check your customers, subscriptions and invoices;
+- compare customer balances with the per-currency totals of the preflight query;
+- under **Settings → Webhooks**, check that your endpoints are there and enabled, and that new
+  deliveries succeed.
+
+## If the upgrade fails
+
+The first step refuses only on a database of an earlier release, and its errors leave the
+database unchanged: fix the cause and start again.
+
+| Error | What to do |
+|---|---|
+| `version(s) … are recorded but their schema changes are missing` | The database was changed by hand or by an unreleased build. Restore the schema those versions created, or contact us at [hey@meteroid.com](mailto:hey@meteroid.com). |
+| `customer.connected_account_id is set on some rows` | No such value can be valid on this database: set the column to `NULL` on those rows, then start again. |
+| A migration fails after the first step | The first step is committed and finds nothing left to do next time. Fix the cause, usually a row listed by the preflight query, and start again: the migrations resume at the one that failed. |
+
+## Roll back
+
+Restore the backup you took before the upgrade, then run the images of your previous version
+again. Do not start an earlier version against the upgraded database: the 2.0 migrations are not
+reverted.
+
+## What changed
+
+### Images and processes
+
+- The official images are now the Enterprise build: the open-source core plus the Enterprise
+  modules, free to run without a license. Moving from the earlier public images to the 2.0
+  images moves you to this build at no cost. To stay on the pure open-source edition, build the
+  images from the repository (see [Editions](/self-hosting/editions)).
+- The scheduler is now the **worker**: image `ghcr.io/meteroid-oss/meteroid-worker`, Compose
+  service `meteroid-worker`, Helm values `worker`. The former `meteroid-scheduler` image name
+  stops with 2.0.
+- Images are tagged with the release version (`2.0.0`), and `2.0`, `2` and `latest`. The
+  `-ee` image names are deprecated: they are still published for 2.0 and will stop.
+- PostgreSQL 18 is required.
+- The Helm chart deploys only Meteroid, and its version is the Meteroid version.
+
+### Webhooks
+
+- Outgoing webhooks are delivered by Meteroid itself: Svix is no longer used.
+- New endpoints are signed with the [Standard Webhooks](https://www.standardwebhooks.com)
+  headers `webhook-id`, `webhook-timestamp` and `webhook-signature`. Endpoints imported from Svix
+  also keep the `svix-*` headers.
+- The Enterprise images refuse to deliver webhooks and alerts to private or loopback addresses.
+  If your endpoints are inside your own network, set `WEBHOOK_ALLOW_PRIVATE_DESTINATIONS=true`.
+
+### Configuration
+
+- Removed: every `SVIX_*` setting (keep them only for the import), and `ANALYTICS_API_KEY`.
+- `MAILER_FROM` is required when `MAILER_SMTP_HOST` is set: the processes refuse to start
+  without it. Earlier releases defaulted it to a Meteroid address.
+- New: `MAILER_CUSTOMER_FROM_ADDR`, the address customer emails are sent from, and
+  `MAILER_REPLY_TO`.
+- `ENABLE_MULTI_ORGANIZATION` has no effect on the open-source edition. On the Enterprise
+  images, it needs a license that includes several organizations.
+
+See the [configuration reference](/self-hosting/configuration).
+
+### Telemetry
+
+The Segment tracking of earlier releases is gone. It is replaced by an
+[anonymous daily report](/self-hosting/telemetry), on by default in the official images and the
+Helm chart. To turn it off, set `METEROID_TELEMETRY=off` (Helm: `global.usageTelemetry: false`).
+An existing `ANALYTICS_ENABLED=false`, or `DO_NOT_TRACK`, is honoured.
+
+### Features
+
+- The **Reports** page (MRR and revenue reports) is part of the Enterprise images, free. The
+  dashboard shows MRR and revenue in both editions.
+- The `?branding=false` parameter of the portal and the `branding={false}` option of the embeds
+  are ignored: "Powered by Meteroid" is hidden only with a license that includes White-label.
+- The platform-admin dead-letter page is gone.
+- REST API: no operation was removed, and many were added. See the API reference.

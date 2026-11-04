@@ -1,0 +1,164 @@
+---
+title: "Editions"
+description: "What the open-source edition and the Enterprise images contain, how to switch between them, and how to license an installation."
+---
+
+Meteroid comes in two editions built from the same code:
+
+- **The Enterprise images** are the official images. They contain the open-source core plus the
+  Enterprise modules. They are free to run without a license, and a license unlocks the paid
+  features.
+- **The open-source edition** is what the source repository,
+  [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid), builds. It is licensed under
+  AGPL-3.0. No images of it are published: you build them from the repository.
+
+Both use the same database schema and the same migrations, so you can switch from one to the
+other, in both directions, by changing the images.
+
+## What each edition contains
+
+Billing, invoicing, subscriptions, plans, metering, the customer portal and checkout are in
+both editions. The Enterprise images add the features below. **Free** features are included in
+the Enterprise images at no cost; **License** features require a paid license.
+
+| Area | Feature | Enterprise images |
+|---|---|---|
+| Billing & invoicing | Dunning: automated payment reminder sequences for overdue invoices | Free |
+| | Tax reports: VAT return and EC Sales List, ready to file | Free |
+| | Invoice consolidation: all of a customer's subscriptions on a single invoice | License |
+| | Minimum commitments: a minimum per billing period on plans, subscriptions and quotes, with the shortfall invoiced automatically | License |
+| | Multiple invoicing entities: invoice from several legal entities, each with its own details and numbering | License |
+| | Invoice annexes: detailed usage tables, built from your events, attached to invoices | License |
+| | Custom properties: your own typed, validated fields on customers, subscriptions and invoices | License |
+| Intelligence | MRR and revenue reports: recurring revenue, revenue and their movements over time | Free |
+| | Advanced analytics: explore and break down any metric across customers, plans and segments | License |
+| | Dashboards: build and share dashboards of the metrics your team follows | License |
+| | Customer signals: which customers are at risk and which are ready to expand | License |
+| | Steering: targets on your metrics, with alerts when they drift | License |
+| Usage controls | Live balances and usage limits: live credit balances, low-balance alerts, hard limits, the real-time access check, and what happens when credit runs out | Free |
+| | Budgets: spending budgets with alerts, per customer | License |
+| | Automatic top-ups: buy credit automatically when a wallet runs low | License |
+| Security & access | Single sign-on: your team signs in through your OIDC identity provider on the domains you verify, optionally enforced | License |
+| | Enforced two-factor authentication for every member of your organization | License |
+| | Custom roles: roles as sets of permissions, assigned to members | License |
+| | Security log and audit log: sign-ins and membership changes, and every change across the workspace | License |
+| Platform | White-label: hide "Powered by Meteroid" from portals, checkout and emails | License |
+| | License issuing: signed software licenses for your customers, tied to their subscriptions | License |
+| Multi-business | Several live tenants: several businesses or brands from one team, each Production tenant with its own customers, catalog and invoices | License |
+| | Several organizations: separate teams on one installation, each with its own members and tenants | License |
+| | Connect: the businesses on your platform bill their own customers through you, Stripe Connect style | License |
+
+The open-source edition shows this list in the app, under **Settings → Upgrade**.
+
+The Enterprise images also include production hardening from Meteroid Cloud, free: API rate
+limiting, counted in Redis when `REDIS_URL` is set, and a guard that stops outgoing webhooks,
+alerts and SSO requests from reaching private or loopback addresses
+(`WEBHOOK_ALLOW_PRIVATE_DESTINATIONS` opens it, see the
+[configuration reference](/self-hosting/configuration#enterprise-images-only)).
+
+## Limits of the open-source edition
+
+The open-source edition contains none of the features above, and:
+
+- runs one organization, with one Production tenant;
+- has one invoicing entity per tenant;
+- always shows "Powered by Meteroid" on portals, checkout and emails;
+- has no API rate limiting, and its outgoing requests may reach any destination;
+- keeps only the status, not the response body, of webhook deliveries in their log.
+
+Without a license, the Enterprise images keep the same limits on tenants and invoicing entities:
+one Production tenant and one invoicing entity per tenant.
+
+## Switch between the editions
+
+Switching only changes the images. The database, its schema and the migrations are the same in
+every edition, so no data is migrated in either direction, and you can switch back the same way.
+
+<Tabs>
+  <Tab title="To the Enterprise images">
+    Run the official images: `ghcr.io/meteroid-oss/meteroid-api`, `meteroid-worker`,
+    `metering-api` and `meteroid-web`, at the version you already run.
+
+    - **Docker Compose**: remove the `image:` overrides that point at your own builds, then run
+      `docker compose up -d`.
+    - **Helm**: remove the `image.repository` values that point at your own registry, then run
+      `helm upgrade` with the same chart version.
+
+    The free features are available right away. To unlock the others,
+    [license the installation](#license-your-installation).
+  </Tab>
+  <Tab title="To the open-source edition">
+    Build the four images from the public repository, at the version you run: its Dockerfiles
+    build the open-source edition. See
+    [Run the open-source edition](/self-hosting/docker-compose#run-the-open-source-edition) for
+    the build commands.
+
+    - **Docker Compose**: point the services at your images with a `docker-compose.override.yml`.
+    - **Helm**: set `api.image.repository`, `worker.image.repository`,
+      `metering.image.repository` and `web.image.repository` (and their `tag`) to your images.
+  </Tab>
+</Tabs>
+
+### What happens to data of a missing feature
+
+When you move to the open-source edition, or a license lapses, the data the Enterprise features
+wrote stays in the database:
+
+- Settings that restrict access keep restricting it, but you can no longer change them: SSO
+  enforcement on your verified domains, custom roles assigned to members, required two-factor
+  authentication.
+- Invoicing entities that have invoice consolidation turned on keep consolidating.
+- Minimum commitments already set on plans and subscriptions keep being billed.
+- Moving back to the Enterprise images, or renewing the license, makes everything editable again.
+
+{/* TODO(owner): state what happens to a second Production tenant or extra invoicing entities that already exist when an installation moves to the open-source edition or its license lapses (kept read-only? still billed?). */}
+
+## License your installation
+
+You manage the license under **Settings → License**, as a member allowed to manage the
+organization. The page shows the license status and the installation's **instance ID**: a
+self-hosted license is bound to one installation.
+
+On an installation with several organizations, only the admins of the organization set in
+`ADMIN_ORGANIZATION_ID` (Helm: `global.adminOrganizationId`) manage the license.
+
+### Get a license
+
+Contact us at [hey@meteroid.com](mailto:hey@meteroid.com). When Meteroid offers plans to your
+installation, **Settings → License → See plans** lists them; subscribing there installs the
+license automatically once the subscription is active.
+
+### Activate it
+
+<Tabs>
+  <Tab title="Online, with an activation code">
+    Enter the code (`mlact_…`) under **Settings → License → Activate with a code**. You can also
+    set it as `LICENSE_ACTIVATION_CODE` on the worker, which redeems it at startup when the
+    installation has no online license yet.
+
+    An online license is refreshed every hour from `https://api.meteroid.com` (or
+    `LICENSE_SERVER_URL`), so the installation needs outgoing access to it.
+  </Tab>
+  <Tab title="Offline">
+    Send us the instance ID shown under **Settings → License**. Then either:
+
+    - paste the license we issue under **Settings → License → Install offline license**. It
+      applies right away, with no restart; or
+    - set it as `LICENSE_KEY` on the API and the worker (Helm: `global.secrets.licenseKey`),
+      then restart them.
+
+    An offline license is not refreshed: ask us for a new one before it expires. The license page
+    of an offline installation also lets you export its usage for a period, as a CSV file.
+
+    {/* TODO(owner): say when and how an offline installation sends this usage export to Meteroid. */}
+  </Tab>
+</Tabs>
+
+Without a valid license, the Enterprise images run on the free tier: the free features stay, and
+the licensed ones close as described [above](#what-happens-to-data-of-a-missing-feature).
+
+<Note>
+  If you restore a copy of your production installation, for example as a staging environment,
+  only one of the two copies renews an online license. The page of the other one says so, and
+  offers to move the license to it.
+</Note>

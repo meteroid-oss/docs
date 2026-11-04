@@ -1,0 +1,234 @@
+---
+title: "Configuration reference"
+sidebarTitle: "Configuration"
+description: "The environment variables each Meteroid process reads, with their defaults."
+---
+
+Every Meteroid process is configured with environment variables. The Docker Compose file and the
+Helm chart set most of them for you; this page lists them all, per process, so you can tell
+what you must provide and what you can tune.
+
+- **Required**: the process does not start without it.
+- **Recommended**: it has a default, but the default is rarely right for a real installation.
+- **Optional**: the default suits most installations.
+
+The API and the worker read the same configuration, and refuse to start when a required variable
+is missing or a value is invalid. Set the same variables on both, even those only one of them
+acts on. Booleans are `true` or `false`. Schedules are cron expressions with five fields,
+evaluated in UTC.
+
+## API and worker
+
+### Required
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection URL, for example `postgres://meteroid:<password>@db:5432/meteroid?sslmode=disable`. |
+| `JWT_SECRET` | Secret signing user sessions. A long random string. |
+| `INTERNAL_API_SECRET` | Secret the Meteroid processes authenticate each other with. The same value on the API, the worker and the metering API. |
+| `SECRETS_CRYPT_KEY` | Key encrypting the connector credentials stored in the database. Exactly 32 characters (see below). |
+| `METEROID_API_LISTEN_ADDRESS` | Address the gRPC API listens on, for example `0.0.0.0:50061`. Required on the worker too. |
+| `METERING_API_EXTERNAL_URL` | Address of the metering API, for example `http://metering-api:50062`. |
+| `OBJECT_STORE_URI` | Where files are stored: `s3://<bucket>` for S3-compatible storage, or `file:///<path>` for a local directory. |
+
+<Warning>
+  `SECRETS_CRYPT_KEY` must be exactly 32 characters, or the process refuses to start. It defaults
+  to 32 zeros, which encrypts nothing worth the name: set your own before the first start, for
+  example with `openssl rand -hex 16`, and **never change it**. It encrypts the credentials of
+  your payment, accounting and CRM connectors: with another key, Meteroid can no longer read them
+  and every connector must be set up again. Back it up with your database backups.
+</Warning>
+
+### Recommended
+
+| Variable | Default | Description |
+|---|---|---|
+| `METEROID_PUBLIC_URL` | `https://app.meteroid.com` | Public URL of the web app, used in the links Meteroid generates (emails, portal, checkout). |
+| `METEROID_REST_API_EXTERNAL_URL` | `http://127.0.0.1:8080` | Public URL of the REST API, used for file links in the portal and for the OAuth and SSO callbacks. |
+| `METEROID_REST_API_LISTEN_ADDRESS` | `127.0.0.1:8080` | Address the REST API listens on. In a container, `0.0.0.0:<port>`. |
+| `OPENEXCHANGERATES_API_KEY` | none | An [Open Exchange Rates](https://openexchangerates.org) key for currency rates. Without it, Meteroid uses its own public rates service, meant for testing. |
+| `REDIS_URL`, `REDIS_PASSWORD` | none | Redis, sharing rate limits and caches across replicas. The Enterprise images enforce API rate limits only with it; without it, no rate limits apply. |
+| `MAILER_SMTP_HOST` | none | SMTP server. Without it, no email is sent. |
+| `MAILER_FROM` | none | Sender of account and alert emails, for example `Billing <billing@example.com>`. **Required once `MAILER_SMTP_HOST` is set**: the process refuses to start without it. |
+
+### Optional
+
+**Email**
+
+| Variable | Default | Description |
+|---|---|---|
+| `MAILER_SMTP_USERNAME`, `MAILER_SMTP_PASSWORD` | none | SMTP credentials. |
+| `MAILER_SMTP_TLS` | `true` | Use TLS with the SMTP server. |
+| `MAILER_CUSTOMER_FROM_ADDR` | the address of `MAILER_FROM` | Address customer emails (invoices, receipts, reminders) are sent from, behind each invoicing entity's sender name. |
+| `MAILER_REPLY_TO` | none | Reply-To of account and alert emails. |
+
+**Object storage**
+
+| Variable | Default | Description |
+|---|---|---|
+| `OBJECT_STORE_PREFIX` | none | Path prefix for every stored file. |
+| `AWS_ENDPOINT` | AWS | Endpoint of an S3-compatible service, such as MinIO. |
+| `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | none | S3 credentials. |
+| `AWS_ALLOW_HTTP` | `false` | Allow a plain HTTP endpoint. |
+
+**Accounts and organizations**
+
+| Variable | Default | Description |
+|---|---|---|
+| `DOMAINS_WHITELIST` | none | Comma-separated email domains allowed to sign up and sign in, for example `example.com,example.org`. |
+| `ORGANIZATION_INVITE_TTL_DAYS` | `7` | Days an organization invitation stays valid. |
+| `METEROID_MFA_ISSUER` | `Meteroid` | Name shown in authenticator apps. |
+| `OAUTH_GOOGLE_CLIENT_ID`, `OAUTH_GOOGLE_CLIENT_SECRET` | none | Enable sign-in with Google. |
+| `OAUTH_HUBSPOT_CLIENT_ID`, `OAUTH_HUBSPOT_CLIENT_SECRET` | none | OAuth app of the HubSpot connector. |
+| `OAUTH_PENNYLANE_CLIENT_ID`, `OAUTH_PENNYLANE_CLIENT_SECRET` | none | OAuth app of the Pennylane connector. |
+| `ENABLE_MULTI_ORGANIZATION` | `false` | Allow several organizations on the installation. Takes effect only on the Enterprise images, with a license that includes several organizations; ignored by the open-source edition. |
+| `ADMIN_ORGANIZATION_ID` | none | Enterprise images with several organizations: the organization whose admins are the installation's platform admins. They manage its [license](/self-hosting/editions#license-your-installation). |
+
+**Outgoing webhooks**
+
+| Variable | Default | Description |
+|---|---|---|
+| `WEBHOOK_DELIVERY_CONCURRENCY` | `32` | Webhook deliveries in flight at once. |
+| `WEBHOOK_RETENTION_DAYS` | `30` | Days webhook messages and their delivery attempts are kept. At least `2`: a delivery is retried for about 28 hours. |
+| `WEBHOOK_EGRESS_PROXY_URL` | none | HTTP `CONNECT` proxy webhook and alert deliveries go through, for example to send from fixed IP addresses. While it is down, deliveries wait, without counting as failures of the endpoints. |
+| `EGRESS_USE_PROXY_SSO` | `false` | Also send SSO requests through the proxy. Off by default so that sign-in never depends on it. |
+| `METEROID_WEBHOOK_EXTERNAL_URL` | `METEROID_REST_API_EXTERNAL_URL` | Public base URL for incoming payment-provider webhooks, when it differs from the REST API URL. |
+
+**Database pool**
+
+| Variable | Default | Description |
+|---|---|---|
+| `PG_POOL_MAX_SIZE` | `10` | PostgreSQL connections per process. Keep replicas × pool size under the server's `max_connections`. |
+| `PG_POOL_CREATE_TIMEOUT_SECS`, `PG_POOL_WAIT_TIMEOUT_SECS` | `30`, `30` | Timeouts to open a connection and to wait for a free one. |
+| `PG_POOL_RECYCLE_TIMEOUT_SECS` | `600` | Timeout to check a connection before reusing it. |
+
+**API only**
+
+| Variable | Default | Description |
+|---|---|---|
+| `METEROID_TRUSTED_PROXY_HOPS` | `0` | Trusted reverse proxies in front of the API, used to find the client IP for the security logs. `0` takes the address seen by a single proxy (Traefik, nginx ingress); add one per extra proxy in the chain. |
+| `IDEMPOTENCY_REQUIRED` | `false` | Require an idempotency key on the gRPC API calls that accept one. |
+| `IDEMPOTENCY_TTL` | `1h` | How long a gRPC idempotency key is remembered. |
+| `IDEMPOTENCY_SIZE` | `100000` | gRPC idempotency keys kept in memory, per process. |
+
+**API rate limits** (Enterprise images, with `REDIS_URL` set)
+
+Each REST limit has a value for Production tenants and one for the other tenants.
+
+| Variables (Production, other tenants) | Defaults | Limit |
+|---|---|---|
+| `RATE_LIMIT_REST_PROD_RPS`, `RATE_LIMIT_REST_NO_PROD_RPS` | `100`, `25` | REST API requests per second. |
+| `RATE_LIMIT_REST_PROD_METERING_RPS`, `RATE_LIMIT_REST_NON_PROD_METERING_RPS` | `500`, `125` | Event ingestion requests per second. |
+| `RATE_LIMIT_REST_PROD_METERING_EPS`, `RATE_LIMIT_REST_NON_PROD_METERING_EPS` | `5000`, `1250` | Ingested events per second. |
+| `RATE_LIMIT_REST_CLIENT_PROD_RPS`, `RATE_LIMIT_REST_CLIENT_NON_PROD_RPS` | `20`, `5` | Requests per second per customer, on the browser-facing client routes. |
+| `RATE_LIMIT_REST_PROD_USAGE_COSTS_RPM`, `RATE_LIMIT_REST_NON_PROD_USAGE_COSTS_RPM` | `600`, `120` | Usage cost reads per minute, per tenant. |
+| `RATE_LIMIT_GRPC_RPM` | `60` | gRPC API requests per minute. |
+
+{/* TODO(owner): confirm the scope of RATE_LIMIT_GRPC_RPM (per IP on unauthenticated calls, or per user?) and of the REST per-second limits (per tenant or per API key), then state it in the table. */}
+
+**Worker only**
+
+| Variable | Default | Description |
+|---|---|---|
+| `RECONCILIATION_ENABLED` | `true` | Poll payment providers for transactions stuck in pending. |
+| `DRAFT_REFRESH_ENABLED`, `DRAFT_REFRESH_CRON` | `true`, `25 * * * *` | Refresh stale draft invoices. |
+| `PAYMENT_REMINDERS_ENABLED`, `PAYMENT_REMINDER_SWEEP_CRON` | `true`, `*/15 * * * *` | Send due payment reminders (dunning, Enterprise images). Each invoicing entity's send window still applies. |
+| `VAT_REVALIDATION_CRON` | `0 4 * * *` | Re-validate customers' VAT numbers. |
+| `TENANT_DELETION_CLEANUP_CRON` | `0 3 * * FRI` | Permanently delete the tenants scheduled for deletion. |
+
+**Instance bootstrap (API)**
+
+On a fresh installation, the API can create a first user, organization, tenant and API key at
+startup, for scripted installs and CI. On an installation that already has an organization, it
+stands down. Re-running it converges on the same objects.
+
+| Variable | Default | Description |
+|---|---|---|
+| `INSTANCE_BOOTSTRAP_ENABLED` | `false` | Turns the bootstrap on; everything below is ignored otherwise. |
+| `INSTANCE_BOOTSTRAP_EMAIL`, `INSTANCE_BOOTSTRAP_PASSWORD` | none | The first user. An email that already has an account is used as is, and the password is not applied to it. |
+| `INSTANCE_BOOTSTRAP_ORGANIZATION`, `INSTANCE_BOOTSTRAP_TENANT` | `Meteroid`, `Development` | Names of the organization and the tenant. |
+| `INSTANCE_BOOTSTRAP_COUNTRY`, `INSTANCE_BOOTSTRAP_CURRENCY` | `US`, `USD` | Country and currency of the organization. |
+| `INSTANCE_BOOTSTRAP_API_KEY` | none | An API key to install, of the form `pv_<env>_<secret>/<id>`. Unset, a new key is created at every start. |
+| `INSTANCE_BOOTSTRAP_OUTPUT_PATH` | none | File the credentials are written to, as dotenv lines. Unset, they are printed to the logs. |
+| `INSTANCE_BOOTSTRAP_TEST_GATEWAY` | `true` | Connect the test payment gateway. |
+
+**Telemetry**
+
+| Variable | Default | Description |
+|---|---|---|
+| `METEROID_TELEMETRY` | `on` in the official images | The [anonymous daily report](/self-hosting/telemetry), sent by the worker. `off` turns it off. |
+| `METEROID_TELEMETRY_DEBUG` | none | Log the report instead of sending it. |
+| `DO_NOT_TRACK` | none | Any value other than empty, `0`, `false`, `off` or `no` turns the report off. |
+| `TELEMETRY_TRACING_ENABLED`, `TELEMETRY_METRICS_ENABLED` | `false` | Export OpenTelemetry traces and metrics. |
+| `TELEMETRY_OTEL_ENDPOINT` | `http://127.0.0.1:4317` | OTLP (gRPC) collector endpoint. |
+
+### Enterprise images only
+
+The open-source edition does not read these.
+
+| Variable | Default | Description |
+|---|---|---|
+| `LICENSE_KEY` | none | An offline license. Read at startup: changing it needs a restart. Without a valid license, the installation runs on the free tier. |
+| `LICENSE_ACTIVATION_CODE` | none | An activation code, redeemed by the worker when the installation holds no online license yet. You can also enter it in **Settings → License**. |
+| `LICENSE_SERVER_URL` | `https://api.meteroid.com` | The server an online license is activated and refreshed against. |
+| `WEBHOOK_ALLOW_PRIVATE_DESTINATIONS` | `false` | Allow webhooks, alerts and SSO requests to reach private and loopback addresses. By default the Enterprise images refuse them, as a guard against server-side request forgery. Set it when your endpoints are inside your own network. |
+| `EGRESS_ALLOW_PRIVATE_DESTINATIONS_SSO` | `WEBHOOK_ALLOW_PRIVATE_DESTINATIONS` | The same, for SSO only: allow an internal identity provider without opening webhooks. |
+| `ANALYTICS_API_EXTERNAL_URL` | `METERING_API_EXTERNAL_URL` | Address of the analytics service. The Enterprise metering API serves it, so leave it unset. |
+| `ANALYTICS_PROJECTION_ENABLED` | `true` | Copy billing data into ClickHouse for Intelligence. Set `false` to keep billing data out of ClickHouse. |
+| `ANALYTICS_ALERTS_ENABLED` | `true` | Evaluate Intelligence alerts. |
+| `TARGET_SNAPSHOT_CRON` | `15 * * * *` | When daily target snapshots are taken (Steering). |
+| `CUSTOMER_ACTIVATION_CRON` | `40 * * * *` | When customer activation is derived (Customer signals). |
+
+## Metering API
+
+### Required
+
+| Variable | Description |
+|---|---|
+| `INTERNAL_API_SECRET` | The same value as on the API and the worker. |
+| `KAFKA_BOOTSTRAP_SERVERS` | Kafka brokers, for example `kafka:9092`. |
+
+### Recommended
+
+| Variable | Default | Description |
+|---|---|---|
+| `METERING_API_LISTEN_ADDRESS` | `127.0.0.1:8080` | Address the metering API listens on. In a container, `0.0.0.0:50062`. |
+| `METEROID_API_EXTERNAL_URL` | `http://127.0.0.1:50061` | Address of the API's gRPC endpoint, for example `http://meteroid-api:50061`. |
+| `CLICKHOUSE_HTTP_ADDRESS` | `http://127.0.0.1:8123` | ClickHouse HTTP address. |
+| `CLICKHOUSE_TCP_ADDRESS` | `127.0.0.1:9000` | ClickHouse native protocol address. |
+| `CLICKHOUSE_USERNAME`, `CLICKHOUSE_PASSWORD` | `default`, `default` | ClickHouse credentials. |
+
+### Optional
+
+| Variable | Default | Description |
+|---|---|---|
+| `CLICKHOUSE_DATABASE` | `meteroid` | ClickHouse database. |
+| `CLICKHOUSE_CLUSTER_NAME` | `meteroid` | ClickHouse cluster the tables are created on. |
+| `CLICKHOUSE_CONSUMER_INSERT_QUORUM` | `auto` | Replicas that must confirm an event insert. `auto` is a majority. On two replicas, `1` keeps ingesting during a replica outage, at the risk of duplicates. |
+| `CLICKHOUSE_CONSUMER_INSERT_QUORUM_TIMEOUT_MS` | `30000` | Timeout of that confirmation. |
+| `CLICKHOUSE_CONSUMER_INSERT_RETRY_BUDGET_MS` | `240000` | How long a failed insert is retried before the consumer restarts. |
+| `KAFKA_RAW_TOPIC` | `meteroid-events-raw` | Topic usage events go through. |
+| `KAFKA_SECURITY_PROTOCOL`, `KAFKA_SASL_MECHANISM` | none | Kafka security, for example `SASL_PLAINTEXT` and `SCRAM-SHA-512`. |
+| `KAFKA_SASL_USERNAME`, `KAFKA_SASL_PASSWORD` | none | Kafka credentials. |
+| `KAFKA_PRODUCER_LINGER_MS` | `20` | Longest wait before a batch of events is sent, at low traffic. |
+| `KAFKA_PRODUCER_QUEUE_MIB` | `400` | Producer buffer size, in MiB. |
+| `KAFKA_MESSAGE_TIMEOUT_MS` | `20000` | Delivery timeout of an event to Kafka. |
+| `KAFKA_COMPRESSION_CODEC` | `none` | `none`, `gzip`, `snappy`, `lz4` or `zstd`. |
+| `TELEMETRY_TRACING_ENABLED`, `TELEMETRY_METRICS_ENABLED`, `TELEMETRY_OTEL_ENDPOINT` | as above | OpenTelemetry export. |
+
+## Web
+
+The web image writes these into the app when the container starts, so one image works on any
+domain.
+
+| Variable | Description |
+|---|---|
+| `VITE_METEROID_API_EXTERNAL_URL` | Required. Public URL of the gRPC API, as the browser reaches it. |
+| `VITE_METEROID_REST_API_EXTERNAL_URL` | Required. Public URL of the REST API, as the browser reaches it. |
+
+## Helm values
+
+The Helm chart sets these variables from its values (for example `global.publicRestApiUrl` for
+`METEROID_REST_API_EXTERNAL_URL`, and the listen addresses and internal URLs by itself). For a
+variable the chart does not map, use the component's `extraEnv`. See
+[Deploy on Kubernetes](/self-hosting/kubernetes).

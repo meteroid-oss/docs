@@ -13,32 +13,42 @@ repository), and a snapshot test makes any change to its content visible in revi
 
 ## Turning it off
 
-Set `METEROID_TELEMETRY=off` on the scheduler. The official images and the Helm chart turn it on;
-a build from source leaves it off.
+Set `METEROID_TELEMETRY=off` on the worker (the `meteroid-worker` process), which sends the
+report. With the Helm chart, set `global.usageTelemetry: false`.
+
+The official images set `METEROID_TELEMETRY=on`, and so do images you build from the
+repository's Dockerfiles. The Helm chart sets it from `global.usageTelemetry`, which is `true`
+by default. A binary you build with `cargo` leaves it unset, which means off.
 
 The first rule that matches decides:
 
 | Setting | Result |
 |---|---|
-| `DO_NOT_TRACK` set to anything but empty, `0` or `false` | off |
+| `DO_NOT_TRACK` set to any value other than empty, `0`, `false`, `off` or `no` | off |
 | `ANALYTICS_ENABLED=false` (the former tracking opt-out) | off |
-| `METEROID_TELEMETRY=on` or `off` | as set |
-| a debug build, or `CI=true` | off |
+| `METEROID_TELEMETRY` set to a non-empty value | off for `0`, `false`, `off` or `no`; on for any other value |
+| a debug build, or `CI` set to any value other than empty, `0`, `false`, `off` or `no` | off |
 | none of the above | off |
 
-The scheduler logs at every start whether the report is on, and why.
+Values are compared without regard to case or surrounding spaces. So `DO_NOT_TRACK=1` turns the
+report off, while `DO_NOT_TRACK=0` or `DO_NOT_TRACK=off` counts as not set.
 
-To see exactly what would be sent, set `METEROID_TELEMETRY_DEBUG=1`: the scheduler then logs the
+The worker logs at every start whether the report is on, and why.
+
+To see exactly what would be sent, set `METEROID_TELEMETRY_DEBUG=1`: the worker then logs the
 report every hour and never sends it.
 
 ## When it is sent
 
-One replica of the scheduler sends it, about an hour after the first start, then once a day, with
-a `POST` to `https://api.metero.id/oss/v1/telemetry`, the host installs already call for exchange
-rates. The collector keeps the country derived from the IP address, never the address itself.
+The worker checks every hour whether a report is due, and one replica at a time does it. The
+first report goes out about an hour after the install's identity is created, then one about
+every day, with a `POST` to `https://api.metero.id/oss/v1/telemetry`, the host installs already
+call for exchange rates. The collector keeps the country derived from the IP address, never the
+address itself.
 
-The install is identified by a random UUID created at the first start and stored in your database.
-It is derived from nothing and is not your license's instance id.
+The install is identified by a random UUID, created by the worker the first time the report is
+on (or in debug mode) and stored in your database. It is derived from nothing and is not your
+license's instance id.
 
 ## What the report contains
 
@@ -73,7 +83,7 @@ It is derived from nothing and is not your license's instance id.
 |---|---|
 | `schema` | Version of this format. |
 | `instance_id` | The install's random UUID. |
-| `install.installed_on`, `install.first_version` | Day and version of the first start. |
+| `install.installed_on`, `install.first_version` | Day and version at which the identity was created. On an install upgraded from a version without the report, that is the first start of a version with it, not the original installation. |
 | `build` | Running version, edition (`oss` or `enterprise`), operating system and CPU architecture. |
 | `deployment` | `docker`, `docker-compose`, `helm` or `unknown`, from `METEROID_DEPLOYMENT`. |
 | `infra.postgres_major` | Major version of PostgreSQL. |
