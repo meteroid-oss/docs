@@ -113,18 +113,17 @@ evaluated in UTC.
 
 **API rate limits** (Enterprise images, with `REDIS_URL` set)
 
-Each REST limit has a value for Production tenants and one for the other tenants.
+The REST limits each have a value for Production tenants and one for the other tenants, and
+are counted per tenant, except the client routes, counted per customer.
 
 | Variables (Production, other tenants) | Defaults | Limit |
 |---|---|---|
-| `RATE_LIMIT_REST_PROD_RPS`, `RATE_LIMIT_REST_NO_PROD_RPS` | `100`, `25` | REST API requests per second. |
-| `RATE_LIMIT_REST_PROD_METERING_RPS`, `RATE_LIMIT_REST_NON_PROD_METERING_RPS` | `500`, `125` | Event ingestion requests per second. |
-| `RATE_LIMIT_REST_PROD_METERING_EPS`, `RATE_LIMIT_REST_NON_PROD_METERING_EPS` | `5000`, `1250` | Ingested events per second. |
-| `RATE_LIMIT_REST_CLIENT_PROD_RPS`, `RATE_LIMIT_REST_CLIENT_NON_PROD_RPS` | `20`, `5` | Requests per second per customer, on the browser-facing client routes. |
+| `RATE_LIMIT_REST_PROD_RPS`, `RATE_LIMIT_REST_NO_PROD_RPS` | `100`, `25` | REST API requests per second, per tenant. |
+| `RATE_LIMIT_REST_PROD_METERING_RPS`, `RATE_LIMIT_REST_NON_PROD_METERING_RPS` | `500`, `125` | Requests per second to the event ingestion routes (`/api/v1/events/`), per tenant, instead of the limit above. |
+| `RATE_LIMIT_REST_PROD_METERING_EPS`, `RATE_LIMIT_REST_NON_PROD_METERING_EPS` | `5000`, `1250` | Ingested events per second, per tenant, on top of the request limit. |
+| `RATE_LIMIT_REST_CLIENT_PROD_RPS`, `RATE_LIMIT_REST_CLIENT_NON_PROD_RPS` | `20`, `5` | Requests per second on the browser-facing client routes, per customer. |
 | `RATE_LIMIT_REST_PROD_USAGE_COSTS_RPM`, `RATE_LIMIT_REST_NON_PROD_USAGE_COSTS_RPM` | `600`, `120` | Usage cost reads per minute, per tenant. |
-| `RATE_LIMIT_GRPC_RPM` | `60` | gRPC API requests per minute. |
-
-{/* TODO(owner): confirm the scope of RATE_LIMIT_GRPC_RPM (per IP on unauthenticated calls, or per user?) and of the REST per-second limits (per tenant or per API key), then state it in the table. */}
+| `RATE_LIMIT_GRPC_RPM` | `60` | gRPC API requests per minute, per method, counted per signed-in user, per portal or checkout session, or per client IP address on the purchase-link calls. |
 
 **Worker only**
 

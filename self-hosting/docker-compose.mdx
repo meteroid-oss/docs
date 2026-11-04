@@ -22,23 +22,24 @@ storage. Use it to try Meteroid or for a small installation. For production, pre
     The files live in `docker/deploy` of the
     [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid) repository:
     `docker-compose.yml`, `.env.example`, and the ClickHouse configuration under `volume/`.
+    Check out the tag of the release you run, so the files match it:
 
     ```bash
-    git clone https://github.com/meteroid-oss/meteroid.git
+    git clone --branch v2.0.0 https://github.com/meteroid-oss/meteroid.git
     cd meteroid/docker/deploy
     cp .env.example .env
     ```
-
-    {/* TODO(owner): name the release tag to check out (e.g. `git clone --branch <tag>`) once the 2.0 tag naming in the public repository is fixed, so the files match the pinned version. */}
   </Step>
   <Step title="Pin the version">
-    `.env` sets the version every Meteroid image runs:
+    `METEROID_VERSION` in `.env` sets the version every Meteroid image runs. Set it to the
+    release you run:
 
     ```bash .env
     METEROID_VERSION=2.0.0
     ```
 
-    Keep it pinned. Without it, the images fall back to `latest`, which moves with every release.
+    Keep it pinned: `latest`, the value in `.env.example` and the fallback when it is unset,
+    moves with every release.
   </Step>
   <Step title="Set the secrets">
     Replace the four placeholder secrets in `.env` before the first start:
@@ -72,9 +73,8 @@ storage. Use it to try Meteroid or for a small installation. For production, pre
 
     On a server, replace `localhost` with its address or domain name. `METEROID_PUBLIC_URL` is
     the address of the web app, used in links Meteroid generates (emails, portal and checkout
-    links).
-
-    {/* TODO(owner): the compose file does not pass METEROID_REST_API_EXTERNAL_URL to meteroid-api/meteroid-worker, so they keep the default http://127.0.0.1:8080 (used for portal logo URLs, OAuth and SSO callbacks). Add it to the compose file (e.g. ${VITE_METEROID_REST_API_EXTERNAL_URL}) and document it here. */}
+    links). The API and the worker also take the REST API's public URL from
+    `VITE_METEROID_REST_API_EXTERNAL_URL`, for file links and the OAuth and SSO callbacks.
   </Step>
   <Step title="Start Meteroid">
     ```bash
@@ -113,9 +113,9 @@ reachable from the internet, restrict them with a firewall, or remove their `por
 
 Compose passes to each container only the variables listed under its `environment:` in
 `docker-compose.yml`; a variable that is only in `.env` is not seen by Meteroid. Optional
-settings (S3 storage, SMTP, Google sign-in, OpenTelemetry) are listed there, commented out. To
-use one, uncomment its lines in both `meteroid-api` and `meteroid-worker`, then set the values in
-`.env`. For a setting that is not listed, such as `REDIS_URL` or `LICENSE_KEY`, add a line to the
+settings (S3 storage, Redis, SMTP, Google sign-in, OpenTelemetry) are listed there, commented
+out. To use one, uncomment its lines in both `meteroid-api` and `meteroid-worker`, then set the
+values in `.env`. For a setting that is not listed, such as `LICENSE_KEY`, add a line to the
 `environment:` of both services.
 
 To turn off the [anonymous telemetry report](/self-hosting/telemetry), uncomment
@@ -123,7 +123,8 @@ To turn off the [anonymous telemetry report](/self-hosting/telemetry), uncomment
 
 See the [configuration reference](/self-hosting/configuration) for every setting.
 
-{/* TODO(owner): with the default OBJECT_STORE_URI=file:///data/object-store, only meteroid-api mounts the object_store_data volume; meteroid-worker writes generated PDFs to its own container filesystem. Mount the volume on meteroid-worker too, or confirm the worker never writes there. */}
+With the default `file://` object storage, the API and the worker share the `object_store_data`
+volume.
 
 ## Update Meteroid
 
@@ -167,12 +168,13 @@ ARGS="--build-arg PROFILE=release --build-arg EDITION=oss \
   --build-arg MOLD_ARCH=x86_64 --build-arg PROTO_ARCH=x86_64 --build-arg GRPC_HEALTH_PROBE_ARCH=amd64"
 
 docker build $ARGS -f modules/meteroid/api.Dockerfile -t meteroid-api:oss .
-docker build $ARGS -f modules/meteroid/scheduler.Dockerfile -t meteroid-worker:oss .
+docker build $ARGS -f modules/meteroid/worker.Dockerfile -t meteroid-worker:oss .
 docker build $ARGS -f modules/metering/Dockerfile -t metering-api:oss .
 docker build -f modules/web/web-app/Dockerfile -t meteroid-web:oss .
 ```
 
-{/* TODO(owner): confirm the worker Dockerfile name after the scheduler -> worker rename (currently modules/meteroid/scheduler.Dockerfile), and whether METEROID_VERSION should be passed as a build argument (it is what the telemetry report shows as the version). */}
+You can also pass `--build-arg METEROID_VERSION=2.0.0` to the API and worker builds. It is optional, and
+only used as the version in the [anonymous telemetry report](/self-hosting/telemetry).
 
 Then point the services at your images, for example with a `docker-compose.override.yml` next
 to `docker-compose.yml`, which Compose reads automatically:

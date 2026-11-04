@@ -109,9 +109,9 @@ wrote stays in the database:
   authentication.
 - Invoicing entities that have invoice consolidation turned on keep consolidating.
 - Minimum commitments already set on plans and subscriptions keep being billed.
+- Production tenants and invoicing entities beyond the limits keep working. Only creating
+  another one is refused, and switching another tenant to Production.
 - Moving back to the Enterprise images, or renewing the license, makes everything editable again.
-
-{/* TODO(owner): state what happens to a second Production tenant or extra invoicing entities that already exist when an installation moves to the open-source edition or its license lapses (kept read-only? still billed?). */}
 
 ## License your installation
 
@@ -137,7 +137,9 @@ license automatically once the subscription is active.
     installation has no online license yet.
 
     An online license is refreshed every hour from `https://api.meteroid.com` (or
-    `LICENSE_SERVER_URL`), so the installation needs outgoing access to it.
+    `LICENSE_SERVER_URL`), so the installation needs outgoing access to it. With its refreshes,
+    the installation reports the revenue its Production tenants finalized each day: per currency,
+    the amount and the number of invoices and credit notes.
   </Tab>
   <Tab title="Offline">
     Send us the instance ID shown under **Settings → License**. Then either:
@@ -147,10 +149,12 @@ license automatically once the subscription is active.
     - set it as `LICENSE_KEY` on the API and the worker (Helm: `global.secrets.licenseKey`),
       then restart them.
 
-    An offline license is not refreshed: ask us for a new one before it expires. The license page
-    of an offline installation also lets you export its usage for a period, as a CSV file.
+    An offline license is not refreshed: ask us for a new one before it expires.
 
-    {/* TODO(owner): say when and how an offline installation sends this usage export to Meteroid. */}
+    An offline installation reports nothing by itself. Instead, its license page has a **Usage**
+    section: pick a period and click **Export usage** to download, as a CSV file signed by the
+    installation, the invoices and credit notes its Production tenants finalized over that
+    period. Send the file to [hey@meteroid.com](mailto:hey@meteroid.com).
   </Tab>
 </Tabs>
 

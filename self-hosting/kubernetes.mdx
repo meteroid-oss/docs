@@ -141,8 +141,9 @@ keys from it:
 The worker's values are under `worker`: image, replicas, resources and its own settings.
 
 <Note>
-  The chart used to call it `scheduler`. Chart 2.0 still reads a `scheduler:` section for one
-  release; rename it to `worker:` in your values.
+  The chart used to call it `scheduler`. Until 2.1 the chart still reads a `scheduler:` section,
+  and its settings win over `worker:`: move them to `worker:` in your values. The chart warns
+  after an install or upgrade while `scheduler:` is set.
 </Note>
 
 ### License
