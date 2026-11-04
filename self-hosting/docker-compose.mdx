@@ -113,7 +113,8 @@ reachable from the internet, restrict them with a firewall, or remove their `por
 
 Compose passes to each container only the variables listed under its `environment:` in
 `docker-compose.yml`; a variable that is only in `.env` is not seen by Meteroid. Optional
-settings (S3 storage, Redis, SMTP, Google sign-in, OpenTelemetry) are listed there, commented
+settings (S3 storage, Redis, SMTP, Google sign-in, outbound webhooks, OpenTelemetry) are listed
+there, commented
 out. To use one, uncomment its lines in both `meteroid-api` and `meteroid-worker`, then set the
 values in `.env`. For a setting that is not listed, such as `LICENSE_KEY`, add a line to the
 `environment:` of both services.
