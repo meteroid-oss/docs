@@ -40,6 +40,33 @@ unchanged. On a database that does not need it, it changes nothing.
 ## Before you start
 
 <Steps>
+  <Step title="Check the pgmq version">
+    ```sql
+    SELECT extversion FROM pg_extension WHERE extname = 'pgmq';
+    ```
+
+    Before version 1.6.0, `pgmq` makes its queue tables part of the extension, and `pg_dump`
+    leaves them out: a dump of such a database restores without the queues and the messages they
+    hold, with no error, and Meteroid then fails on every queue. The
+    `ghcr.io/meteroid-oss/meteroid-postgres:17.4` image ships `pgmq` 1.5.0.
+
+    If the query returns a version below 1.6.0, update the extension to 1.11.0 before you take
+    any dump. Its update scripts are plain SQL, and the `meteroid-postgres` 18.3 images contain
+    them. With Docker Compose, from `docker/deploy`:
+
+    ```bash
+    docker run --rm --entrypoint sh ghcr.io/meteroid-oss/meteroid-postgres:18.3-standard \
+      -c 'cd /usr/share/postgresql/18/extension && tar cf - pgmq--1.*--*.sql' \
+      | docker compose exec -T -u root meteroid-db tar xf - -C /usr/share/postgresql/17/extension
+    docker compose exec -T meteroid-db psql -U meteroid -d meteroid \
+      -c "ALTER EXTENSION pgmq UPDATE TO '1.11.0'"
+    ```
+
+    On another server, copy the same `pgmq--1.*--*.sql` files into its extension directory (the
+    `extension` folder of `pg_config --sharedir`), then run the same `ALTER EXTENSION`. The
+    update keeps your queues and their messages, and your current version of Meteroid keeps
+    working with it.
+  </Step>
   <Step title="Check your PostgreSQL version">
     Meteroid 2.0 requires **PostgreSQL 18** or later, with the `pgmq` extension available: its
     migrations use functions built into PostgreSQL 18. Check the version of your server:
@@ -52,7 +79,7 @@ unchanged. On a database that does not need it, it changes nothing.
     `ghcr.io/meteroid-oss/meteroid-postgres:17.4`. Upgrade the server to PostgreSQL 18 first:
     with Docker Compose, follow [Upgrade PostgreSQL to 18](#upgrade-postgresql-to-18-docker-compose);
     elsewhere, use `pg_upgrade`, or restore a dump into a new PostgreSQL 18 server that has
-    `pgmq`.
+    `pgmq`. Either way, check the `pgmq` version first (previous step).
 
     Starting 2.0 on PostgreSQL 17 is harmless: it refuses and changes nothing.
   </Step>
@@ -114,7 +141,9 @@ unchanged. On a database that does not need it, it changes nothing.
 
 Follow this section if your Compose installation runs `meteroid-postgres:17.4` (`SHOW
 server_version;` returns 17). It moves your data into a PostgreSQL 18 container with a dump and
-a restore. Run it from `docker/deploy`, with your **current** Compose file until step 4.
+a restore. Run it from `docker/deploy`, with your **current** Compose file until step 4, after
+updating `pgmq` as in [Check the pgmq version](#before-you-start): with an older `pgmq`, the dump
+leaves out the queues.
 
 <Note>
   This procedure is tested for the 2.0 release. Keep the dump and the archive of the old volume
@@ -131,9 +160,13 @@ a restore. Run it from `docker/deploy`, with your **current** Compose file until
   </Step>
   <Step title="Dump the whole server">
     ```bash
+    docker compose exec -T meteroid-db psql -U meteroid -d meteroid \
+      -c "SELECT extversion FROM pg_extension WHERE extname = 'pgmq'" \
+      -c "SELECT count(*) FROM pgmq.meta"
     docker compose exec -T meteroid-db pg_dumpall -U meteroid > meteroid-pg17.sql
     ```
 
+    The first query must return 1.6.0 or later. Note the number of queues the second returns.
     Check that the dump is complete: its last lines contain
     `PostgreSQL database cluster dump complete`.
   </Step>
@@ -178,7 +211,13 @@ a restore. Run it from `docker/deploy`, with your **current** Compose file until
     psql reports that the role and the database already exist: the new container created them,
     and these two errors are expected. Any other error means the restore is incomplete: stop and
     investigate before going further. The restore recreates the `pgmq` extension from the 18.3
-    image.
+    image, at version 1.11.0.
+
+    Check that the queues came across: the result of this query must be the number you noted.
+
+    ```bash
+    docker compose exec -T meteroid-db psql -U meteroid -d meteroid -c "SELECT count(*) FROM pgmq.meta"
+    ```
   </Step>
   <Step title="Continue the upgrade">
     Check the version (`SHOW server_version;` now returns 18), then continue with
@@ -294,8 +333,9 @@ outside the release, then to a new installation of the 2.0 chart. In the command
     Kafka when you go on are lost.
   </Step>
   <Step title="Stop Meteroid and dump the database">
-    Run the [preflight query](#before-you-start) against the bundled PostgreSQL, then stop the
-    Meteroid processes, which run as Deployments (the bundled services are StatefulSets):
+    Run the [preflight query](#before-you-start) against the bundled PostgreSQL, and check its
+    [`pgmq` version](#before-you-start): update it first if it is below 1.6.0, or the dump leaves
+    out the queues. Then stop the Meteroid processes, which run as Deployments (the bundled services are StatefulSets):
 
     ```bash
     kubectl scale deployment -l app.kubernetes.io/instance=<release> --replicas=0
@@ -454,6 +494,7 @@ they refuse: fix the cause and start again.
 | `Meteroid needs PostgreSQL 18 or later, and this server runs …` | Upgrade the server to PostgreSQL 18 (see [Upgrade PostgreSQL to 18](#upgrade-postgresql-to-18-docker-compose) for Docker Compose), then start again. |
 | `version(s) … are recorded but their schema changes are missing` | The database was changed by hand or by an unreleased build. Restore the schema those versions created, or contact us at [hey@meteroid.com](mailto:hey@meteroid.com). |
 | `customer.connected_account_id is set on some rows` | No such value can be valid on this database: set the column to `NULL` on those rows, then start again. |
+| `relation "pgmq.q_…" does not exist` | The database was restored from a dump taken with `pgmq` older than 1.6.0, which left out the queues. Go back to the old server (or its archived volume), update `pgmq` as in [Check the pgmq version](#before-you-start), and dump again. |
 | A migration fails after the history was moved | The move is committed and finds nothing left to do next time. Fix the cause, usually a row listed by the preflight query, and start again: the migrations resume at the one that failed. |
 
 ## Roll back
@@ -471,8 +512,8 @@ reverted.
   images moves you to this build at no cost. To stay on the pure open-source edition, build the
   images from the repository (see [Editions](/self-hosting/editions)).
 - The scheduler is now the **worker**: image `ghcr.io/meteroid-oss/meteroid-worker`, Compose
-  service `meteroid-worker`, Helm values `worker`. The former `meteroid-scheduler` image name
-  stops with 2.0.
+  service `meteroid-worker`, Helm values `worker`. The `meteroid-scheduler` image name remains
+  an alias of the worker image through the 2.x releases.
 - Images are tagged with the release version (`2.0.0`), and `2.0`, `2` and `latest`. The
   `-ee` image names are deprecated: they are still published for 2.0 and will stop.
 - PostgreSQL 18 is required.
