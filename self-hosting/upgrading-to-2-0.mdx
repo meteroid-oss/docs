@@ -24,13 +24,24 @@ Meteroid needs PostgreSQL 18 or later, and this server runs 17.4. Nothing was ch
 
 It then takes a database lock, so processes that start together run the next steps one at a
 time. The migration history of the Meteroid repository was reorganized after the last public
-release: some migrations were renumbered. On a database of an earlier release, the process
-moves the migration history onto the new one, then runs the 2.0 migrations. You do not run any
-migration command yourself.
+release: some migrations were renumbered. On a database of a 1.0.0 release candidate, the
+process moves the migration history onto the new one; a 0.19 database has nothing to move. It
+then runs the 2.0 migrations. You do not run any migration command yourself.
 
 Moving the history checks the database before changing anything. If a migration it is about to
 map is recorded but its schema changes are missing, it refuses and leaves the database
 unchanged. On a database that does not need it, it changes nothing.
+
+Two queues of earlier releases, `outbox_event` and `billable_metric_sync`, have no consumer in
+2.0, and its migrations remove them. While either still holds messages, the process refuses and
+leaves the database unchanged: let them drain before you stop the previous version (see
+[Upgrade](#upgrade)).
+
+The metering API migrates ClickHouse when it starts. A ClickHouse set up by 0.19 or
+`1.0.0-rc1` to `rc3` stores usage events under the previous identifiers: the metering API copies
+them to the 2.0 tables and logs how many. An event whose customer or tenant is not a Meteroid
+identifier is not copied; the previous tables are then kept as `raw_events_unconverted`, for you
+to review and drop.
 
 <Warning>
   Do not run `diesel migration run` against the database before 2.0 has started once. Let the
@@ -152,7 +163,18 @@ leaves out the queues.
 
 <Steps>
   <Step title="Stop the Meteroid services">
-    Leave the database running, and stop everything that writes to it:
+    Stop the traffic that writes to Meteroid (your API clients, and the usage events you send),
+    wait a minute, and check that the two queues 2.0 removes are empty, with the previous version
+    still running:
+
+    ```bash
+    docker compose exec -T meteroid-db psql -U meteroid -d meteroid -c \
+      "SELECT queue_name, queue_length FROM pgmq.metrics_all() WHERE queue_name IN ('outbox_event', 'billable_metric_sync')"
+    ```
+
+    Wait until every `queue_length` is 0.
+
+    Then leave the database running, and stop everything that writes to it:
 
     ```bash
     docker compose stop meteroid-api meteroid-scheduler metering-api meteroid-web
@@ -191,7 +213,7 @@ leaves out the queues.
     ```
   </Step>
   <Step title="Take the 2.0 deployment files">
-    Replace `docker-compose.yml` and update `.env` as in [Upgrade](#upgrade), steps 2 and 3. Keep
+    Take the 2.0 deployment files and update `.env` as in [Upgrade](#upgrade), steps 2 and 3. Keep
     the same `DATABASE_USER`, `DATABASE_PASSWORD` and `DATABASE_NAME`.
   </Step>
   <Step title="Start PostgreSQL 18 alone">
@@ -231,7 +253,19 @@ leaves out the queues.
   <Tab title="Docker Compose">
     <Steps>
       <Step title="Stop the current installation">
-        With your current Compose file, stop the containers. The volumes, and your data, stay.
+        Stop the traffic that writes to Meteroid (your API clients, and the usage events you send),
+        wait a minute, and check that the two queues 2.0 removes are empty, with the previous version
+        still running:
+
+        ```bash
+        docker compose exec -T meteroid-db psql -U meteroid -d meteroid -c \
+          "SELECT queue_name, queue_length FROM pgmq.metrics_all() WHERE queue_name IN ('outbox_event', 'billable_metric_sync')"
+        ```
+
+        Wait until every `queue_length` is 0.
+
+        Then, with your current Compose file, stop the containers. The volumes, and your data,
+        stay.
 
         ```bash
         docker compose down
@@ -241,9 +275,11 @@ leaves out the queues.
         `meteroid-scheduler` service, keeps running against the new schema.
       </Step>
       <Step title="Take the 2.0 deployment files">
-        Replace `docker-compose.yml` with the one of the 2.0 release, from `docker/deploy` at
-        the `v2.0.0` tag of the repository, and reapply your own changes to it (the optional
-        settings you uncommented). The scheduler service is now `meteroid-worker`.
+        Replace your deployment files with the `docker/deploy` folder of the `v2.0.0` tag of
+        the repository: `docker-compose.yml`, and the ClickHouse configuration under `volume/`,
+        which the 2.0 Compose file mounts. Without it, ClickHouse starts with no cluster and the
+        metering API cannot migrate. Reapply your own changes to `docker-compose.yml` (the
+        optional settings you uncommented). The scheduler service is now `meteroid-worker`.
       </Step>
       <Step title="Update .env">
         Compare your `.env` with the new `.env.example` and:
@@ -262,9 +298,9 @@ leaves out the queues.
         docker compose logs -f meteroid-api meteroid-worker
         ```
 
-        The first process to start logs `Legacy OSS migration history moved onto the current
-        history`, then each migration it applies. The others wait for it, then find nothing left
-        to do.
+        The first process to start logs each migration it applies; on a database of a release
+        candidate, it first logs `Legacy OSS migration history moved onto the current history`.
+        The others wait for it, then find nothing left to do.
       </Step>
     </Steps>
   </Tab>
@@ -281,6 +317,17 @@ leaves out the queues.
     For a release that already uses external PostgreSQL 18, Kafka and ClickHouse:
 
     <Steps>
+      <Step title="Let the queues drain">
+        Stop the traffic that writes to Meteroid, wait a minute, and run against the database:
+
+        ```sql
+        SELECT queue_name, queue_length FROM pgmq.metrics_all()
+        WHERE queue_name IN ('outbox_event', 'billable_metric_sync');
+        ```
+
+        Wait until every `queue_length` is 0: the upgrade replaces the scheduler, which empties
+        them, and 2.0 refuses to migrate while they hold messages.
+      </Step>
       <Step title="Update your values">
         Start from the [values of the 2.0 chart](/self-hosting/kubernetes#values-to-set) and
         carry over your settings:
@@ -380,8 +427,8 @@ outside the release, then to a new installation of the 2.0 chart. In the command
 
 ## Import your webhook endpoints from Svix
 
-Earlier releases delivered outgoing webhooks through a Svix server you ran, and your webhook
-endpoints live only there. 2.0 delivers webhooks itself and no longer uses Svix: until you import
+Earlier releases delivered outgoing webhooks through Svix, at `SVIX_SERVER_URL` (Svix Cloud) with
+the token in `SVIX_JWT_TOKEN`, and your webhook endpoints live only there. 2.0 delivers webhooks itself and no longer uses Svix: until you import
 the endpoints, they receive nothing. The API image includes a one-shot command,
 `meteroid-svix-import`, that copies them.
 
@@ -401,8 +448,8 @@ webhook endpoint of that tenant, with:
   are dropped and reported. An endpoint filtered only on such types is skipped, since it would
   otherwise receive every event;
 - its signing secret. Its deliveries carry the `svix-id`, `svix-timestamp` and `svix-signature`
-  headers next to the Standard Webhooks `webhook-*` ones, so your receivers keep verifying
-  without any change;
+  headers next to the Standard Webhooks `webhook-*` ones, so your receivers keep verifying the
+  signatures without any change. The payload itself changed: see [Webhooks](#webhooks);
 - its custom headers;
 - its state: an endpoint disabled in Svix is imported disabled.
 
@@ -495,6 +542,7 @@ they refuse: fix the cause and start again.
 | `version(s) … are recorded but their schema changes are missing` | The database was changed by hand or by an unreleased build. Restore the schema those versions created, or contact us at [hey@meteroid.com](mailto:hey@meteroid.com). |
 | `customer.connected_account_id is set on some rows` | No such value can be valid on this database: set the column to `NULL` on those rows, then start again. |
 | `relation "pgmq.q_…" does not exist` | The database was restored from a dump taken with `pgmq` older than 1.6.0, which left out the queues. Go back to the old server (or its archived volume), update `pgmq` as in [Check the pgmq version](#before-you-start), and dump again. |
+| `… message(s) wait in the … queue, which this version removes` | Nothing was changed. Start your previous version again until the queue is empty (see [Upgrade](#upgrade), step 1), then start 2.0. |
 | A migration fails after the history was moved | The move is committed and finds nothing left to do next time. Fix the cause, usually a row listed by the preflight query, and start again: the migrations resume at the one that failed. |
 
 ## Roll back
@@ -525,8 +573,16 @@ reverted.
 - New endpoints are signed with the [Standard Webhooks](https://www.standardwebhooks.com)
   headers `webhook-id`, `webhook-timestamp` and `webhook-signature`. Endpoints imported from Svix
   also keep the `svix-*` headers.
-- The Enterprise images refuse to deliver webhooks and alerts to private or loopback addresses.
-  If your endpoints are inside your own network, set `WEBHOOK_ALLOW_PRIVATE_DESTINATIONS=true`.
+- The payload is no longer wrapped in `data`: the object's fields are at the top level, next to
+  the event's `id`, `type` and `timestamp`, and the object's identifier has its own field. A
+  `customer.created` event was
+  `{"type": "customer.created", "id": "evt_…", "data": {"id": "cus_…", "name": "Acme", "discriminator": "CUSTOMER", …}}`
+  and is now `{"type": "customer.created", "id": "evt_…", "customer_id": "cus_…", "name": "Acme", …}`.
+  Update the receivers that read `data`.
+- The Enterprise images refuse to deliver webhooks and alerts to private or loopback addresses,
+  and over plain `http`. If your endpoints are inside your own network, set
+  `WEBHOOK_ALLOW_PRIVATE_DESTINATIONS=true` (with Docker Compose, uncomment its line in
+  `docker-compose.yml`).
 
 ### Configuration
 
