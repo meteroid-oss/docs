@@ -1,0 +1,147 @@
+---
+title: "Deploy with Docker Compose"
+sidebarTitle: "Docker Compose"
+description: "Run Meteroid and every service it needs on one machine with Docker Compose."
+---
+
+The public repository ships a Compose file that runs Meteroid with all its infrastructure on one
+machine: PostgreSQL, ClickHouse, Redpanda (Kafka-compatible) and a local directory for object
+storage. Use it to try Meteroid or for a small installation. For production, prefer
+[Kubernetes](/self-hosting/kubernetes) with managed databases.
+
+## Install
+
+<Steps>
+  <Step title="Get the deployment files">
+    The files live in `docker/deploy` of the
+    [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid) repository:
+    `docker-compose.yml`, `.env.example`, and the ClickHouse configuration under `volume/`.
+    Check out the tag of the release you run, so the files match it:
+
+    ```bash
+    git clone --branch v2.0.0 https://github.com/meteroid-oss/meteroid.git
+    cd meteroid/docker/deploy
+    cp .env.example .env
+    ```
+  </Step>
+  <Step title="Set the secrets">
+    Replace the four placeholder secrets in `.env` before the first start:
+
+    | Variable | Value | Generate with |
+    |---|---|---|
+    | `JWT_SECRET` | Long random string signing user sessions | `openssl rand -hex 32` |
+    | `INTERNAL_API_SECRET` | Long random string authenticating calls between Meteroid processes | `openssl rand -hex 32` |
+    | `SECRETS_CRYPT_KEY` | **Exactly 32 characters**, encrypting stored connector credentials | `openssl rand -hex 16` |
+    | `DATABASE_PASSWORD` | PostgreSQL password | `openssl rand -hex 24` |
+
+    `DATABASE_PASSWORD` is inserted into the database URL, so a hexadecimal value avoids
+    characters that would need escaping.
+
+    <Warning>
+      Never change `SECRETS_CRYPT_KEY` once set: it encrypts your connector credentials (see the
+      [configuration reference](/self-hosting/configuration#required)). Keep a copy of `.env`
+      with your backups.
+    </Warning>
+  </Step>
+  <Step title="Set the public URLs">
+    The browser talks to the API directly, so the web app needs the addresses at which your
+    users reach it. The defaults work when you open Meteroid on the same machine:
+
+    ```bash .env
+    METEROID_PUBLIC_URL=http://localhost:3000
+    VITE_METEROID_API_EXTERNAL_URL=http://localhost:50061
+    VITE_METEROID_REST_API_EXTERNAL_URL=http://localhost:8084
+    ```
+
+    On a server, replace `localhost` with its address or domain name. `METEROID_PUBLIC_URL` is
+    the address of the web app, used in links Meteroid generates (emails, portal and checkout
+    links). The API and the worker also take the REST API's public URL from
+    `VITE_METEROID_REST_API_EXTERNAL_URL`, for file links and the OAuth and SSO callbacks.
+  </Step>
+  <Step title="Start Meteroid">
+    ```bash
+    docker compose up -d
+    ```
+
+    The first start downloads the images and runs the database migrations, which takes a few
+    minutes. Follow it with `docker compose logs -f meteroid-api`.
+  </Step>
+  <Step title="Create the first account">
+    Open [http://localhost:3000](http://localhost:3000) and sign up: the first account creates
+    the organization. When SMTP is configured, a new account must first confirm its email
+    address.
+  </Step>
+</Steps>
+
+## Services and ports
+
+| Service | Purpose | Port on the host |
+|---|---|---|
+| `meteroid-web` | Web app | `3000` |
+| `meteroid-api` | gRPC API (used by the web app) and REST API | `50061`, `8084` |
+| `meteroid-worker` | Scheduled jobs and queue consumers | none |
+| `metering-api` | Usage event ingestion | `50062` |
+| `meteroid-db` | PostgreSQL 18 with `pgmq` (`ghcr.io/meteroid-oss/meteroid-postgres:18.3-standard`) | `5432` |
+| `clickhouse` | ClickHouse, single node with its embedded Keeper | `8123`, `9000` |
+| `redpanda` | Kafka-compatible broker | `9092` |
+| `clickhouse-volume-init`, `redpanda-topic-create` | One-shot setup: volume permissions, the `meteroid-events-raw` topic | none |
+
+The Compose file publishes the database and broker ports on the host as well. On a machine
+reachable from the internet, restrict them with a firewall, or remove their `ports:` entries.
+
+## Configure optional settings
+
+Compose passes to each container only the variables listed under its `environment:` in
+`docker-compose.yml`; a variable that is only in `.env` is not seen by Meteroid. Optional
+settings (S3 storage, Redis, SMTP, Google sign-in, outbound webhooks, OpenTelemetry) are listed
+there, commented
+out. To use one, uncomment its lines in both `meteroid-api` and `meteroid-worker`, then set the
+values in `.env`. For a setting that is not listed, such as `LICENSE_KEY`, add a line to the
+`environment:` of both services.
+
+To turn off the [anonymous telemetry report](/self-hosting/telemetry), uncomment
+`METEROID_TELEMETRY=off` in the same two services.
+
+See the [configuration reference](/self-hosting/configuration) for every setting.
+
+With the default `file://` object storage, the API and the worker share the `object_store_data`
+volume.
+
+## Update Meteroid
+
+[Back up](#backups) the database first: an upgrade cannot be undone except by restoring a
+backup. Take `docker/deploy` from the tag of the new release if its files changed, reapply your
+changes to `docker-compose.yml`, then:
+
+```bash
+docker compose pull
+docker compose up -d --remove-orphans
+```
+
+The images run `latest`, so `docker compose pull` takes the newest release. To stay on one
+release, set `METEROID_VERSION` in `.env`, for example `2.0.0`, and change it when you upgrade.
+
+Coming from a 1.0.0 release candidate, 0.19 or an older build? Follow
+[Upgrading to 2.0](/self-hosting/upgrading-to-2-0) instead.
+
+## Backups
+
+The data lives in these volumes:
+
+| Volume | Contents |
+|---|---|
+| `pg_data` | PostgreSQL: all billing data. |
+| `clickhouse_data` | ClickHouse: usage events. |
+| `object_store_data` | Stored files, such as invoice PDFs and logos, with the default `file://` storage. |
+| `redpanda_data` | Events in transit to ClickHouse. |
+
+`docker compose down -v` deletes these volumes, and your data with them.
+
+Back up PostgreSQL with `pg_dump`, for example:
+
+```bash
+docker compose exec -T meteroid-db pg_dump -U meteroid -Fc meteroid > meteroid.dump
+```
+
+Use the user and database names of your `.env` (`DATABASE_USER`, `DATABASE_NAME`) if you
+changed them. Store the dump, and your `.env`, away from the machine.

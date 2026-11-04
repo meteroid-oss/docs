@@ -1,0 +1,163 @@
+---
+title: "Deploy on Kubernetes"
+sidebarTitle: "Kubernetes"
+description: "Install Meteroid on Kubernetes with the Helm chart, connected to the databases and services you operate."
+---
+
+The Helm chart deploys the four Meteroid processes: the API, the worker, the metering API and
+the web app. It does not deploy PostgreSQL, ClickHouse, Kafka or object storage: you provide
+them, managed or operated in your cluster.
+
+## Prerequisites
+
+- **PostgreSQL 18** with the [`pgmq`](https://github.com/pgmq/pgmq) extension available. The
+  migrations run `CREATE EXTENSION pgmq`. Meteroid publishes PostgreSQL images that include it:
+  `ghcr.io/meteroid-oss/meteroid-postgres:18.3-cnpg` for
+  [CloudNativePG](https://cloudnative-pg.io/) and `ghcr.io/meteroid-oss/meteroid-postgres:18.3-standard`.
+- **Kafka**. The chart's defaults expect SASL/SCRAM-SHA-512 authentication (`global.kafka.*`).
+  Create the `meteroid-events-raw` topic, unless your brokers create topics automatically.
+- **ClickHouse** with Keeper (or ZooKeeper). The migrations create `Replicated*MergeTree` tables
+  `ON CLUSTER` the cluster named in `global.clickhouse.clusterName`, and the ClickHouse user needs
+  the `named_collection_control` privilege.
+- **S3-compatible object storage** (`global.objectStore.*`).
+- **Traefik**, for the `IngressRoute`s the chart creates by default. With another ingress
+  controller, set `ingress.useIngressRoute: false` to get a standard `Ingress`.
+
+Optional: Redis (`global.redis.url`), which shares rate limits and caches across replicas, and an
+SMTP server (`global.smtp.*`).
+
+## Install
+
+<Steps>
+  <Step title="Write your values">
+    Create a `values.yaml` with at least the URLs, hosts, secrets and service addresses of your
+    installation (see [Values to set](#values-to-set)):
+
+    ```yaml values.yaml
+    global:
+      publicAppUrl: "https://billing.example.com"
+      publicApiUrl: "https://billing-rpc.example.com"
+      publicRestApiUrl: "https://billing-api.example.com"
+
+      secrets:
+        databaseUrl: "postgres://meteroid:<password>@postgres:5432/meteroid"
+        jwtPrivateKey: "<random string>"
+        internalApiSecret: "<random string>"
+        secretsCryptkey: "<exactly 32 characters>"
+        kafka:
+          password: "<password>"
+        clickhouse:
+          password: "<password>"
+
+      kafka:
+        bootstrapServers: "kafka:9092"
+      clickhouse:
+        httpAddress: "http://clickhouse:8123"
+        tcpAddress: "clickhouse:9000"
+      objectStore:
+        uri: "s3://meteroid"
+
+    ingress:
+      hosts:
+        - host: billing.example.com
+          paths:
+            - { path: /, pathType: Prefix, service: web, port: 80 }
+        - host: billing-rpc.example.com
+          paths:
+            - { path: /, pathType: Prefix, service: api, port: 50061 }
+        - host: billing-api.example.com
+          paths:
+            - { path: /, pathType: Prefix, service: api, port: 8080 }
+      tls:
+        - hosts: [billing.example.com, billing-rpc.example.com, billing-api.example.com]
+          secretName: meteroid-tls
+    ```
+
+    Generate `jwtPrivateKey` and `internalApiSecret` with `openssl rand -hex 32`, and
+    `secretsCryptkey` with `openssl rand -hex 16`.
+  </Step>
+  <Step title="Install the chart">
+    ```bash
+    helm install meteroid oci://ghcr.io/meteroid-oss/charts/meteroid --version 2.0.0 -f values.yaml
+    ```
+
+    Chart `2.0.0` runs the `2.0.0` images. Releases are listed on the
+    [package page](https://github.com/orgs/meteroid-oss/packages/container/package/charts%2Fmeteroid).
+  </Step>
+</Steps>
+
+Once the pods are ready, open `publicAppUrl` and sign up: the first account creates the
+organization.
+
+<Warning>
+  Never change `global.secrets.secretsCryptkey` once set: it encrypts your connector credentials
+  (see the [configuration reference](/self-hosting/configuration#required)).
+</Warning>
+
+## Values to set
+
+See the chart's `values.yaml` for every value. The ones most installations set:
+
+| Value | Description |
+|---|---|
+| `global.publicAppUrl`, `global.publicApiUrl`, `global.publicRestApiUrl` | Public URLs of the web app, the gRPC API (called by the browser) and the REST API. |
+| `ingress.hosts`, `ingress.tls` | The same hosts, and their TLS secret. |
+| `global.secrets.existingSecretName` | A Secret you manage, holding the keys listed below. Leave empty to have the chart create it from `global.secrets.*`. |
+| `global.secrets.databaseUrl`, `jwtPrivateKey`, `internalApiSecret`, `secretsCryptkey` | Required. |
+| `global.kafka.*`, `global.clickhouse.*`, `global.objectStore.uri` | Kafka, ClickHouse and object storage. |
+| `global.secrets.kafka.password`, `clickhouse.password`, `redis.password` | Their credentials. |
+| `global.secrets.objectStore.accessKeyId`, `secretAccessKey` | Object storage credentials. |
+| `global.smtp.host`, `from`, `customerFromAddr`, `replyTo` | Email delivery. `from` is required once `host` is set. Credentials: `global.secrets.smtp.*`. |
+| `global.redis.url` | Optional Redis. |
+| `global.webhooks.*` | Outgoing webhook delivery, for example an egress proxy. |
+| `<component>.resources`, `<component>.autoscaling` | Unset by default. CPU autoscaling needs CPU requests. |
+| `<component>.extraEnv` | Extra environment variables, as a list of `name`/`value` entries, for any setting of the [configuration reference](/self-hosting/configuration). |
+
+The components are `api`, `worker`, `metering` and `web`.
+
+### Secret keys
+
+When you provide your own Secret with `global.secrets.existingSecretName`, the chart reads these
+keys from it:
+
+| Key | Required | Content |
+|---|---|---|
+| `database-url` | Yes | PostgreSQL URL |
+| `jwt-private-key` | Yes | Session signing secret |
+| `internal-api-secret` | Yes | Secret shared by the Meteroid processes |
+| `secrets-crypt-key` | Yes | 32-character encryption key |
+| `license-key` | No | Offline license |
+| `kafka-password`, `clickhouse-password`, `redis-password` | No | Service credentials |
+| `aws-access-key-id`, `aws-secret-access-key` | No | Object storage credentials |
+| `smtp-username`, `smtp-password` | No | SMTP credentials |
+| `oauth-google-client-id`, `oauth-google-client-secret` | No | Sign in with Google |
+| `oauth-hubspot-client-id`, `oauth-hubspot-client-secret`, `oauth-pennylane-client-id`, `oauth-pennylane-client-secret` | No | HubSpot and Pennylane connectors |
+
+### License
+
+The chart runs the official images, which are free without a license (see
+[Editions](/self-hosting/editions)). You can activate a license online from
+**Settings → License** in the app, with no change to your values.
+
+### Telemetry
+
+The installation sends one [anonymous report a day](/self-hosting/telemetry). To turn it off:
+
+```yaml values.yaml
+global:
+  usageTelemetry: false
+```
+
+## Upgrade
+
+Back up the database, then upgrade the release to the new chart version:
+
+```bash
+helm upgrade meteroid oci://ghcr.io/meteroid-oss/charts/meteroid --version 2.0.1 -f values.yaml
+```
+
+Leave the `image.tag` values unset, so the chart version alone decides what runs. Until the last
+old pod is replaced, the old pods may fail some requests against the new schema.
+
+Coming from an earlier public release? Read [Upgrading to 2.0](/self-hosting/upgrading-to-2-0)
+first: the chart changed.

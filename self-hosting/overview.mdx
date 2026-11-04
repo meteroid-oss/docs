@@ -1,0 +1,75 @@
+---
+title: "Self-hosting Meteroid"
+sidebarTitle: "Overview"
+description: "What a self-hosted Meteroid installation runs, the two ways to deploy it, and which version to run."
+---
+
+You can run Meteroid on your own infrastructure: on one machine with Docker Compose, or on
+Kubernetes with the Helm chart.
+
+## What you run
+
+Four processes, each an image under `ghcr.io/meteroid-oss/`:
+
+- **API** (`meteroid-api`): the gRPC and REST APIs, the customer portal, checkout and incoming
+  payment-provider webhooks.
+- **Worker** (`meteroid-worker`): scheduled jobs and queue consumers, such as billing runs,
+  outgoing webhooks, emails and invoice PDFs.
+- **Metering API** (`metering-api`): usage event ingestion and queries.
+- **Web** (`meteroid-web`): the web app.
+
+They run their migrations when they start, and each can run several replicas. They need:
+
+| Service | Used for |
+|---|---|
+| PostgreSQL 18 with [`pgmq`](https://github.com/pgmq/pgmq) | Billing data and internal queues |
+| ClickHouse with Keeper | Usage events |
+| Kafka, or a compatible broker such as Redpanda | Usage event ingestion |
+| S3-compatible object storage, or a local directory on one machine | Invoice PDFs, logos, uploaded files |
+| Redis (optional) | API rate limits across replicas |
+| SMTP server (optional) | Emails |
+
+## Ways to deploy
+
+<CardGroup cols={2}>
+  <Card title="Docker Compose" icon="brand-docker" href="/self-hosting/docker-compose">
+    One machine, every service included. To try Meteroid or run a small installation.
+  </Card>
+  <Card title="Kubernetes (Helm)" icon="brand-kubernetes" href="/self-hosting/kubernetes">
+    The Meteroid processes on your cluster, connected to PostgreSQL, ClickHouse, Kafka and
+    object storage you operate. For production.
+  </Card>
+</CardGroup>
+
+Either way, the first account you sign up with creates the organization. After it, sign-up is
+closed and teammates join by invitation.
+
+## Editions
+
+The open-source edition, built from
+[meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid) under AGPL-3.0, contains
+everything a business needs to run its billing, metering and invoicing. The official images run
+the Enterprise edition: it is free, adds features such as revenue reports, dunning and tax
+reports, and a license unlocks the rest. Both receive every bug fix and security patch.
+
+In production, we recommend the Enterprise edition with the Helm chart, or
+[Meteroid Cloud](https://meteroid.com), hosted in the EU, to run nothing yourself. See
+[Which one to run](/self-hosting/editions#which-one-to-run).
+
+## Versions
+
+Every release publishes the images tagged with its version (`2.0.0`), and moves the `2.0`, `2`
+and `latest` tags to it. Pin the exact version in your deployment and change it when you
+upgrade, so that every process runs the same release and nothing changes on a restart.
+
+The Helm chart is versioned with Meteroid: chart `2.0.0` runs the `2.0.0` images.
+
+## Next steps
+
+- [Deploy with Docker Compose](/self-hosting/docker-compose) or [on Kubernetes](/self-hosting/kubernetes).
+- Review the [configuration reference](/self-hosting/configuration), in particular the
+  secrets that must be set before the first start.
+- Upgrading an installation of an earlier public release? Read
+  [Upgrading to 2.0](/self-hosting/upgrading-to-2-0) first.
+- Read what the [anonymous telemetry report](/self-hosting/telemetry) contains, and how to turn
+  it off.

@@ -166,6 +166,18 @@
             "pages": [
                "migration/stripe-migration-guide"
             ]
+          },
+          {
+            "group": "Self-hosting",
+            "pages": [
+              "self-hosting/overview",
+              "self-hosting/editions",
+              "self-hosting/docker-compose",
+              "self-hosting/kubernetes",
+              "self-hosting/configuration",
+              "self-hosting/upgrading-to-2-0",
+              "self-hosting/telemetry"
+            ]
           }
         ]
       },
