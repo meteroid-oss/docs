@@ -350,9 +350,11 @@ leaves out the queues.
         helm upgrade meteroid oci://ghcr.io/meteroid-oss/charts/meteroid --version 2.0.0 -f values.yaml
         ```
 
-        The new pods run the migrations as they start. Until the last old pod is replaced, the
-        old version runs against the new schema and may fail some requests; it does not run any
-        migration.
+        The new pods run the migrations as they start. On a large database they can take several
+        minutes: the startup probes of the API and metering pods allow 30 minutes
+        (`api.httpStartupProbe` and `metering.grpcStartupProbe`, `failureThreshold` × 5 seconds).
+        Until the last old pod is replaced, the old version runs against the new schema and may
+        fail some requests; it does not run any migration.
       </Step>
     </Steps>
   </Tab>
