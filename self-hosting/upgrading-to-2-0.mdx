@@ -513,4 +513,8 @@ An existing `ANALYTICS_ENABLED=false`, or `DO_NOT_TRACK`, is honoured.
 - The `?branding=false` parameter of the portal and the `branding={false}` option of the embeds
   are ignored: "Powered by Meteroid" is hidden only with a license that includes White-label.
 - The platform-admin dead-letter page is gone.
+- Without a license, an installation runs one organization, with one Production tenant per
+  organization and one invoicing entity per tenant. If you already have more, they keep working:
+  only creating another one, or switching another tenant to Production, is refused. See
+  [editions](/self-hosting/editions#what-happens-to-data-of-a-missing-feature).
 - REST API: no operation was removed, and many were added. See the API reference.
