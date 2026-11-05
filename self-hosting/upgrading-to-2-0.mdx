@@ -8,8 +8,10 @@ This release brings a new baseline to Meteroid OSS, built from the same codebase
 Meteroid Enterprise. The open-source edition now includes a lot more, and gets bug fixes and security
 patches much faster.
 
-The official Docker images are now Meteroid Enterprise: They are free to run without a license, and some Enterprise features come free with them: 
-dunning, tax reports, MRR and revenue reports, and live balances and usage limits. A license unlocks the rest. 
+The official Docker images are now Meteroid Enterprise: free for companies under 50 employees and €2M in
+annual revenue, with many Enterprise features included, such as credit units and packs, portal self-service,
+e-invoicing, dunning, tax reports, MRR and revenue reports, and live balances and usage limits. A license
+unlocks the rest. 
 To run the open-source edition only, build the images from this repository. Details in [Editions](/self-hosting/editions) 
 
 The Helm chart is now officially maintained by our team.
@@ -45,8 +47,8 @@ changed nothing (see [If the upgrade fails](#if-the-upgrade-fails)).
   `ANALYTICS_API_KEY` are removed.
 - **The scheduler is now the worker**: image `meteroid-worker`, Compose service
   `meteroid-worker`, Helm values `worker`.
-- **The official images run the [Enterprise edition](/self-hosting/editions)**, free. The `-ee`
-  image names are deprecated.
+- **The official images run the [Enterprise edition](/self-hosting/editions)**, free for
+  companies under 50 employees and €2M in annual revenue. The `-ee` image names are deprecated.
 - **The Helm chart** deploys only Meteroid, no longer PostgreSQL, Kafka or ClickHouse, and its
   version is the Meteroid version.
 - **Telemetry**: the Segment tracking is replaced by an
