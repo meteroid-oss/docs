@@ -101,6 +101,19 @@
             ]
           },
           {
+            "group": "Credits",
+            "pages": [
+              "credits/overview",
+              "credits/wallets-and-grants",
+              "credits/credit-packs",
+              "credits/credit-units",
+              "credits/top-ups",
+              "credits/promotional-credit",
+              "credits/limits-and-budgets",
+              "credits/customer-portal"
+            ]
+          },
+          {
             "group": "Intelligence",
             "pages": [
               "analytics/overview",
