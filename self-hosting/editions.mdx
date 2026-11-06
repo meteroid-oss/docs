@@ -5,11 +5,12 @@ description: "What the open-source and Enterprise editions contain, which one to
 
 Meteroid comes in two editions, built from the same code and the same database schema.
 
-- **The open-source edition** contains what a single-entity business needs to run its billing,
-  metering and invoicing: plans, subscriptions, usage metering, prepaid credit in money, quotes,
-  invoices, payments, the customer portal and checkout, with no arbitrary paywall. It is licensed
-  under AGPL-3.0, and you build its images from
-  [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid).
+- **The open-source edition** contains what a single-entity business needs to bill its customers
+  end to end, compliant and secure: plans, subscriptions, usage metering, prepaid credit in money
+  with top-ups from the portal, quotes, invoices with e-invoicing, payment reminders, payments, the
+  customer portal and checkout, with no arbitrary paywall. It is licensed under AGPL-3.0: we
+  publish its images, built from [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid),
+  and you can build them yourself.
 - **The Enterprise edition** adds features from our proprietary modules. It is what the official
   images run, under the [Meteroid Enterprise License](https://github.com/meteroid-oss/meteroid/blob/main/editions/enterprise/LICENSE): free for companies under 50
   employees and €2M in annual revenue, with many features included; a license unlocks the rest.
@@ -37,15 +38,12 @@ features too:
 |---|---|
 | Credits | Credit units: your own currency of credit, such as "API credits", to price and grant usage in |
 | | Credit packs: credit included in or sold with plans, add-ons and subscriptions, every period or once, with expiry and rollover |
-| | Self-serve top-ups: customers buy credit from the portal |
-| Customer portal | Self-service: customers change their plan, add-ons and seats, top up credit and redeem promotion codes. The open-source portal shows the same screens read-only, where customers still pay, manage payment methods and cancel |
-| Billing & invoicing | E-invoicing: Factur-X / ZUGFeRD and XRechnung documents alongside the PDF |
-| | Dunning: automated payment reminder sequences for overdue invoices |
-| | Tax reports: VAT return and EC Sales List, ready to file |
-| | Customer email customization: which emails go out and to whom, the sender, previews, test sends and the log of sent emails. The open-source edition sends the default emails |
+| | Credit top-ups in your credit units from the portal. Top-ups in money are in the open-source edition |
+| Customer portal | Self-service: customers change their plan, add-ons and seats and redeem promotion codes. The open-source portal shows the same screens read-only, where customers still pay, top up credit in money, manage payment methods and cancel |
+| Billing & invoicing | Tax reports: VAT return and EC Sales List, ready to file |
+| | Customer email customization: which emails go out and to whom, the sender, the copy of payment reminders, previews, test sends and the log of sent emails. The open-source edition sends the default emails and reminders |
 | Intelligence | MRR and revenue reports: recurring revenue, revenue and their movements over time |
 | Usage controls | Live balances and usage limits: live credit balances, low-balance alerts, hard limits, the real-time access check, and what happens when credit runs out |
-| Platform | Run like Meteroid Cloud: the protections and tuning of our hosted service, such as API rate limiting, egress protection and optimizations for larger deployments |
 
 ## Unlocked by a license
 
@@ -78,7 +76,7 @@ features too:
 | | Several organizations: separate teams on one installation, each with its own members and tenants |
 | | Connect: the businesses on your platform bill their own customers through you, Stripe Connect style |
 
-The open-source edition shows these lists in the app, under **Settings → Upgrade**.
+The open-source edition shows these lists in the app, under **Settings → Enterprise**.
 
 ## Which one to run
 
@@ -91,11 +89,23 @@ The open-source edition shows these lists in the app, under **Settings → Upgra
   and it costs less than operating Meteroid yourself at scale. It is hosted in the EU, by a
   company based in the EU.
 
-## Build the open-source images
+## Run the open-source images
 
-Moving between the editions only replaces the images. The repository's Dockerfiles build the
-open-source edition, at the version you run. The Rust images take a few build arguments for the
-target architecture:
+Moving between the editions only replaces the images. Each release publishes the open-source
+images, built from the public repository, for amd64 and arm64:
+`ghcr.io/meteroid-oss/meteroid-oss-api`, `meteroid-oss-worker`, `meteroid-oss-metering` and
+`meteroid-oss-web`.
+
+- With Docker Compose, add the override shipped next to `docker-compose.yml`:
+  `docker compose -f docker-compose.yml -f docker-compose.oss.yml up -d`, or set
+  `COMPOSE_FILE=docker-compose.yml:docker-compose.oss.yml` in `.env` so every `docker compose`
+  command uses it.
+- With Helm, set `edition: oss`: the chart runs these images and leaves out the license settings.
+
+### Build them yourself
+
+The repository's Dockerfiles build the open-source edition, at the version you run. The Rust
+images take a few build arguments for the target architecture:
 
 ```bash
 # From the repository root, for x86_64 (on arm64: aarch64, aarch_64 and arm64)

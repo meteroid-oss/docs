@@ -65,6 +65,11 @@ storage. Use it to try Meteroid or for a small installation. For production, pre
 
     The first start downloads the images and runs the database migrations, which takes a few
     minutes. Follow it with `docker compose logs -f meteroid-api`.
+
+    The default images are Meteroid Enterprise, free for companies under 50 employees and €2M in
+    annual revenue (see [Editions](/self-hosting/editions)). For the open-source images, start with
+    `docker compose -f docker-compose.yml -f docker-compose.oss.yml up -d`, or set
+    `COMPOSE_FILE=docker-compose.yml:docker-compose.oss.yml` in `.env`.
   </Step>
   <Step title="Create the first account">
     Open [http://localhost:3000](http://localhost:3000) and sign up: the first account creates
