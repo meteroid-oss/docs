@@ -47,7 +47,7 @@ evaluated in UTC.
 | `METEROID_REST_API_EXTERNAL_URL` | `http://127.0.0.1:8080` | Public URL of the REST API, used for file links in the portal and for the OAuth and SSO callbacks. |
 | `METEROID_REST_API_LISTEN_ADDRESS` | `127.0.0.1:8080` | Address the REST API listens on. In a container, `0.0.0.0:<port>`. |
 | `OPENEXCHANGERATES_API_KEY` | none | An [Open Exchange Rates](https://openexchangerates.org) key for currency rates. Without it, Meteroid uses its own public rates service, meant for testing. |
-| `REDIS_URL`, `REDIS_PASSWORD` | none | Redis, sharing rate limits and caches across replicas. The Enterprise images enforce API rate limits only with it; without it, no rate limits apply. |
+| `REDIS_URL`, `REDIS_PASSWORD` | none | Redis, sharing rate limits and caches across replicas. The API enforces rate limits only with it; without it, no rate limits apply. |
 | `MAILER_SMTP_HOST` | none | SMTP server. Without it, no email is sent. |
 | `MAILER_FROM` | none | Sender of account and alert emails, for example `Billing <billing@example.com>`. **Required once `MAILER_SMTP_HOST` is set**: the process refuses to start without it. |
 
@@ -90,6 +90,8 @@ evaluated in UTC.
 |---|---|---|
 | `WEBHOOK_DELIVERY_CONCURRENCY` | `32` | Webhook deliveries in flight at once. |
 | `WEBHOOK_RETENTION_DAYS` | `30` | Days webhook messages and their delivery attempts are kept. At least `2`: a delivery is retried for about 28 hours. |
+| `WEBHOOK_ALLOW_PRIVATE_DESTINATIONS` | `false` | Allow webhooks, alerts and SSO requests to reach private and loopback addresses, plain `http` and other ports. By default they are refused, as a guard against server-side request forgery. Set it when your endpoints are inside your own network, or to test webhooks against `localhost`. |
+| `EGRESS_ALLOW_PRIVATE_DESTINATIONS_SSO` | `WEBHOOK_ALLOW_PRIVATE_DESTINATIONS` | The same, for SSO only: allow an internal identity provider without opening webhooks. |
 | `WEBHOOK_EGRESS_PROXY_URL` | none | HTTP `CONNECT` proxy webhook and alert deliveries go through, for example to send from fixed IP addresses. While it is down, deliveries wait, without counting as failures of the endpoints. |
 | `EGRESS_USE_PROXY_SSO` | `false` | Also send SSO requests through the proxy. Off by default so that sign-in never depends on it. |
 | `METEROID_WEBHOOK_EXTERNAL_URL` | `METEROID_REST_API_EXTERNAL_URL` | Public base URL for incoming payment-provider webhooks, when it differs from the REST API URL. |
@@ -111,7 +113,7 @@ evaluated in UTC.
 | `IDEMPOTENCY_TTL` | `1h` | How long a gRPC idempotency key is remembered. |
 | `IDEMPOTENCY_SIZE` | `100000` | gRPC idempotency keys kept in memory, per process. |
 
-**API rate limits** (Enterprise images, with `REDIS_URL` set)
+**API rate limits** (with `REDIS_URL` set)
 
 The REST limits each have a value for Production tenants and one for the other tenants, and
 are counted per tenant, except the client routes, counted per customer.
@@ -131,7 +133,7 @@ are counted per tenant, except the client routes, counted per customer.
 |---|---|---|
 | `RECONCILIATION_ENABLED` | `true` | Poll payment providers for transactions stuck in pending. |
 | `DRAFT_REFRESH_ENABLED`, `DRAFT_REFRESH_CRON` | `true`, `25 * * * *` | Refresh stale draft invoices. |
-| `PAYMENT_REMINDERS_ENABLED`, `PAYMENT_REMINDER_SWEEP_CRON` | `true`, `*/15 * * * *` | Send due payment reminders (dunning, Enterprise images). Each invoicing entity's send window still applies. |
+| `PAYMENT_REMINDERS_ENABLED`, `PAYMENT_REMINDER_SWEEP_CRON` | `true`, `*/15 * * * *` | Send due payment reminders (dunning). Each invoicing entity's send window still applies. |
 | `VAT_REVALIDATION_CRON` | `0 4 * * *` | Re-validate customers' VAT numbers. |
 | `TENANT_DELETION_CLEANUP_CRON` | `0 3 * * FRI` | Permanently delete the tenants scheduled for deletion. |
 
@@ -170,8 +172,6 @@ The open-source edition does not read these.
 | `LICENSE_KEY` | none | An offline license. Read at startup: changing it needs a restart. Without a valid license, the installation runs on the free tier. |
 | `LICENSE_ACTIVATION_CODE` | none | An activation code, redeemed by the worker when the installation holds no online license yet. You can also enter it in **Settings → License**. |
 | `LICENSE_SERVER_URL` | `https://api.meteroid.com` | The server an online license is activated and refreshed against. |
-| `WEBHOOK_ALLOW_PRIVATE_DESTINATIONS` | `false` | Allow webhooks, alerts and SSO requests to reach private and loopback addresses. By default the Enterprise images refuse them, as a guard against server-side request forgery. Set it when your endpoints are inside your own network. |
-| `EGRESS_ALLOW_PRIVATE_DESTINATIONS_SSO` | `WEBHOOK_ALLOW_PRIVATE_DESTINATIONS` | The same, for SSO only: allow an internal identity provider without opening webhooks. |
 | `ANALYTICS_API_EXTERNAL_URL` | `METERING_API_EXTERNAL_URL` | Address of the analytics service. The Enterprise metering API serves it, so leave it unset. |
 | `ANALYTICS_PROJECTION_ENABLED` | `true` | Copy billing data into ClickHouse for Intelligence. Set `false` to keep billing data out of ClickHouse. |
 | `ANALYTICS_ALERTS_ENABLED` | `true` | Evaluate Intelligence alerts. |

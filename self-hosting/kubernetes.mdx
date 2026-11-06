@@ -139,6 +139,10 @@ The chart runs the official images, free for companies under 50 employees and â‚
 revenue (see [Editions](/self-hosting/editions)). You can activate a license online from
 **Settings â†’ License** in the app, with no change to your values.
 
+To run the open-source edition, set `edition: oss`: the chart runs the AGPL images
+(`ghcr.io/meteroid-oss/meteroid-oss-*`) and leaves out the license settings. Both editions share
+the database, so you can switch either way.
+
 ### Telemetry
 
 The installation sends one [anonymous report a day](/self-hosting/telemetry). To turn it off:
