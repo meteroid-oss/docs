@@ -5,26 +5,47 @@ description: "What the open-source and Enterprise editions contain, which one to
 
 Meteroid comes in two editions, built from the same code and the same database schema.
 
-- **The open-source edition** contains everything a single-entity business needs to run its billing, metering
-  and invoicing: plans, subscriptions, usage metering, invoices, the customer portal and
-  checkout, with no arbitrary paywall. It is licensed under AGPL-3.0, and you build its images
-  from [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid).
-- **The Enterprise edition** adds features from our proprietary and cloud modules. It is what the official
-  images run, and it is free: revenue reports, dunning and tax reports, among others, come at no
-  cost, and a license unlocks the rest. It is the edition closest to Meteroid Cloud, and the
-  first to get our latest features and optimizations.
+- **The open-source edition** contains what a single-entity business needs to run its billing,
+  metering and invoicing: plans, subscriptions, usage metering, prepaid credit in money, quotes,
+  invoices, payments, the customer portal and checkout, with no arbitrary paywall. It is licensed
+  under AGPL-3.0, and you build its images from
+  [meteroid-oss/meteroid](https://github.com/meteroid-oss/meteroid).
+- **The Enterprise edition** adds features from our proprietary modules. It is what the official
+  images run, under the [Meteroid Enterprise License](https://github.com/meteroid-oss/meteroid/blob/main/editions/enterprise/LICENSE): free for companies under 50
+  employees and €2M in annual revenue, with many features included; a license unlocks the rest.
+  It is the edition closest to Meteroid Cloud, and the first to get our latest features and
+  optimizations.
 
-All editions receive every bug fix and security patch. 
+All editions receive every bug fix and security patch.
 You can move from one to the other at any time by changing the images: no data is migrated.
+
+## Who can use the Enterprise edition for free
+
+The [Meteroid Enterprise License](https://github.com/meteroid-oss/meteroid/blob/main/editions/enterprise/LICENSE) lets a company use the official images for free when,
+together with the companies it controls or is controlled by, it has fewer than 50 employees and
+less than €2M in annual revenue. Above that, a commercial license is needed, for the free
+features too:
+
+- any company can evaluate the images for 30 days, outside production;
+- a company that grows past the thresholds has 90 days to get a license.
+
+[Contact us](mailto:hey@meteroid.com) for a commercial license.
 
 ## Free in the Enterprise edition
 
-- **MRR and revenue reports**: recurring revenue, revenue and their movements over time.
-- **Dunning**: automated payment reminder sequences for overdue invoices.
-- **Tax reports**: VAT return and EC Sales List, ready to file.
-- **Live balances and usage limits**: live credit balances, low-balance alerts, hard limits, the
-  real-time access check, and what happens when credit runs out. 
-- **Run like Meteroid Cloud**: the protections and tuning of our hosted service, such as API rate limiting, egress protection and many optimizations for larger deployments
+| Area | Feature |
+|---|---|
+| Credits | Credit units: your own currency of credit, such as "API credits", to price and grant usage in |
+| | Credit packs: credit included in or sold with plans, add-ons and subscriptions, every period or once, with expiry and rollover |
+| | Self-serve top-ups: customers buy credit from the portal |
+| Customer portal | Self-service: customers change their plan, add-ons and seats, top up credit and redeem promotion codes. The open-source portal shows the same screens read-only, where customers still pay, manage payment methods and cancel |
+| Billing & invoicing | E-invoicing: Factur-X / ZUGFeRD and XRechnung documents alongside the PDF |
+| | Dunning: automated payment reminder sequences for overdue invoices |
+| | Tax reports: VAT return and EC Sales List, ready to file |
+| | Customer email customization: which emails go out and to whom, the sender, previews, test sends and the log of sent emails. The open-source edition sends the default emails |
+| Intelligence | MRR and revenue reports: recurring revenue, revenue and their movements over time |
+| Usage controls | Live balances and usage limits: live credit balances, low-balance alerts, hard limits, the real-time access check, and what happens when credit runs out |
+| Platform | Run like Meteroid Cloud: the protections and tuning of our hosted service, such as API rate limiting, egress protection and optimizations for larger deployments |
 
 ## Unlocked by a license
 
@@ -35,11 +56,17 @@ You can move from one to the other at any time by changing the images: no data i
 | | Multiple invoicing entities: invoice from several legal entities, each with its own details and numbering |
 | | Invoice annexes: detailed usage tables, built from your events, attached to invoices |
 | | Custom properties: your own typed, validated fields on customers, subscriptions and invoices |
+| Quotes | Several signers: collect signatures from several people on a quote |
+| | Purchase orders: customers add their purchase order to the quote they sign |
+| Credits | Scoped credit: grants for one subscription, for usage only or for some products |
+| Customer portal | Embedded portal: the portal and its widgets inside your application |
+| | Portal theming: theme mode and corner roundness, on top of your logo and colors |
 | Intelligence | Advanced analytics: explore and break down any metric across customers, plans and segments |
 | | Dashboards: build and share dashboards of the metrics your team follows |
 | | Customer signals: which customers are at risk and which are ready to expand |
 | | Steering: targets on your metrics, with alerts when they drift |
-| Usage controls | Budgets: spending budgets with alerts, per customer |
+| Usage controls | Usage costs: what each customer's usage costs over time, and the running total of the next invoice, in the REST API |
+| | Budgets: spending budgets with alerts, per customer |
 | | Automatic top-ups: buy credit automatically when a wallet runs low |
 | Security & access | Single sign-on: your team signs in through your OIDC identity provider on the domains you verify, optionally enforced |
 | | Enforced two-factor authentication for every member of your organization |
@@ -51,7 +78,7 @@ You can move from one to the other at any time by changing the images: no data i
 | | Several organizations: separate teams on one installation, each with its own members and tenants |
 | | Connect: the businesses on your platform bill their own customers through you, Stripe Connect style |
 
-The open-source edition shows this list in the app, under **Settings → Upgrade**.
+The open-source edition shows these lists in the app, under **Settings → Upgrade**.
 
 ## Which one to run
 
@@ -142,10 +169,12 @@ license automatically once the subscription is active.
   </Tab>
 </Tabs>
 
-Without a valid license, or on the open-source edition, the licensed features close but nothing
-is deleted. What they set up keeps applying, such as SSO enforcement, custom roles, minimum
-commitments or extra tenants: you can no longer change it or create more, until a license makes
-it editable again.
+An online license is renewed every hour and each renewal is valid for 7 days, so a renewal that
+fails for a while changes nothing. Once the license expires, or on the open-source edition, the
+licensed features close but nothing is deleted and billing goes on as before. What they set up
+keeps applying, such as SSO enforcement, custom roles, minimum commitments, scoped credit or extra
+tenants: you can no longer change it or create more, until a license makes it editable again.
+The license returns as soon as a renewal succeeds.
 
 <Note>
   If you restore a copy of your production installation, for example as a staging environment,
