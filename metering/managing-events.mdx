@@ -16,3 +16,30 @@ You can bulk import events into Meteroid by clicking **“Import CSV.”** The i
 * **customer\_id**: Used to link the event to a Customer in Meteroid. The link is established through the **Alias** defined in the Customer record.
 
 💡**Note:** You can monitor and manage batch processing at any time by consulting the Developers > Batch Jobs section. This allows you to track the progress and see if the import was successful, partially successful, or failed.
+
+## Correct Events
+
+Meteroid identifies an event by its ID and its Customer, and keeps the first event received with a given ID: an event sent again with the same ID within 35 days is ignored, even if its values changed. To fix an event that was already ingested, amend or void it.
+
+📌 Amending and voiding events is not enabled by default. Contact your account manager to enable it.
+
+### Void Events
+
+Voiding cancels an event: it no longer counts in usage, metrics or draft invoices.
+
+* **In the app**: in the **Events** section, select events (or open one) and click **Void**. Meteroid lists the events to void, then shows the result for each one: voided, or refused with the reason.
+* **Through the API**: see [Void an event](https://docs.meteroid.com/api-reference/events/void-an-event).
+
+The ID of a voided event stays reserved: sending an event with this ID again within 35 days is ignored. To replace a voided event, send it under a new ID.
+
+### Amend Events
+
+Amending replaces the timestamp and the properties of an event. The event code and the Customer cannot change: void the event and send a new one instead.
+
+Events are amended through the API only: see [Amend an event](https://docs.meteroid.com/api-reference/events/amend-an-event).
+
+### Limits
+
+* Only events ingested in the last 35 days can be amended or voided.
+* Events in a period that was already invoiced cannot change. When you void several events at once, the others are still voided.
+* Changes are applied within a few seconds. Wait until a change is visible before changing the same event again.
