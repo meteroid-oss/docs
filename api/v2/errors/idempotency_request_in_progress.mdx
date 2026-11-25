@@ -1,0 +1,10 @@
+---
+title: "idempotency_request_in_progress"
+description: "The first request with this key is still running"
+---
+
+**HTTP 409**
+
+A request with this key is still being processed.
+
+**What to do:** Retry after a short wait: the retry answers the first request's response once it is done.

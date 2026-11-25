@@ -1,0 +1,10 @@
+---
+title: "validation_failed"
+description: "A field of the request is refused"
+---
+
+**HTTP 422**
+
+The request was read, but one or more fields are refused.
+
+**What to do:** Read `errors`: each entry has the JSON pointer (`path`) of the field, a `code` and a `message`.

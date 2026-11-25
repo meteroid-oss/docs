@@ -1,0 +1,10 @@
+---
+title: "not_expressible"
+description: "The model cannot express this"
+---
+
+**HTTP 422**
+
+What was asked is valid JSON but has no meaning in the pricing model, for example a flat price on a seat charge, or seats billed in arrears. A read can also answer it for data written through API v1 that v2 cannot represent.
+
+**What to do:** Change the request as `detail` explains, or read that resource with API v1.
