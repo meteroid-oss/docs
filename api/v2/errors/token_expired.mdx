@@ -1,0 +1,10 @@
+---
+title: "token_expired"
+description: "The token expired"
+---
+
+**HTTP 401**
+
+The client API (`/api/client/v1`, called from a browser) was sent a customer token that is genuine but expired. API v2 itself does not answer it: an expired access token there is [`unauthorized`](/api/v2/errors/unauthorized).
+
+**What to do:** Have your backend mint a new token for the customer (`POST /api/v2/customers/{id_or_alias}/portal-token`) and retry with it.

@@ -1,0 +1,124 @@
+---
+title: "Webhooks"
+description: "What an endpoint receives, in which shape, and how to verify a delivery."
+---
+
+A webhook endpoint receives a signed `POST` for each event of the types it subscribes to. Create one with [`POST /api/v2/webhooks/endpoints`](/api/v2/webhooks/create-a-webhook-endpoint), or from the dashboard. Event types are named `<group>.<action>` (`invoice.paid`, `subscription.created`); an endpoint subscribed to none receives every event type but the beta ones.
+
+Any `2xx` answer acknowledges a delivery. Another answer, or none, is retried with backoff for about 28 hours. `GET /api/v2/webhooks/endpoints/{id}/deliveries` lists an endpoint's deliveries, newest first, and `POST /api/v2/webhooks/deliveries/{id}/resend` sends one again. An endpoint failing for too long is disabled (`disabled_reason: auto_failures`); `PATCH` it with `"disabled": false` once it answers again.
+
+## Payload versions
+
+An endpoint's `api_version` pins the shape of what it receives:
+
+| Endpoint | `api_version` | Payloads |
+|---|---|---|
+| Created through API v2 with `Meteroid-Version` | The version that date resolves to | v2's from `2026-12-15`, v1's before |
+| Created through API v2 without `Meteroid-Version` | The latest version, `2026-12-15` | v2's |
+| Created from the dashboard | The latest version | v2's |
+| Created through API v1, or before versions were recorded | None | v1's |
+
+A pinned endpoint never changes shape on its own: only a change of its `api_version` moves it. API v1's payloads are described in the API v1 reference.
+
+### The v2 envelope
+
+From `2026-12-15`, each event is the envelope `{id, type, created_at, api_version, data}` (`data` trimmed here):
+
+```json
+{
+  "id": "evt_4rWbJ1dK9xV2mQ6nT8zL3p",
+  "type": "invoice.paid",
+  "created_at": "2026-11-26T10:04:12.311Z",
+  "api_version": "2026-12-15",
+  "data": {
+    "id": "inv_3sPWEvyMpZDnFU0LPAYm4r",
+    "number": "INV-0001",
+    "status": "finalized",
+    "customer": { "id": "cus_1GTSD5Q6GgoAp1oUntOgCT", "alias": "northwind", "name": "Northwind Labs GmbH" },
+    "subscription": { "id": "sub_5Y3HnuVi4qvGkPtqLHS0qi", "external_id": "northwind-growth" },
+    "currency": "EUR",
+    "total": 22300,
+    "amount_due": 0,
+    "amount_paid": 22300,
+    "payment_status": "paid"
+  }
+}
+```
+
+- `id` is the event's id, also sent as the `webhook-id` header: the same on every attempt and to every endpoint. Deduplicate by it.
+- `type` is the event type; `created_at` when the event was recorded; `api_version` the version the payload is rendered at.
+- `data` is the resource as its v2 `GET` reads it, with the same schema, references, typed ids and decimals: an `invoice.*` event carries an invoice as `GET /api/v2/invoices/{id}` answers it, a `subscription.*` event a subscription, a `customer.*` event a customer. It is read when the event is processed, a moment after the event. A resource deleted by then is named by its `id` alone, and so is the draft of `invoice.deleted`.
+- A notification carries what it observed: `payment.*` and `refund.*` carry `{payment, invoice}`, the payment as its invoice lists it; `wallet.*`, `credit_grant.*` and `quote.*` events carry data of their own.
+
+A payload is the same bytes on every retry and resend, whatever the endpoint holds since. Each event type's payload is in the API reference, under **Webhooks**: [`invoice.paid`](/api/v2/webhooks/invoicepaid-webhook), for example. The test event the dashboard sends to an endpoint on v2's payloads is `webhook.test`, its `data` naming the `endpoint`.
+
+### Moving an endpoint to v2's payloads
+
+1. Deploy a handler that reads both shapes. A v2 payload has `api_version` and `data`; a v1 payload has neither, its fields beside `type` (`invoice_id`, `customer_id`…).
+2. Move the endpoint: `PATCH /api/v2/webhooks/endpoints/{id}` with `{"api_version": "2026-12-15"}`, or in the dashboard, under the endpoint's **Payload version**, **Upgrade…**.
+3. Events from then on are sent in v2's shape. Deliveries already made keep their bytes, so retries of earlier events may still arrive in v1's shape for a while.
+
+An endpoint's `api_version` can be changed to any published version, never removed.
+
+## Verifying a delivery
+
+Every delivery is signed as the [Standard Webhooks](https://www.standardwebhooks.com) specification describes, so its [libraries](https://github.com/standard-webhooks/standard-webhooks/tree/main/libraries) verify it: pass them the endpoint's secret as it reads, the headers and the raw body.
+
+```js
+import { Webhook } from "standardwebhooks";
+
+// rawBody: the request body exactly as received, before any JSON parsing.
+const event = new Webhook(process.env.METEROID_WEBHOOK_SECRET).verify(rawBody, request.headers);
+```
+
+`verify` throws when the signature does not match or the timestamp is too far from your clock.
+
+### What is signed
+
+Each delivery carries three headers:
+
+| Header | Value |
+|---|---|
+| `webhook-id` | The event's id (`evt_…`, the payload's `id`), the same on every attempt and resend |
+| `webhook-timestamp` | The Unix time, in seconds, the attempt was sent |
+| `webhook-signature` | `v1,` followed by the base64 of the HMAC-SHA256 of `<webhook-id>.<webhook-timestamp>.<body>` |
+
+The signed content is the id, the timestamp and the body's bytes exactly as received, joined by dots: verify them before parsing the body. The HMAC key is the secret's bytes, the base64 after its `whsec_` prefix decoded, not the string itself. The signature is base64 with the standard alphabet, padded.
+
+Without a library:
+
+```js
+import crypto from "node:crypto";
+
+function verify(secret, headers, rawBody) {
+  const id = headers["webhook-id"];
+  const timestamp = headers["webhook-timestamp"];
+  // Refuse a delivery more than 5 minutes from your clock: it could be a replay.
+  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 5 * 60) return false;
+
+  const key = Buffer.from(secret.slice("whsec_".length), "base64");
+  const expected = crypto
+    .createHmac("sha256", key)
+    .update(`${id}.${timestamp}.`)
+    .update(rawBody)
+    .digest();
+
+  // While a rotated-out secret still signs, the header holds several signatures.
+  return headers["webhook-signature"].split(" ").some((entry) => {
+    const [version, signature] = entry.split(",");
+    if (version !== "v1" || !signature) return false;
+    const candidate = Buffer.from(signature, "base64");
+    return candidate.length === expected.length && crypto.timingSafeEqual(candidate, expected);
+  });
+}
+```
+
+Refuse a timestamp more than 5 minutes away from your clock, so a delivery captured on the way cannot be replayed later, and compare signatures in constant time.
+
+### Secrets and rotation
+
+An endpoint's secret starts with `whsec_`. It is answered when the endpoint is created, and read again with `GET /api/v2/webhooks/endpoints/{id}/secret`.
+
+`POST /api/v2/webhooks/endpoints/{id}/rotate-secret` answers a new secret. The secret it replaces keeps signing beside it for 24 hours: during that time, `webhook-signature` holds one signature per secret, separated by spaces, the current one first. Accept the delivery when any of them matches, then switch your handler to the new secret within the 24 hours. At most 10 rotated-out secrets sign at once: a rotation past that is refused (`409 conflict`).
+
+An endpoint migrated from Svix also receives the same three values as `svix-id`, `svix-timestamp` and `svix-signature`.

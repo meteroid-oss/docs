@@ -1,0 +1,12 @@
+---
+title: "not_expressible"
+description: "The model cannot express this"
+---
+
+**HTTP 422**
+
+What was asked is valid JSON but has no meaning in the pricing model, for example a flat price on a seat charge, seats billed in arrears, `included` on anything but a per-unit usage price, or a subscription's overridden price that would bill the charge differently. Meteroid refuses it rather than storing something else; `errors` points at the field.
+
+A read can also answer it, for a plan version or a subscription written through API v1 or the dashboard that v2 cannot represent.
+
+**What to do:** Change the request as `detail` explains. For a read, use `GET /api/v2/subscriptions/{id_or_external_id}/summary`, which never answers it, or API v1.

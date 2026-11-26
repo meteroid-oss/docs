@@ -1,0 +1,10 @@
+---
+title: "payload_too_large"
+description: "The request body is too large"
+---
+
+**HTTP 413**
+
+The body exceeds the size the request accepts: 1 MB for an event batch, and for any request sent with an `Idempotency-Key`.
+
+**What to do:** Send less per request: for events, smaller batches (500 events at most).

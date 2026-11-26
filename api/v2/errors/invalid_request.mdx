@@ -1,0 +1,12 @@
+---
+title: "invalid_request"
+description: "The request could not be read"
+---
+
+**HTTP 400**
+
+The body is not JSON of the request's shape: it is not JSON, a field has the wrong type (`invalid`), a required field is missing (`required`), or the body has a field the endpoint does not take (`unknown`). `errors[0].path` is the JSON pointer of the field. No field is ignored silently: a misspelt name is refused, not dropped.
+
+A query parameter that does not read (an unknown `status`, a `limit` out of range) is not this: it is [`validation_failed`](/api/v2/errors/validation_failed), naming the parameter.
+
+**What to do:** Fix the field at `errors[0].path`; `detail` says what could not be read.

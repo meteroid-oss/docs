@@ -1,0 +1,160 @@
+---
+title: "API v2"
+sidebarTitle: "Introduction"
+description: "Conventions every v2 endpoint follows."
+---
+
+API v2 is served at `https://api.meteroid.com/api/v2`, beside v1, with the same API keys and tenants. A self-hosted instance serves it at its REST API's external URL (`http://localhost:8084` by default). v1 is frozen: it keeps working, but new features ship in v2 only. New integrations should use v2.
+
+## Authentication
+
+Send your secret API key as a bearer token. Your first call can be [`GET /api/v2/me`](/api/v2/credentials/get-the-calling-credentials), which tells which tenant and environment the key reads and writes:
+
+```bash
+curl https://api.meteroid.com/api/v2/me \
+  -H "Authorization: Bearer $METEROID_API_KEY"
+```
+
+```json
+{
+  "tenant": { "id": "ten_…", "name": "Production", "environment": "production", "currency": "EUR" },
+  "organization": { "id": "org_…", "name": "Acme" },
+  "key": { "kind": "secret_key", "id": "tkn_…", "name": "Backend", "created_at": "2026-11-25T09:00:00.000Z" }
+}
+```
+
+It never answers the key's secret. Connect credentials (an app's access token, or a platform's key acting for a connected account) also read a `delegation`: what they may reach. A request without a valid key is `401 unauthorized`, with `WWW-Authenticate: Bearer`. Express organizations keep API v1.
+
+## Versions
+
+Send `Meteroid-Version: YYYY-MM-DD` to pin the shape your integration was written against. Meteroid answers with the latest version published on or before that date, and echoes it in the `Meteroid-Version` response header. Without the header, you get the first v2 version, `2026-12-01`. A date before it, or a value that is not a date, is refused (`400 unsupported_version`).
+
+| Version | Changes |
+|---|---|
+| `2026-12-01` | The first v2 version. |
+| `2026-12-15` | Webhook payloads in v2's shape. Requests and responses are unchanged. See [Webhooks](/api/v2/webhooks). |
+
+A breaking change ships as a new dated version. A new value in an enum a response carries is not a breaking change: see [Enums are open](#enums-are-open).
+
+## Identifiers and codes
+
+- Ids are prefixed by their resource: `cus_…`, `plan_…`, `prd_…`, `sub_…`, `inv_…`, `crn_…`, `whe_…`. Paths and bodies also accept the UUID form. An id of another tenant reads as not found.
+- Plans, products, add-ons, product families, metrics, managed quantities, rate cards, coupons, features and credit units have a **code** you choose (`growth`, `seats`). Every catalog path takes the id or the code: `GET /api/v2/plans/growth`. Codes are immutable.
+- A metric has its own `code`, which paths and charges name it by, and an `event_code`: the code its usage events carry. Several metrics may read one event code, each aggregating it its own way.
+- A customer is named by its id or by its alias written `ext:<alias>`: `GET /api/v2/customers/ext:northwind`. A subscription by its id or by the `external_id` you gave it.
+- Invoices, credit notes, webhook endpoints, checkout sessions and custom property definitions are named by their id only.
+
+## References
+
+A response names another resource by a reference object: its id and the key you know it by.
+
+| Reference | Fields |
+|---|---|
+| `CustomerRef` | `id`, `alias`, `name` |
+| `SubscriptionRef` | `id`, `external_id` |
+| `PlanRef` | `id`, `code`, and the `version` and `option` bought where a subscription or a checkout names it |
+| `ProductRef`, `AddOnRef`, `ProductFamilyRef`, `MetricRef`, `CreditUnitRef`, `CouponRef`, `FeatureRef` | `id`, `code` |
+| `InvoiceRef`, `CreditNoteRef` | `id`, `number` |
+
+```json
+{
+  "id": "inv_3sPWEvyMpZDnFU0LPAYm4r",
+  "customer": { "id": "cus_1GTSD5Q6GgoAp1oUntOgCT", "alias": "northwind", "name": "Northwind Labs GmbH" },
+  "subscription": { "id": "sub_5Y3HnuVi4qvGkPtqLHS0qi", "external_id": "northwind-growth" }
+}
+```
+
+An invoice or a credit note also carries `customer_details`: the customer as the document prints it (name, email, VAT number, billing address), as it was when the document was issued. `customer` is the customer as it reads now.
+
+A request names what it names by a string: an id or a code, `ext:<alias>` for a customer. What reads back as you wrote it, such as a plan version's charges, also names its products and metrics by code.
+
+## Money and quantities
+
+- A price or a rate is a decimal string in the currency's major unit: `"49"`, `"0.0015"`.
+- An amount billed (an invoice total, a minimum) is an integer in minor units next to its `currency`: `{"amount": 4900, "currency": "EUR"}`.
+- Quantities are decimal strings.
+
+## Lists
+
+Lists answer `{data, next_cursor, has_more}`. Pass `limit` (1 to 100, default 20) and `after=<next_cursor>` for the next page. Cursors are opaque. A list that is never long, such as a customer's wallets, answers `{data}` and takes no cursor.
+
+- A filter taking several values is the parameter repeated: `?status=active&status=trial_active`.
+- Subscriptions, invoices, customers and credit notes take `created_after` and `created_before`; subscriptions, invoices and customers also take `updated_after`. Each is an RFC 3339 moment, exclusive.
+- Archived resources are left out unless you ask for them: `include_archived=true`, `archived=true` for customers, or `status=archived`.
+
+To poll for changes with `updated_after`, keep the latest `updated_at` you read and ask next for `updated_after` that time minus 5 minutes, treating what you read again as already seen. A change can commit with an `updated_at` slightly earlier than one you already read; the overlap makes sure you read it at least once.
+
+## Requests
+
+- Bodies are JSON (`Content-Type: application/json`). A field the body does not take is refused, never ignored: `400 invalid_request`, with the field's JSON pointer in `errors` and the code `unknown`.
+- `PATCH` takes a JSON merge patch (`application/merge-patch+json`, or `application/json`): a field left out is unchanged, `null` clears it. `PATCH /api/v2/rate-cards/{id_or_code}/rates` is the exception: its body lists the rates to set and the keys to remove, from one day on.
+- Every change to a subscription's plan, seats, levels, charges or add-ons, and its cancellation, has a `…/preview` sibling taking the same body and writing nothing: it answers the documents the change would issue and the subscription as it would read after it. A preview that could not compute a part says so with `incomplete: true` and the parts in `missing`.
+
+## Idempotency
+
+Send an `Idempotency-Key` header (1 to 255 visible ASCII characters) with any `POST` but a preview and the OAuth endpoints, and with `PATCH /api/v2/rate-cards/{id_or_code}/rates`. A retry with the same key and request answers the first response, with `Idempotent-Replayed: true`. Keys are kept 24 hours.
+
+The writes that can invoice, credit or record money require a key, and are refused without one (`400 idempotency_key_required`): creating a subscription, changing its plan, seats or levels, amending or cancelling it, creating a one-off invoice, recording or reversing a payment, issuing a credit note, granting credit and topping up a wallet. Each operation's `x-idempotency` in the OpenAPI document says `required` or `optional`.
+
+- The same key with another request is `422 idempotency_key_reused`; while the first request still runs, `409 idempotency_request_in_progress`.
+- A first response larger than 512 KB, or one holding a secret (a webhook endpoint's signing secret, an OAuth app's client secret), is not kept: its retry answers an `IdempotentReplayMarker`, `{"idempotent_replay": "response_not_kept", "status": 201, "id": "…", "detail": "…"}`. The write was made once; read the resource by its `id`.
+
+## Rate limits
+
+Limits are per tenant environment: every API key of the tenant shares them. At their defaults:
+
+| Limit | Production | Other environments |
+|---|---|---|
+| Requests, every route but the event routes | 100 a second | 25 a second |
+| Requests to `/api/v2/events/…` | 500 a second | 125 a second |
+| Events ingested | 5,000 a second | 1,250 a second |
+| Usage reads (`/usage/summary`, and `…/usage…` under a customer or a subscription) | 600 a minute | 120 a minute |
+| Event corrections (`…/void`, `…/amend`, Enterprise edition) | 600 a minute | 120 a minute |
+
+A response the request limits counted carries `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset` (Unix seconds), `RateLimit-Policy` and `RateLimit`. Past a limit, the answer is `429 rate_limited`: with `Retry-After` (seconds) for the two request limits, with the wait in `detail` for the others. A self-hosted instance sets its own limits.
+
+## Events
+
+[`POST /api/v2/events/ingest`](/api/v2/events/ingest-events) takes 1 to 500 events (1 MB at most). Each names its `customer` by id or `ext:<alias>`, and carries the `code` the metrics reading it have as `event_code`. A property is a string, a number or a boolean; `null`, an object or an array is refused.
+
+```json
+{
+  "events": [
+    {
+      "event_id": "01JDQ6K3W8Z4N2V7R5T9X1M3B6",
+      "code": "completion",
+      "customer": "ext:northwind",
+      "timestamp": "2026-11-26T09:12:44Z",
+      "properties": { "model": "large", "tokens": 1832 }
+    }
+  ]
+}
+```
+
+It answers `{"accepted": 1, "rejected": []}`, each rejected event with its `index`, `event_id`, the JSON `path` of what is refused and a `message`. By default one rejected event refuses the batch (`422 validation_failed`, each rejection in `errors`); with `allow_partial_failures: true` the others are ingested. Events are deduplicated by `event_id` and customer, so sending a batch again is safe.
+
+## Errors
+
+Errors are [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problems, `application/problem+json`:
+
+```json
+{
+  "type": "https://docs.meteroid.com/api/v2/errors/validation_failed",
+  "title": "A field of the request is refused",
+  "status": 422,
+  "code": "validation_failed",
+  "detail": "…",
+  "errors": [{ "path": "/charges/1/prices/0/model/unit_price", "code": "invalid", "message": "…" }],
+  "request_id": "…"
+}
+```
+
+Branch on `code`, not on `title` or `detail`. `path` is a JSON pointer into your request, or the name of the parameter or header refused (`status`, `Idempotency-Key`). Every response carries a `Request-Id` header, also the problem's `request_id`: send `X-Request-Id` to choose it, and quote it to support. See [Errors](/api/v2/errors) for every code.
+
+## Enums are open
+
+New values of an enum a response carries (problem codes, field error codes, statuses, event types) may appear without a new `Meteroid-Version`. Accept a value you do not know: read an unknown problem by its HTTP status, and an unknown field error code as `invalid`. Removing or renaming a value is a breaking change, made only in a new version.
+
+## Editions
+
+The API reference is the Enterprise edition's, the edition closest to Meteroid Cloud. An operation the open-source edition does not serve says so first in its description (`Enterprise edition.`), and carries `x-meteroid-edition: enterprise` in the OpenAPI document.

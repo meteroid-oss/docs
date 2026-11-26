@@ -1,0 +1,10 @@
+---
+title: "rate_limited"
+description: "Too many requests"
+---
+
+**HTTP 429**
+
+You sent more than a [rate limit](/api/v2#rate-limits) of your tenant environment allows: requests per second, events ingested per second, usage reads or event corrections per minute.
+
+**What to do:** Wait, then retry with backoff and the same `Idempotency-Key`. A request limit answers `Retry-After` (seconds) and the `RateLimit` headers; the others say their wait in `detail` (`Retry after <n> seconds`).

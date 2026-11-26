@@ -1,0 +1,10 @@
+---
+title: "unauthorized"
+description: "Unauthorized"
+---
+
+**HTTP 401**
+
+No API key, or an unknown, revoked or expired one: a secret key, or a Connect access token. A publishable key (`pk_…`) is refused too: it only reads the client API's public routes. The answer carries `WWW-Authenticate: Bearer`.
+
+**What to do:** Send `Authorization: Bearer <key>` with an active secret key.

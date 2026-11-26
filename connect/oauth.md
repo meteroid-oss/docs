@@ -3,8 +3,6 @@ title: "Standard Accounts (OAuth)"
 description: "Let existing Meteroid users connect their accounts to your platform via OAuth 2.0."
 ---
 
-# Standard Accounts (OAuth)
-
 Standard accounts use an OAuth 2.0 authorization code flow with PKCE to let existing Meteroid users connect their organization to your platform. The user goes through a consent screen, approves the connection, and your platform receives tokens to act on their behalf.
 
 This is the right approach when your users already have Meteroid accounts and you want to integrate with their existing billing setup.

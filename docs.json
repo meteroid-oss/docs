@@ -17,10 +17,8 @@
   },
   "colors": {
     "primary": "#000000",
-    
     "light": "#ffffff",
     "dark": "#000000"
-
   },
   "appearance": {
     "default": "dark"
@@ -60,7 +58,7 @@
               "billing/managing-plans",
               "billing/creating-products-and-modeling-your-pricing",
               "billing/managing-trials-and-coupons",
-              "billing/managing-add-ons", 
+              "billing/managing-add-ons",
               "billing/managing-price-updates",
               "billing/managing-invoice-annexes"
             ]
@@ -177,7 +175,7 @@
           {
             "group": "Migration",
             "pages": [
-               "migration/stripe-migration-guide"
+              "migration/stripe-migration-guide"
             ]
           },
           {
@@ -196,9 +194,57 @@
       },
       {
         "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API v2",
+            "pages": [
+              "api/v2/index",
+              "api/v2/webhooks",
+              {
+                "group": "Errors",
+                "pages": [
+                  "api/v2/errors",
+                  "api/v2/errors/invalid_request",
+                  "api/v2/errors/validation_failed",
+                  "api/v2/errors/not_expressible",
+                  "api/v2/errors/not_found",
+                  "api/v2/errors/code_taken",
+                  "api/v2/errors/already_exists",
+                  "api/v2/errors/conflict",
+                  "api/v2/errors/no_draft",
+                  "api/v2/errors/when_refused",
+                  "api/v2/errors/idempotency_key_reused",
+                  "api/v2/errors/idempotency_request_in_progress",
+                  "api/v2/errors/idempotency_key_required",
+                  "api/v2/errors/unsupported_version",
+                  "api/v2/errors/unauthorized",
+                  "api/v2/errors/token_expired",
+                  "api/v2/errors/forbidden",
+                  "api/v2/errors/feature_not_available",
+                  "api/v2/errors/rate_limited",
+                  "api/v2/errors/payload_too_large",
+                  "api/v2/errors/method_not_allowed",
+                  "api/v2/errors/unsupported_media_type",
+                  "api/v2/errors/unavailable",
+                  "api/v2/errors/not_implemented",
+                  "api/v2/errors/internal_error"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "openapi": {
+              "source": "api/v2/openapi.json",
+              "directory": "api/v2"
+            }
+          }
+        ]
+      },
+      {
+        "tab": "API v1 (legacy)",
         "openapi": "https://api.meteroid.com/api-docs/openapi.json",
-                    "collapsed": true
-        
+        "collapsed": true
       },
       {
         "tab": "Changelog",
@@ -213,28 +259,25 @@
       }
     ],
     "global": {
-    "anchors": [
-      {
-        "anchor": "Blog",
-        "href": "https://meteroid.com/blog",
-        "icon": "book"
-
-      },
-      {
-        "anchor": "Talk to us",
-        "href": "https://meteroid.com/talk-to-us",
-        "icon": "message"
-      },
-
-      {
-        "anchor": "GitHub",
-        "href": "https://go.meteroid.com/github",
-        "icon": "github"
-
-      }
-    ]
-  }
-},
+      "anchors": [
+        {
+          "anchor": "Blog",
+          "href": "https://meteroid.com/blog",
+          "icon": "book"
+        },
+        {
+          "anchor": "Talk to us",
+          "href": "https://meteroid.com/talk-to-us",
+          "icon": "message"
+        },
+        {
+          "anchor": "GitHub",
+          "href": "https://go.meteroid.com/github",
+          "icon": "github"
+        }
+      ]
+    }
+  },
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg",
@@ -271,17 +314,17 @@
       "enabled": false
     }
   },
- "contextual": {
-   "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "grok",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
- }
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "grok",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  }
 }

@@ -1,0 +1,10 @@
+---
+title: "idempotency_key_required"
+description: "An Idempotency-Key is required"
+---
+
+**HTTP 400**
+
+The request can invoice, credit or record money, and was sent without an `Idempotency-Key`, so a retry could do it twice. `errors` names the header (`path: "Idempotency-Key"`, `code: "required"`). The writes that require one: creating a subscription, changing its plan, seats or levels, amending or cancelling it, creating a one-off invoice, recording or reversing a payment, issuing a credit note, granting credit and topping up a wallet. Each operation's `x-idempotency` in the OpenAPI document says `required`.
+
+**What to do:** Send the request again with an `Idempotency-Key` header: a unique value per request (a UUID), reused only when you retry that same request.

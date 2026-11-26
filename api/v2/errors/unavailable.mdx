@@ -1,0 +1,10 @@
+---
+title: "unavailable"
+description: "Unavailable, retry later"
+---
+
+**HTTP 503**
+
+A service Meteroid depends on is briefly unavailable or did not answer in time, such as metering on event ingestion, event corrections and usage reads.
+
+**What to do:** Retry with backoff, with the same `Idempotency-Key` for writes. Sending an event batch again is safe: events are deduplicated.
