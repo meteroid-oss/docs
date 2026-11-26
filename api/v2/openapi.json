@@ -23932,7 +23932,7 @@
                       ],
                       "needs_setup": false,
                       "rate_limit_per_sec": 20,
-                      "api_version": "2026-12-01",
+                      "api_version": "2026-12-15",
                       "created_at": "2026-11-25T23:51:27.404Z"
                     }
                   ],
@@ -24037,7 +24037,7 @@
                   ],
                   "needs_setup": false,
                   "rate_limit_per_sec": 20,
-                  "api_version": "2026-12-01",
+                  "api_version": "2026-12-15",
                   "created_at": "2026-11-25T23:51:27.404Z",
                   "secret": "whsec_ADraV4u9Tr2dpdigJFAbs0h3VPtIqlpB"
                 }
@@ -24164,7 +24164,7 @@
                   ],
                   "needs_setup": false,
                   "rate_limit_per_sec": 20,
-                  "api_version": "2026-12-01",
+                  "api_version": "2026-12-15",
                   "created_at": "2026-11-25T23:51:27.404Z"
                 }
               }
@@ -24279,7 +24279,7 @@
                   ],
                   "needs_setup": false,
                   "rate_limit_per_sec": 20,
-                  "api_version": "2026-12-01",
+                  "api_version": "2026-12-15",
                   "created_at": "2026-11-25T23:51:27.404Z",
                   "updated_at": "2026-11-25T23:51:27.429Z"
                 }
@@ -24397,7 +24397,7 @@
                   ],
                   "needs_setup": false,
                   "rate_limit_per_sec": 20,
-                  "api_version": "2026-12-01",
+                  "api_version": "2026-12-15",
                   "created_at": "2026-11-25T23:51:27.404Z",
                   "updated_at": "2026-11-25T23:51:27.489Z",
                   "archived_at": "2026-11-25T23:51:27.489Z"
@@ -41282,7 +41282,7 @@
     },
     {
       "name": "Webhooks",
-      "description": "Endpoints Meteroid POSTs signed event payloads to, their signing secret, and their deliveries.\n\n**Verifying a delivery.** Every delivery is signed as the Standard Webhooks specification describes (https://www.standardwebhooks.com), so its libraries verify it (https://github.com/standard-webhooks/standard-webhooks/tree/main/libraries): pass them the endpoint's secret as it reads, the headers and the raw body. Each delivery carries three headers. `webhook-id` is the event's id (`evt_…`, its payload's `id`), the same on every attempt and resend of it: deduplicate by it. `webhook-timestamp` is the Unix time, in seconds, the attempt was sent. `webhook-signature` is `v1,` followed by the base64 (standard alphabet, padded) of the HMAC-SHA256 of `<webhook-id>.<webhook-timestamp>.<body>`, the body's bytes exactly as received: verify them before parsing. The HMAC key is the secret's bytes, the base64 after its `whsec_` prefix decoded, not the string itself. While a rotated-out secret still signs (24 hours after its rotation), the header holds one signature per secret, separated by spaces, the current one first: accept the delivery when any of them matches, compared in constant time. Refuse a timestamp more than 5 minutes away from your clock, so a delivery captured on the way cannot be replayed later. An endpoint migrated from Svix also receives the same three values as `svix-id`, `svix-timestamp` and `svix-signature`.\n\nPayload versions. An endpoint's `api_version` pins the shape of what it receives. From `2026-12-15` on, each event is the envelope `{id, type, created_at, api_version, data}` documented here: `data` is the resource as its v2 GET reads it (the same schema, references, typed ids and decimals), read when the event is processed, or for a notification what it observed. An endpoint created through v2 holds the `Meteroid-Version` it was created at (`2026-12-01` when none is sent), one created from the dashboard the latest version; one holding `2026-12-01`, or none (created through v1, or before versions were recorded), receives API v1's payloads, which v1's document describes. `PATCH /api/v2/webhooks/endpoints/{id}` with `api_version` moves an endpoint to another version from its next event on; nothing else does: a pinned endpoint never changes shape, and a payload is the same bytes on every retry and resend. A resource deleted before its event is processed is named by its `id` alone."
+      "description": "Endpoints Meteroid POSTs signed event payloads to, their signing secret, and their deliveries.\n\n**Verifying a delivery.** Every delivery is signed as the Standard Webhooks specification describes (https://www.standardwebhooks.com), so its libraries verify it (https://github.com/standard-webhooks/standard-webhooks/tree/main/libraries): pass them the endpoint's secret as it reads, the headers and the raw body. Each delivery carries three headers. `webhook-id` is the event's id (`evt_…`, its payload's `id`), the same on every attempt and resend of it: deduplicate by it. `webhook-timestamp` is the Unix time, in seconds, the attempt was sent. `webhook-signature` is `v1,` followed by the base64 (standard alphabet, padded) of the HMAC-SHA256 of `<webhook-id>.<webhook-timestamp>.<body>`, the body's bytes exactly as received: verify them before parsing. The HMAC key is the secret's bytes, the base64 after its `whsec_` prefix decoded, not the string itself. While a rotated-out secret still signs (24 hours after its rotation), the header holds one signature per secret, separated by spaces, the current one first: accept the delivery when any of them matches, compared in constant time. Refuse a timestamp more than 5 minutes away from your clock, so a delivery captured on the way cannot be replayed later. An endpoint migrated from Svix also receives the same three values as `svix-id`, `svix-timestamp` and `svix-signature`.\n\nPayload versions. An endpoint's `api_version` pins the shape of what it receives. From `2026-12-15` on, each event is the envelope `{id, type, created_at, api_version, data}` documented here: `data` is the resource as its v2 GET reads it (the same schema, references, typed ids and decimals), read when the event is processed, or for a notification what it observed. An endpoint created through v2 holds the `Meteroid-Version` its request named, or the latest version when it named none; one created from the dashboard the latest version too; one holding `2026-12-01`, or none (created through v1, or before versions were recorded), receives API v1's payloads, which v1's document describes. `PATCH /api/v2/webhooks/endpoints/{id}` with `api_version` moves an endpoint to another version from its next event on; nothing else does: a pinned endpoint never changes shape, and a payload is the same bytes on every retry and resend. A resource deleted before its event is processed is named by its `id` alone."
     }
   ],
   "externalDocs": {
