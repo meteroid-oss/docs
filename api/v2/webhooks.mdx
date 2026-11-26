@@ -48,7 +48,13 @@ From `2026-12-15`, each event is the envelope `{id, type, created_at, api_versio
 - `id` is the event's id, also sent as the `webhook-id` header: the same on every attempt and to every endpoint. Deduplicate by it.
 - `type` is the event type; `created_at` when the event was recorded; `api_version` the version the payload is rendered at.
 - `data` is the resource as its v2 `GET` reads it, with the same schema, references, typed ids and decimals: an `invoice.*` event carries an invoice as `GET /api/v2/invoices/{id}` answers it, a `subscription.*` event a subscription, a `customer.*` event a customer. It is read when the event is processed, a moment after the event. A resource deleted by then is named by its `id` alone, and so is the draft of `invoice.deleted`.
-- A notification carries what it observed: `payment.*` and `refund.*` carry `{payment, invoice}`, the payment as its invoice lists it; `wallet.*`, `credit_grant.*` and `quote.*` events carry data of their own.
+- An event about something without a resource of its own still carries the resources it concerns, each as its GET returns it:
+  - `payment.*` and `refund.*` carry `{payment, invoice}`, the payment as its invoice lists it.
+  - `wallet.funded` and `wallet.debited` carry the `wallet` after the movement, the `ledger_entry` and the full `credit_grant`. The other `wallet.*` events and the auto top-up events carry the `wallet`.
+  - `credit_grant.expired` carries the full `credit_grant` and its lapse as a `ledger_entry`.
+  - `checkout.payment_kept_as_credit` carries the `checkout_session`.
+  - `quote.*` events name the quote by id; v2 has no quote read yet.
+- A resource gone by the time the event is processed is named by its `id` alone; a wallet, which has no id, by its currency or credit unit.
 
 A payload is the same bytes on every retry and resend, whatever the endpoint holds since. Each event type's payload is in the API reference, under **Webhooks**: [`invoice.paid`](/api/v2/webhooks/invoicepaid-webhook), for example. The test event the dashboard sends to an endpoint on v2's payloads is `webhook.test`, its `data` naming the `endpoint`.
 

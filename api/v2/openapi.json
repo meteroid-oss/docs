@@ -28908,6 +28908,7 @@
         "description": "A spending cap held back an automatic top-up. Amounts in minor units of `currency`.",
         "required": [
           "customer",
+          "wallet",
           "currency",
           "period",
           "cap",
@@ -28925,7 +28926,8 @@
             "format": "int64"
           },
           "currency": {
-            "type": "string"
+            "type": "string",
+            "description": "The money the cap counts (ISO 4217): the customer's currency for a credit unit wallet."
           },
           "customer": {
             "$ref": "#/components/schemas/CustomerRef"
@@ -28941,6 +28943,10 @@
           "period_start": {
             "type": "string",
             "format": "date-time"
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet, with its automatic top-up, as `GET /customers/{id}/wallets/{wallet}` reads it."
           }
         }
       },
@@ -28982,6 +28988,7 @@
         "description": "An automatic top-up was turned on or off, or its terms changed.",
         "required": [
           "customer",
+          "wallet",
           "currency",
           "enabled",
           "actor",
@@ -29019,7 +29026,8 @@
             ]
           },
           "currency": {
-            "type": "string"
+            "type": "string",
+            "description": "The wallet's currency, or its credit unit's code."
           },
           "customer": {
             "$ref": "#/components/schemas/CustomerRef"
@@ -29032,6 +29040,10 @@
               "string",
               "null"
             ]
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet, with its automatic top-up as changed, as `GET\n/customers/{id}/wallets/{wallet}` reads it."
           }
         }
       },
@@ -29073,6 +29085,7 @@
         "description": "An automatic top-up's charge failed (`wallet.auto_top_up_failed`), or failed often enough to\nsuspend it (`wallet.auto_top_up_suspended`).",
         "required": [
           "customer",
+          "wallet",
           "currency",
           "amount",
           "consecutive_failures",
@@ -29082,14 +29095,15 @@
           "amount": {
             "type": "integer",
             "format": "int64",
-            "description": "In minor units of `currency`."
+            "description": "The credit the charge would have bought, in minor units of the wallet."
           },
           "consecutive_failures": {
             "type": "integer",
             "format": "int32"
           },
           "currency": {
-            "type": "string"
+            "type": "string",
+            "description": "The wallet's currency, or its credit unit's code."
           },
           "customer": {
             "$ref": "#/components/schemas/CustomerRef"
@@ -29103,6 +29117,10 @@
               "null"
             ],
             "format": "date-time"
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet, with its automatic top-up, as `GET /customers/{id}/wallets/{wallet}` reads it."
           }
         }
       },
@@ -30556,8 +30574,8 @@
             "description": "Credited to the customer, in minor units of `currency`."
           },
           "checkout_session": {
-            "$ref": "#/components/schemas/CheckoutSessionId",
-            "description": "The checkout session cancelled."
+            "$ref": "#/components/schemas/CheckoutSession",
+            "description": "The checkout session, cancelled, as `GET /checkout-sessions/{id}` reads it."
           },
           "currency": {
             "type": "string"
@@ -33287,39 +33305,6 @@
         ],
         "description": "The endpoint created, with its signing secret: read it again with `GET …/secret`."
       },
-      "CreditDenomination": {
-        "type": "object",
-        "description": "What a wallet or a budget counts: a currency, or a credit unit with its precision.",
-        "properties": {
-          "credit_unit": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/CreditUnitRef",
-                "description": "Absent for a currency."
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "credit_unit_precision": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "format": "int32",
-            "description": "Decimal places of `credit_unit`: amounts are integers of 10^-precision credit.",
-            "minimum": 0
-          },
-          "currency": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Absent for a credit unit."
-          }
-        }
-      },
       "CreditDiscount": {
         "type": "object",
         "description": "Credit added to the customer's balance when the subscription it is redeemed on starts; never\nan invoice discount. Redeemed once per customer, its code matched whatever the case.",
@@ -33442,67 +33427,41 @@
         }
       },
       "CreditGrantExpiredEventData": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreditDenomination"
-          },
-          {
-            "type": "object",
-            "required": [
-              "customer",
-              "applies_to",
-              "products",
-              "credit_grant",
-              "ledger_entry",
-              "expired_amount",
-              "expired_at",
-              "reason"
-            ],
-            "properties": {
-              "applies_to": {
-                "$ref": "#/components/schemas/AppliesTo"
-              },
-              "credit_grant": {
-                "$ref": "#/components/schemas/CreditGrantId"
-              },
-              "customer": {
-                "$ref": "#/components/schemas/CustomerRef"
-              },
-              "expired_amount": {
-                "type": "integer",
-                "format": "int64",
-                "description": "In minor units of the wallet."
-              },
-              "expired_at": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "ledger_entry": {
-                "$ref": "#/components/schemas/LedgerEntryId"
-              },
-              "products": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProductRef"
-                }
-              },
-              "reason": {
-                "$ref": "#/components/schemas/GrantLapseReason"
-              },
-              "subscription": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/SubscriptionRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            }
-          }
+        "type": "object",
+        "description": "What was left of a grant lapsed: it expired, or the subscription it was for ended.",
+        "required": [
+          "customer",
+          "credit_grant",
+          "ledger_entry",
+          "expired_amount",
+          "expired_at",
+          "reason"
         ],
-        "description": "What was left of a grant lapsed: it expired, or the subscription it was for ended."
+        "properties": {
+          "credit_grant": {
+            "$ref": "#/components/schemas/CustomerCreditGrant",
+            "description": "The grant, as `GET /customers/{id}/credit-grants/{grant_id}` reads it."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "expired_amount": {
+            "type": "integer",
+            "format": "int64",
+            "description": "In minor units of the wallet."
+          },
+          "expired_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ledger_entry": {
+            "$ref": "#/components/schemas/LedgerEntry",
+            "description": "The lapse, as `GET /customers/{id}/credit-ledger` lists it."
+          },
+          "reason": {
+            "$ref": "#/components/schemas/GrantLapseReason"
+          }
+        }
       },
       "CreditGrantId": {
         "type": "string",
@@ -45794,41 +45753,40 @@
         }
       },
       "WalletBalanceLowEventData": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreditDenomination"
-          },
-          {
-            "type": "object",
-            "required": [
-              "customer",
-              "balance",
-              "threshold"
-            ],
-            "properties": {
-              "balance": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "customer": {
-                "$ref": "#/components/schemas/CustomerRef"
-              },
-              "shared_balance": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
-                "format": "int64",
-                "description": "The balance any subscription can use, when only part of `balance` is."
-              },
-              "threshold": {
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
+        "type": "object",
+        "description": "A wallet's balance (credit on account net of usage not invoiced yet) fell below one of its\nlow-balance thresholds. Amounts in minor units of the wallet.",
+        "required": [
+          "customer",
+          "wallet",
+          "balance",
+          "threshold"
         ],
-        "description": "A wallet's balance (credit on account net of usage not invoiced yet) fell below one of its\nlow-balance thresholds. Amounts in minor units of the wallet."
+        "properties": {
+          "balance": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The balance that crossed the threshold."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "shared_balance": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "The balance any subscription can use, when only part of `balance` is."
+          },
+          "threshold": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet, as `GET /customers/{id}/wallets/{wallet}` reads it."
+          }
+        }
       },
       "WalletCheck": {
         "type": "object",
@@ -45940,67 +45898,65 @@
         }
       },
       "WalletCreditRecoveredEventData": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreditDenomination"
-          },
-          {
-            "type": "object",
-            "required": [
-              "customer",
-              "cause",
-              "credit_recovered",
-              "credit_unrecovered_total"
-            ],
-            "properties": {
-              "cause": {
-                "type": "string"
-              },
-              "credit_note": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/CreditNoteRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "credit_recovered": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "credit_unrecovered_total": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "customer": {
-                "$ref": "#/components/schemas/CustomerRef"
-              },
-              "invoice": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/InvoiceRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "payment": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/PaymentTransactionId"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            }
-          }
+        "type": "object",
+        "description": "Credit left unrecovered was taken back since. Amounts in minor units of the wallet.",
+        "required": [
+          "customer",
+          "wallet",
+          "cause",
+          "credit_recovered",
+          "credit_unrecovered_total"
         ],
-        "description": "Credit left unrecovered was taken back since. Amounts in minor units of the wallet."
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "credit_note": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CreditNoteRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "credit_recovered": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "credit_unrecovered_total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "invoice": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InvoiceRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "payment": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentTransactionId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet, as `GET /customers/{id}/wallets/{wallet}` reads it."
+          }
+        }
       },
       "WalletCreditUnrecoveredEvent": {
         "type": "object",
@@ -46036,73 +45992,71 @@
         }
       },
       "WalletCreditUnrecoveredEventData": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreditDenomination"
-          },
-          {
-            "type": "object",
-            "required": [
-              "customer",
-              "cause",
-              "credit_taken_back",
-              "credit_unrecovered",
-              "credit_unrecovered_total"
-            ],
-            "properties": {
-              "cause": {
-                "type": "string"
-              },
-              "credit_note": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/CreditNoteRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "credit_taken_back": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "credit_unrecovered": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "credit_unrecovered_total": {
-                "type": "integer",
-                "format": "int64",
-                "description": "What stays unrecovered of this money, every notice of it counted."
-              },
-              "customer": {
-                "$ref": "#/components/schemas/CustomerRef"
-              },
-              "invoice": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/InvoiceRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "payment": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/PaymentTransactionId"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            }
-          }
+        "type": "object",
+        "description": "Credit bought was spent when its money came back (a reversed payment, a refund): part of it\ncould not be taken back. Amounts in minor units of the wallet.",
+        "required": [
+          "customer",
+          "wallet",
+          "cause",
+          "credit_taken_back",
+          "credit_unrecovered",
+          "credit_unrecovered_total"
         ],
-        "description": "Credit bought was spent when its money came back (a reversed payment, a refund): part of it\ncould not be taken back. Amounts in minor units of the wallet."
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "credit_note": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CreditNoteRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "credit_taken_back": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "credit_unrecovered": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "credit_unrecovered_total": {
+            "type": "integer",
+            "format": "int64",
+            "description": "What stays unrecovered of this money, every notice of it counted."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "invoice": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/InvoiceRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "payment": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PaymentTransactionId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet, as `GET /customers/{id}/wallets/{wallet}` reads it."
+          }
+        }
       },
       "WalletDebitedEvent": {
         "type": "object",
@@ -46138,93 +46092,47 @@
         }
       },
       "WalletDebitedEventData": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreditDenomination"
-          },
-          {
-            "type": "object",
-            "required": [
-              "customer",
-              "applies_to",
-              "products",
-              "ledger_entry",
-              "credit_grant",
-              "amount",
-              "reason"
-            ],
-            "properties": {
-              "actor": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/EventActor",
-                    "description": "Who removed it by hand."
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "amount": {
-                "type": "integer",
-                "format": "int64",
-                "description": "In minor units of the wallet."
-              },
-              "applies_to": {
-                "$ref": "#/components/schemas/AppliesTo"
-              },
-              "credit_grant": {
-                "$ref": "#/components/schemas/CreditGrantId"
-              },
-              "credit_note": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/CreditNoteRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "customer": {
-                "$ref": "#/components/schemas/CustomerRef"
-              },
-              "invoice": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/InvoiceRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "ledger_entry": {
-                "$ref": "#/components/schemas/LedgerEntryId"
-              },
-              "products": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProductRef"
-                }
-              },
-              "reason": {
-                "type": "string"
-              },
-              "subscription": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/SubscriptionRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            }
-          }
+        "type": "object",
+        "description": "Credit leaving a wallet: applied to an invoice, taken back by a credit note, or removed by hand.",
+        "required": [
+          "customer",
+          "wallet",
+          "ledger_entry",
+          "credit_grant",
+          "reason"
         ],
-        "description": "Credit leaving a wallet: applied to an invoice, taken back by a credit note, or removed by hand."
+        "properties": {
+          "actor": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EventActor",
+                "description": "Who removed it by hand."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "credit_grant": {
+            "$ref": "#/components/schemas/CustomerCreditGrant",
+            "description": "The grant the credit left, as `GET /customers/{id}/credit-grants/{grant_id}` reads it."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "ledger_entry": {
+            "$ref": "#/components/schemas/LedgerEntry",
+            "description": "The movement, as `GET /customers/{id}/credit-ledger` lists it."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why the credit left, as it was recorded."
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet after the movement, as `GET /customers/{id}/wallets/{wallet}` reads it."
+          }
+        }
       },
       "WalletDepletedEvent": {
         "type": "object",
@@ -46260,23 +46168,21 @@
         }
       },
       "WalletDepletedEventData": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreditDenomination"
-          },
-          {
-            "type": "object",
-            "required": [
-              "customer"
-            ],
-            "properties": {
-              "customer": {
-                "$ref": "#/components/schemas/CustomerRef"
-              }
-            }
-          }
+        "type": "object",
+        "description": "A wallet's balance reached zero.",
+        "required": [
+          "customer",
+          "wallet"
         ],
-        "description": "A wallet's balance reached zero."
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet, as `GET /customers/{id}/wallets/{wallet}` reads it."
+          }
+        }
       },
       "WalletFundedEvent": {
         "type": "object",
@@ -46312,88 +46218,36 @@
         }
       },
       "WalletFundedEventData": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreditDenomination"
-          },
-          {
-            "type": "object",
-            "required": [
-              "customer",
-              "applies_to",
-              "products",
-              "ledger_entry",
-              "credit_grant",
-              "amount",
-              "source",
-              "type"
-            ],
-            "properties": {
-              "amount": {
-                "type": "integer",
-                "format": "int64",
-                "description": "In minor units of the wallet."
-              },
-              "applies_to": {
-                "$ref": "#/components/schemas/AppliesTo"
-              },
-              "credit_grant": {
-                "$ref": "#/components/schemas/CreditGrantId"
-              },
-              "credit_note": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/CreditNoteRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "customer": {
-                "$ref": "#/components/schemas/CustomerRef"
-              },
-              "invoice": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/InvoiceRef"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "ledger_entry": {
-                "$ref": "#/components/schemas/LedgerEntryId"
-              },
-              "products": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProductRef"
-                },
-                "description": "The products the credit pays; empty for any."
-              },
-              "source": {
-                "$ref": "#/components/schemas/GrantSource"
-              },
-              "subscription": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/SubscriptionRef",
-                    "description": "The one subscription the credit is for; absent for any."
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "type": {
-                "$ref": "#/components/schemas/GrantType"
-              }
-            }
-          }
+        "type": "object",
+        "description": "Credit added to a wallet: a purchase, a top-up, a plan's credit, a coupon, a credit note, a\ngrant by hand, or what a voided invoice gave back.",
+        "required": [
+          "customer",
+          "wallet",
+          "ledger_entry",
+          "credit_grant",
+          "source"
         ],
-        "description": "Credit added to a wallet: a purchase, a top-up, a plan's credit, a coupon, a credit note, a\ngrant by hand, or what a voided invoice gave back."
+        "properties": {
+          "credit_grant": {
+            "$ref": "#/components/schemas/CustomerCreditGrant",
+            "description": "The grant credited, as `GET /customers/{id}/credit-grants/{grant_id}` reads it."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "ledger_entry": {
+            "$ref": "#/components/schemas/LedgerEntry",
+            "description": "The movement, as `GET /customers/{id}/credit-ledger` lists it."
+          },
+          "source": {
+            "$ref": "#/components/schemas/GrantSource",
+            "description": "Why the credit came in: the grant's source, or what gave a draw back (`credit_note`;\n`adjustment` for a voided invoice, or a usage settlement returning what it drew)."
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet after the movement, as `GET /customers/{id}/wallets/{wallet}` reads it."
+          }
+        }
       },
       "WalletList": {
         "type": "object",
@@ -46445,29 +46299,27 @@
         }
       },
       "WalletRecoveredEventData": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CreditDenomination"
-          },
-          {
-            "type": "object",
-            "required": [
-              "customer",
-              "balance"
-            ],
-            "properties": {
-              "balance": {
-                "type": "integer",
-                "format": "int64",
-                "description": "In minor units of the wallet."
-              },
-              "customer": {
-                "$ref": "#/components/schemas/CustomerRef"
-              }
-            }
-          }
+        "type": "object",
+        "description": "A wallet's balance came back above zero.",
+        "required": [
+          "customer",
+          "wallet",
+          "balance"
         ],
-        "description": "A wallet's balance came back above zero."
+        "properties": {
+          "balance": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The balance it came back to, in minor units of the wallet."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerRef"
+          },
+          "wallet": {
+            "$ref": "#/components/schemas/Wallet",
+            "description": "The wallet, as `GET /customers/{id}/wallets/{wallet}` reads it."
+          }
+        }
       },
       "WebhookDelivery": {
         "type": "object",
@@ -47138,7 +46990,7 @@
     },
     {
       "name": "Webhooks",
-      "description": "Endpoints Meteroid POSTs signed event payloads to, their signing secret, and their deliveries.\n\n**Verifying a delivery.** Every delivery is signed as the Standard Webhooks specification describes (https://www.standardwebhooks.com), so its libraries verify it (https://github.com/standard-webhooks/standard-webhooks/tree/main/libraries): pass them the endpoint's secret as it reads, the headers and the raw body. Each delivery carries three headers. `webhook-id` is the event's id (`evt_…`, its payload's `id`), the same on every attempt and resend of it: deduplicate by it. `webhook-timestamp` is the Unix time, in seconds, the attempt was sent. `webhook-signature` is `v1,` followed by the base64 (standard alphabet, padded) of the HMAC-SHA256 of `<webhook-id>.<webhook-timestamp>.<body>`, the body's bytes exactly as received: verify them before parsing. The HMAC key is the secret's bytes, the base64 after its `whsec_` prefix decoded, not the string itself. While a rotated-out secret still signs (24 hours after its rotation), the header holds one signature per secret, separated by spaces, the current one first: accept the delivery when any of them matches, compared in constant time. Refuse a timestamp more than 5 minutes away from your clock, so a delivery captured on the way cannot be replayed later. An endpoint migrated from Svix also receives the same three values as `svix-id`, `svix-timestamp` and `svix-signature`.\n\nPayload versions. An endpoint's `api_version` pins the shape of what it receives. From `2026-12-15` on, each event is the envelope `{id, type, created_at, api_version, data}` documented here: `data` is the resource as its v2 GET reads it (the same schema, references, typed ids and decimals), read when the event is processed, or for a notification what it observed. An endpoint created through v2 holds the `Meteroid-Version` its request named, or the latest version when it named none; one created from the dashboard the latest version too; one holding `2026-12-01`, or none (created through v1, or before versions were recorded), receives API v1's payloads, which v1's document describes. `PATCH /api/v2/webhooks/endpoints/{id}` with `api_version` moves an endpoint to another version from its next event on; nothing else does: a pinned endpoint never changes shape, and a payload is the same bytes on every retry and resend. A resource deleted before its event is processed is named by its `id` alone."
+      "description": "Endpoints Meteroid POSTs signed event payloads to, their signing secret, and their deliveries.\n\n**Verifying a delivery.** Every delivery is signed as the Standard Webhooks specification describes (https://www.standardwebhooks.com), so its libraries verify it (https://github.com/standard-webhooks/standard-webhooks/tree/main/libraries): pass them the endpoint's secret as it reads, the headers and the raw body. Each delivery carries three headers. `webhook-id` is the event's id (`evt_…`, its payload's `id`), the same on every attempt and resend of it: deduplicate by it. `webhook-timestamp` is the Unix time, in seconds, the attempt was sent. `webhook-signature` is `v1,` followed by the base64 (standard alphabet, padded) of the HMAC-SHA256 of `<webhook-id>.<webhook-timestamp>.<body>`, the body's bytes exactly as received: verify them before parsing. The HMAC key is the secret's bytes, the base64 after its `whsec_` prefix decoded, not the string itself. While a rotated-out secret still signs (24 hours after its rotation), the header holds one signature per secret, separated by spaces, the current one first: accept the delivery when any of them matches, compared in constant time. Refuse a timestamp more than 5 minutes away from your clock, so a delivery captured on the way cannot be replayed later. An endpoint migrated from Svix also receives the same three values as `svix-id`, `svix-timestamp` and `svix-signature`.\n\nPayload versions. An endpoint's `api_version` pins the shape of what it receives. From `2026-12-15` on, each event is the envelope `{id, type, created_at, api_version, data}` documented here: `data` is the resource as its v2 GET reads it (the same schema, references, typed ids and decimals), read when the event is processed, or for a notification what it observed beside the resources it is about, read alike (a wallet's notice its wallet, credit moving its ledger entry and grant too). An endpoint created through v2 holds the `Meteroid-Version` its request named, or the latest version when it named none; one created from the dashboard the latest version too; one holding `2026-12-01`, or none (created through v1, or before versions were recorded), receives API v1's payloads, which v1's document describes. `PATCH /api/v2/webhooks/endpoints/{id}` with `api_version` moves an endpoint to another version from its next event on; nothing else does: a pinned endpoint never changes shape, and a payload is the same bytes on every retry and resend. A resource deleted before its event is processed is named by its `id` alone (a wallet, which has none, by its currency or credit unit)."
     }
   ],
   "externalDocs": {
