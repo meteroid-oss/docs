@@ -5,6 +5,8 @@ description: "A field of the request is refused"
 
 **HTTP 422**
 
-The request was read, but one or more fields are refused.
+The request was read, but one or more fields are refused: a blank `name`, a negative price, tiers that do not ascend, a currency Meteroid does not know, a code naming nothing (`not_found`) or something archived (`archived`).
 
-**What to do:** Read `errors`: each entry has the JSON pointer (`path`) of the field, a `code` and a `message`.
+A query parameter that does not read is answered the same way, with the parameter's name as `path`: an unknown `status` value, a `limit` outside 1 to 100, a cursor in `after` that is not one this list gave. So is an event batch refused as a whole, each rejected event in `errors` at its pointer (`/events/3/customer`).
+
+**What to do:** Read `errors`: each entry has the JSON pointer (`path`) of the field or the parameter, a [field error code](/api/v2/errors#field-errors) and a `message`. Fix those fields and send the request again.

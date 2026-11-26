@@ -3,7 +3,7 @@ title: "Errors"
 description: "Every error code API v2 answers."
 ---
 
-Every v2 error is a problem (`application/problem+json`) whose `type` is the page of its code below. Branch on `code`: it is stable across versions.
+Every v2 error is a problem (`application/problem+json`) whose `type` is the page of its code below: `https://docs.meteroid.com/api/v2/errors/<code>`. Branch on `code`: it is stable across versions.
 
 | Code | Status | Meaning |
 |---|---|---|
@@ -14,13 +14,16 @@ Every v2 error is a problem (`application/problem+json`) whose `type` is the pag
 | [`code_taken`](/api/v2/errors/code_taken) | 409 | The code is taken |
 | [`already_exists`](/api/v2/errors/already_exists) | 409 | It already exists |
 | [`conflict`](/api/v2/errors/conflict) | 409 | The resource's state refuses the change |
-| [`no_draft`](/api/v2/errors/no_draft) | 404 | The plan has no draft |
+| [`no_draft`](/api/v2/errors/no_draft) | 409 | The plan has no draft |
 | [`when_refused`](/api/v2/errors/when_refused) | 422 | The change cannot take effect when asked |
 | [`idempotency_key_reused`](/api/v2/errors/idempotency_key_reused) | 422 | The Idempotency-Key was used with another request |
-| [`idempotency_request_in_progress`](/api/v2/errors/idempotency_request_in_progress) | 409 | The first request with this key is still running |
+| [`idempotency_request_in_progress`](/api/v2/errors/idempotency_request_in_progress) | 409 | The first request with this Idempotency-Key is still running |
+| [`idempotency_key_required`](/api/v2/errors/idempotency_key_required) | 400 | An Idempotency-Key is required |
 | [`unsupported_version`](/api/v2/errors/unsupported_version) | 400 | Unsupported Meteroid-Version |
 | [`unauthorized`](/api/v2/errors/unauthorized) | 401 | Unauthorized |
+| [`token_expired`](/api/v2/errors/token_expired) | 401 | The token expired |
 | [`forbidden`](/api/v2/errors/forbidden) | 403 | Forbidden |
+| [`feature_not_available`](/api/v2/errors/feature_not_available) | 403 | The feature is not available |
 | [`rate_limited`](/api/v2/errors/rate_limited) | 429 | Too many requests |
 | [`payload_too_large`](/api/v2/errors/payload_too_large) | 413 | The request body is too large |
 | [`method_not_allowed`](/api/v2/errors/method_not_allowed) | 405 | Method not allowed |
@@ -28,3 +31,24 @@ Every v2 error is a problem (`application/problem+json`) whose `type` is the pag
 | [`unavailable`](/api/v2/errors/unavailable) | 503 | Unavailable, retry later |
 | [`not_implemented`](/api/v2/errors/not_implemented) | 501 | Not implemented |
 | [`internal_error`](/api/v2/errors/internal_error) | 500 | Internal error |
+
+## Field errors
+
+A problem about fields lists them in `errors`, each `{path, code, message}`. `path` is a JSON pointer into the request body (`/charges/0/prices/1/model`), or the name of the parameter or header refused (`limit`, `Idempotency-Key`). `message` is for a person to read and may change; branch on `code`:
+
+| Code | The field… |
+|---|---|
+| `required` | is left out, or empty, where it is required (a header too: `Idempotency-Key`) |
+| `invalid` | is present but not a value it can take |
+| `unknown` | is not a field the body takes, such as a misspelt name |
+| `not_found` | names something that does not exist, or not in this tenant |
+| `archived` | names something archived, which takes no new use |
+| `ambiguous` | could name more than one thing, such as a product several charges bill |
+| `duplicate` | holds another resource's value, or one repeated in the request |
+| `not_expressible` | asks what the pricing model cannot express |
+| `preset_conflict` | contradicts the preset its charge names |
+| `when_refused` | asks for a moment the change cannot take effect at |
+
+## New codes
+
+Problem codes and field error codes are open: new ones may be added without a new `Meteroid-Version`. Read a problem code you do not know by its HTTP status, and a field error code you do not know as `invalid`.

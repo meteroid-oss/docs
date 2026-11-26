@@ -198,7 +198,8 @@
           {
             "group": "API v2",
             "pages": [
-              "api/v2/introduction",
+              "api/v2/index",
+              "api/v2/webhooks",
               {
                 "group": "Errors",
                 "pages": [
@@ -214,9 +215,12 @@
                   "api/v2/errors/when_refused",
                   "api/v2/errors/idempotency_key_reused",
                   "api/v2/errors/idempotency_request_in_progress",
+                  "api/v2/errors/idempotency_key_required",
                   "api/v2/errors/unsupported_version",
                   "api/v2/errors/unauthorized",
+                  "api/v2/errors/token_expired",
                   "api/v2/errors/forbidden",
+                  "api/v2/errors/feature_not_available",
                   "api/v2/errors/rate_limited",
                   "api/v2/errors/payload_too_large",
                   "api/v2/errors/method_not_allowed",
@@ -230,7 +234,10 @@
           },
           {
             "group": "Endpoints",
-            "openapi": "https://api.meteroid.com/api-docs/v2/openapi.json"
+            "openapi": {
+              "source": "api/v2/openapi.json",
+              "directory": "api/v2"
+            }
           }
         ]
       },

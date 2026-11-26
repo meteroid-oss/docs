@@ -5,6 +5,6 @@ description: "It already exists"
 
 **HTTP 409**
 
-The resource you are creating exists already.
+What you are creating exists already: a customer `alias` naming another customer (at `/alias`), a connected account still pending for the same email (at `/email`), or another resource the store holds once.
 
-**What to do:** Read the existing resource instead of creating it.
+**What to do:** Read the existing resource instead of creating it, or change the field `errors` points at.

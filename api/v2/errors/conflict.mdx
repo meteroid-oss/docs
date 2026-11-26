@@ -5,6 +5,6 @@ description: "The resource's state refuses the change"
 
 **HTTP 409**
 
-The resource exists but its current state refuses this change: an archived plan, a cancelled subscription, a finalized invoice…
+The resource exists but its current state refuses this change. For example: archiving a customer with an active subscription, changing an ended subscription, revoking a cancellation when none is scheduled, editing the lines of an invoice already issued, issuing a credit note on a draft or void invoice, cancelling a checkout session already completed, a budget changed since the `expected_version` you sent, a webhook endpoint past the tenant's 50.
 
 **What to do:** Read the resource to see its state; `detail` names what refuses the change.

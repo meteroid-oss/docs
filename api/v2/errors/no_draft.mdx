@@ -3,8 +3,8 @@ title: "no_draft"
 description: "The plan has no draft"
 ---
 
-**HTTP 404**
+**HTTP 409**
 
-The endpoint works on a plan's draft version, and the plan has none.
+The endpoint works on a plan's draft version (publishing or discarding it), and the plan has none.
 
-**What to do:** Create a draft with `PUT /api/v2/plans/{id_or_code}/draft` first.
+**What to do:** Write a draft with `PUT /api/v2/plans/{id_or_code}/draft` first.

@@ -5,6 +5,6 @@ description: "Unsupported media type"
 
 **HTTP 415**
 
-The body is not sent as JSON (or as a merge patch for `PATCH`).
+The body is not sent as JSON.
 
-**What to do:** Send `Content-Type: application/json` (or `application/merge-patch+json`).
+**What to do:** Send `Content-Type: application/json` (`application/merge-patch+json` for a `PATCH` reads the same).

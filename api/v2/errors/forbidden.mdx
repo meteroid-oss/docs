@@ -5,6 +5,6 @@ description: "Forbidden"
 
 **HTTP 403**
 
-The key is valid but may not do this, or your organization's plan does not include it.
+The credentials are valid but may not do this: a Connect access token without the scope, delegated credentials on a route they do not reach (the money routes are never theirs), or an Express organization, which keeps API v1. A feature your plan or edition does not include is [`feature_not_available`](/api/v2/errors/feature_not_available), not this.
 
-**What to do:** Use a key with the right permissions, or check your plan.
+**What to do:** Use a secret key of the tenant, or credentials granted this scope. `GET /api/v2/me` tells what the credentials may reach.

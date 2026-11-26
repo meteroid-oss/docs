@@ -5,6 +5,6 @@ description: "Not found"
 
 **HTTP 404**
 
-No resource of this kind has this id or code in your tenant, or the path does not exist.
+No resource of this kind has this id or code in your tenant, or the path does not exist. An id of another tenant reads as not found, so does an archived webhook endpoint. A few reads answer it for something not there yet: a customer or subscription not entitled to the feature asked, an invoice's PDF before it is generated, a wallet in a currency the customer has none in.
 
-**What to do:** Check the id or code, and that the API key belongs to the right tenant (production or sandbox).
+**What to do:** Check the id or code, and that the API key belongs to the right tenant (production or sandbox): `GET /api/v2/me` tells which.

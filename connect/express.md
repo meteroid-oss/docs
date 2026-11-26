@@ -3,8 +3,6 @@ title: "Express Accounts"
 description: "Onboard your users to Meteroid billing with a guided, platform-branded setup flow."
 ---
 
-# Express Accounts
-
 Express accounts let platforms onboard users who don't yet have a Meteroid account and who should not manage their billing entities directly. You create a connected account on their behalf, send them an onboarding link, and they complete a short setup wizard — all within a platform-branded experience.
 
 Meteroid handles organization creation, tenant provisioning, and invoicing entity setup automatically. Once onboarding completes, you can make API calls on behalf of the connected account using your own API key and the `x-meteroid-connect-account` header.
@@ -38,7 +36,7 @@ Meteroid generates a single-use onboarding link that you send to the user — vi
 
 ![Express onboarding link generation](/assets/express-link.png)
 
-<Info>You can also create connected accounts and generate onboarding links programmatically via the API. See the [API Reference](/api-reference) for details.</Info>
+<Info>You can also create connected accounts and generate onboarding links programmatically via the API. See the [API reference](/api/v2) for details.</Info>
 
 ## The Onboarding Wizard
 
